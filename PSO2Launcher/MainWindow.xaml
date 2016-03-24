@@ -1,0 +1,290 @@
+﻿<controls:MetroWindow x:Name="MetroWindow" x:Class="DogStar.MainWindow"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DogStar"
+        xmlns:properties="clr-namespace:DogStar.Properties"
+        mc:Ignorable="d"
+        Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize">
+
+    <controls:MetroWindow.Resources>
+        <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:Dictionaries}" MethodName="GetColor" />
+        <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:Dictionaries}" MethodName="GetTheme" />
+        <ObjectDataProvider x:Key="Settings" ObjectType="{x:Type properties:Settings}"/>
+    </controls:MetroWindow.Resources>
+
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <controls:Flyout x:Name="DebugFlyout" Position="Right" Theme="Adapt" CloseButtonIsCancel="True">
+                <Grid Margin="10">
+                    <StackPanel>
+                        <RichTextBox Height="300" VerticalScrollBarVisibility="Auto" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Copy" Margin="5" BorderBrush="{x:Null}"></Button>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Report" Margin="5" BorderBrush="{x:Null}"></Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </controls:Flyout>
+            <controls:Flyout x:Name="DonationFlyout" Position="Right" Theme="Adapt" CloseButtonIsCancel="True">
+                <Grid Margin="10">
+                    <StackPanel>
+                        <Button x:Name="DonateToDogstar" BorderBrush="{x:Null}" Background="{x:Null}" Click="DonateToDogstar_Click">
+                            <StackPanel>
+                                <Image Source="Resources/dogstartlogo.png" Width="201" Height="122"/>
+                                <Label Content="Donate to Dogstar (Some guy)" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="DonateToPolaris" BorderBrush="{x:Null}" Background="{x:Null}" Click="DonateToPolaris_Click">
+                            <StackPanel>
+                                <Rectangle x:Name="Polaris" Width="173" Height="155">
+                                    <Rectangle.OpacityMask>
+                                        <ImageBrush ImageSource="Resources/Polaris.png"/>
+                                    </Rectangle.OpacityMask>
+                                    <Rectangle.Style>
+                                        <Style TargetType="{x:Type Rectangle}">
+                                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
+                                <Label Content="Donate to Polaris (PSO2Proxy)" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+
+    <Grid>
+        <TabControl x:Name="MainTabControl" Margin="10" controls:TabControlHelper.IsUnderlined="True">
+            <TabItem x:Name="GameTabItem" Header="Game" controls:ControlsHelper.HeaderFontSize="21">
+                <TabControl x:Name="GameTabControl">
+                    <TabItem x:Name="MainTabItem" IsEnabled="False">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="52,0,52,72" RenderTransformOrigin="0.5,0.5">
+                                <StackPanel.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </StackPanel.RenderTransform>
+                                <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="CheckButton" Content="Check Files" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="CheckButton_Click"/>
+                                <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="LaunchButton" Content="Launch" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="LaunchButton_Click"/>
+                            </StackPanel>
+                            <StackPanel Height="294" VerticalAlignment="Top" Margin="0">
+                                <controls:Tile x:Name="Tile" Title="Game Settings (Resolution, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Change PSO2 Game Settings.">
+                                    <Rectangle x:Name="SettingsIcon" Width="40" Height="40" Fill="White">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource appbar_settings}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </controls:Tile>
+                                <controls:Tile x:Name="EnhancementsTile" Title="Enhancements (English patch, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click">
+                                    <Rectangle x:Name="EnhancementIcon" Width="40" Height="40" Fill="White">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource appbar_potion}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </controls:Tile>
+                                <controls:Tile x:Name="TileCopy1" Title="Other (PSO2Proxy, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Install PSO2, PSO2Proxy, Etc." Click="TileCopy1_Click">
+                                    <Rectangle x:Name="OtherIcon" Width="40" Height="40" Fill="White">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource appbar_resource}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </controls:Tile>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="FileCheckTabItem" IsEnabled="False">
+                        <Grid Margin="10">
+                            <Label x:Name="CompletedCheckDownloadActionslabel" VerticalAlignment="Top" Height="27" Margin="0,2,0,0"/>
+                            <Label x:Name="CurrentCheckDownloadActionlabel" Margin="0,28,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Grid>
+                                <controls:MetroProgressBar x:Name="CheckDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
+                                <Label x:Name="CurrentCheckSizeActionLable" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Label x:Name="CompletedCheckActionslabel" Margin="0,115,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Label x:Name="CurrentCheckActionlabel" Margin="0,141,0,0" VerticalAlignment="Top" Height="27"/>
+                            <controls:MetroProgressBar x:Name="CheckProgressbar" Height="45" Margin="0,165,0,192"/>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="EnhancementsTabItem" IsEnabled="False">
+                        <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top">
+                            <Grid Margin="0,0,0,50" HorizontalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="96"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">English Patch:</Label>
+                                <Label Grid.Column="0" Grid.Row="1" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Large Files:</Label>
+                                <Label Grid.Column="0" Grid.Row="2" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP E-Codes:</Label>
+                                <Label Grid.Column="0" Grid.Row="3" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP Enemies:</Label>
+                                <Label Grid.Column="0" Grid.Row="4" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Story Patch:</Label>
+                                <Label Grid.Column="0" Grid.Row="5" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">PSO2 Proxy:</Label>
+                                <Label Grid.Column="0" Grid.Row="6" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Item Translation:</Label>
+                                <Label Grid.Column="0" Grid.Row="7" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Title Translation:</Label>
+                                <Label Grid.Column="0" Grid.Row="8" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Damage Parser:</Label>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="0" x:Name="EnglishPatchToggle" VerticalAlignment="Center" Checked="EnglishPatchToggle_Checked" Unchecked="EnglishPatchToggle_Unchecked"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="1" x:Name="LargeFilesToggle" VerticalAlignment="Center" Checked="LargeFilesToggle_Checked" Unchecked="LargeFilesToggle_Unchecked"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JPECodesToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JPEnemiesToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="4" x:Name="StoryPatchToggle" Checked="StoryPatchToggle_Checked" Unchecked="StoryPatchToggle_Checked" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="5" x:Name="Pso2ProxyToggle" Checked="Pso2ProxyToggle_Checked" Unchecked="Pso2ProxyToggle_Unchecked" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="6" x:Name="ItemTranslationToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="7" x:Name="TitleTranslationToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="8" x:Name="DamageParserToggle" VerticalAlignment="Center"/>
+                            </Grid>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="OtherTabItem" IsEnabled="False">
+                        <Grid>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click"/>
+                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
+                        </Grid>
+                    </TabItem>
+                    <!--<TabItem x:Name="GeneralDownloadTab" IsEnabled="False">
+                        <Grid>
+                            <controls:MetroProgressBar x:Name="GeneralDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
+                            <Label x:Name="CurrentGeneralDownloadActionlabel" Margin="0,28,0,0" VerticalAlignment="Top" Height="27"/>
+                        </Grid>
+                    </TabItem>-->
+                </TabControl>
+            </TabItem>
+            <TabItem Header="Settings" controls:ControlsHelper.HeaderFontSize="21">
+                <Grid x:Name="LauncherSettingsGrid" Margin="5,0,5,5">
+                    <StackPanel Orientation="Vertical">
+                        <Label FontSize="14" FontWeight="Bold" Margin="0,5,0,0">Visual Settings</Label>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <Label FontSize="14">Launcher Color:</Label>
+                            <ComboBox x:Name="Colors" Width="75" SelectedValue="blue" SelectionChanged="Color_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Color}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="25,0,0,0" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label FontSize="14">Launcher Theme:</Label>
+                            <ComboBox x:Name="Themes" Width="75" SelectedValue="BaseDark" SelectionChanged="Theme_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Theme}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="16,0,0,0" />
+                        </StackPanel>
+                        <Label FontSize="14" FontWeight="Bold" Margin="0,5,0,0">Launch Settings</Label>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
+                                <Label FontSize="14" Margin="0,3,0,0">Close on launch:</Label>
+                                <Label FontSize="14" Margin="0,6,0,0">Always on top:</Label>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
+                                <controls:ToggleSwitch x:Name="Launch" Margin="16,0,0,0" Checked="Launch_Changed" Unchecked="Launch_Changed" IsChecked="{Binding CloseOnLaunch, Mode=OneTime, Source={StaticResource Settings}}" />
+                                <controls:ToggleSwitch x:Name="AlwaysOnTop" Margin="16,0,0,0" Checked="AlwaysOnTop_Changed" Unchecked="AlwaysOnTop_Changed" IsChecked="{Binding AlwaysOnTop, Mode=OneTime, Source={StaticResource Settings}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="About" controls:ControlsHelper.HeaderFontSize="21"/>
+            <TabItem Header="Support" controls:ControlsHelper.HeaderFontSize="21"/>
+        </TabControl>
+
+        <Rectangle x:Name="Debug" Height="40" Width="40" Margin="67,451,245,18" MouseDown="Debug_MouseDown" ToolTip="Debug Window">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_bug_remove}" />
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Github" Height="40" Width="40" Margin="110,449,202,20" MouseDown="Github_MouseDown" ToolTip="DogStar Source Code">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_social_github_octocat_solid}" />
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Twitter" Height="40" Width="40" Margin="155,449,157,20" MouseDown="Twitter_MouseDown" ToolTip="TeamDogStar Twitter Account">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_twitter_bird}" />
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Donate" Height="40" Width="40" Margin="202,447,110,22" MouseDown="Donate_MouseDown" ToolTip="Donate">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_money}" />
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Information" Height="40" Width="40" Margin="249,445,63,24" MouseDown="Information_MouseDown" ToolTip="Get Information On IRC">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_information_circle}" />
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+    </Grid>
+</controls:MetroWindow>
