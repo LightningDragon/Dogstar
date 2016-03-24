@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/PSO2Launcher/obj/Release
+/PSO2Launcher/bin/Release
