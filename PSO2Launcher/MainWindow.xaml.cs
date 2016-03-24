@@ -134,11 +134,11 @@ namespace DogStar
 
 			Settings.Default.Save();
 
-			string edition_path = Path.Combine(Settings.Default.GameFolder, "edition.txt");
+			string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
-			if (File.Exists(edition_path))
+			if (File.Exists(editionPath))
 			{
-				string edition = await Task.Run(() => File.ReadAllText(edition_path));
+				string edition = await Task.Run(() => File.ReadAllText(editionPath));
 
 				if (edition != "jp")
 				{
@@ -298,20 +298,20 @@ namespace DogStar
 
 					if (File.Exists(LauncherListPath))
 					{
-						var stored_launcherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
-						launcherlistdata = launcherlistdata.Except(stored_launcherlist, zzz);
+						var storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
+						launcherlistdata = launcherlistdata.Except(storedLauncherlist, zzz);
 					}
 
 					if (File.Exists(PatchListPath))
 					{
-						var stored_newlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
-						newlistdata = newlistdata.Except(stored_newlist, zzz);
+						var storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
+						newlistdata = newlistdata.Except(storedNewlist, zzz);
 					}
 
 					if (File.Exists(PatchListOldPath))
 					{
-						var stored_oldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
-						oldlistdata = oldlistdata.Except(stored_oldlist, zzz);
+						var storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
+						oldlistdata = oldlistdata.Except(storedOldlist, zzz);
 					}
 				}
 
