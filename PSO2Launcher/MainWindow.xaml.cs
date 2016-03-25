@@ -294,24 +294,24 @@ namespace DogStar
 
 				if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 				{
-					var zzz = new PatchListEntryComparer();
+					var entryComparer = new PatchListEntryComparer();
 
 					if (File.Exists(LauncherListPath))
 					{
 						var storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
-						launcherlistdata = launcherlistdata.Except(storedLauncherlist, zzz);
+						launcherlistdata = launcherlistdata.Except(storedLauncherlist, entryComparer);
 					}
 
 					if (File.Exists(PatchListPath))
 					{
 						var storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
-						newlistdata = newlistdata.Except(storedNewlist, zzz);
+						newlistdata = newlistdata.Except(storedNewlist, entryComparer);
 					}
 
 					if (File.Exists(PatchListOldPath))
 					{
 						var storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
-						oldlistdata = oldlistdata.Except(storedOldlist, zzz);
+						oldlistdata = oldlistdata.Except(storedOldlist, entryComparer);
 					}
 				}
 
