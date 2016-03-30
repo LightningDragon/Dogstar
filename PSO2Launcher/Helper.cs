@@ -45,7 +45,7 @@ namespace DogStar
 
 		public static readonly Uri VersionUrl = new Uri(BasePatch, "version.ver");
 
-		public static  readonly Uri ManagementUrl = new Uri(BasePatch, "management_beta.txt");
+		public static readonly Uri ManagementUrl = new Uri("http://patch01.pso2gs.net/patch_prod/patches/management_beta.txt");
 
 		public static readonly AssemblyName ApplicationInfo = Application.Current.MainWindow.GetType().Assembly.GetName();
 
