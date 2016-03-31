@@ -265,6 +265,7 @@ namespace DogStar
 			return true;
 		}
 
+		// TODO: If version.ver is missing, we should download the latest patch list(s) and compare with the local ones. If they match, download version.ver and return true.
 		public static async Task<bool> IsGameUpToDate()
 		{
 			var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
