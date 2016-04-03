@@ -165,6 +165,9 @@
   <data name="GenericPatchSuccess" xml:space="preserve">
     <value>{0} installed successfully.</value>
   </data>
+  <data name="GoneWrong" xml:space="preserve">
+    <value>Something appears to have gone wrong. Would you like to try again?</value>
+  </data>
   <data name="HaveInstalled" xml:space="preserve">
     <value>Do you have PSO2 installed?</value>
   </data>
@@ -200,6 +203,9 @@
   </data>
   <data name="SelectExe" xml:space="preserve">
     <value>Please select the location of pso2.exe</value>
+  </data>
+  <data name="SelectInstallLocation" xml:space="preserve">
+    <value>Please select an install location.</value>
   </data>
   <data name="ServerMaintenance" xml:space="preserve">
     <value>Maintenance</value>

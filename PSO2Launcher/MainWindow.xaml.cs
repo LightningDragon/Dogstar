@@ -282,6 +282,7 @@ namespace DogStar
 					oldlist = await client.DownloadStringTaskAsync(PatchListOldUrl);
 				}
 
+				// TODO: Add patchlist things to download thing and redo download thing because it's shit
 				var launcherlistdata = ParsePatchList(launcherlist);
 				var newlistdata = ParsePatchList(newlist);
 				var oldlistdata = ParsePatchList(oldlist);
@@ -450,13 +451,24 @@ namespace DogStar
 			}
 		}
 
-		private async Task InstallGame()
+		private async Task<bool> InstallGame(string path)
 		{
-			// TODO: Show file select message box
-			//Settings.Default.GameFolder = Result of message box;
-			//Settings.Default.IsGameInstalled = true;
-			await CheckGameFiles(UpdateMethod.FileCheck);
-			//Settings.Default.Save();
+			try
+			{
+				CreateDirectoryIfNoneExists(path);
+				Settings.Default.GameFolder = path;
+				Settings.Default.IsGameInstalled = true;
+				await CheckGameFiles(UpdateMethod.FileCheck);
+				Settings.Default.Save();
+				return true;
+			}
+			catch (Exception)
+			{
+				Settings.Default.GameFolder = string.Empty;
+				Settings.Default.IsGameInstalled = false;
+				Settings.Default.Save();
+				return false;
+			}
 		}
 
 		private async Task SetupGameInfo()
@@ -469,7 +481,17 @@ namespace DogStar
 
 				if (result == MessageDialogResult.Affirmative)
 				{
-					await InstallGame();
+					var path = await this.ShowFolderSelectAsync(string.Empty, Text.SelectInstallLocation, Properties.Resources.DefaultInstallDir);
+
+					while (!string.IsNullOrWhiteSpace(path) && !await InstallGame(Path.Combine(path, "PHANTASYSTARONLINE2", "pso2_bin")))
+					{
+						if (await this.ShowMessageAsync(string.Empty, !Uri.IsWellFormedUriString(path, UriKind.Absolute) ? Text.InvalidPathTryAgain : Text.GoneWrong, AffirmNeg, YesNo) == MessageDialogResult.Negative)
+						{
+							break;
+						}
+
+						path = await this.ShowFolderSelectAsync(string.Empty, Text.SelectInstallLocation, Properties.Resources.DefaultInstallDir);
+					}
 				}
 			}
 			else

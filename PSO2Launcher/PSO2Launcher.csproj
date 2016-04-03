@@ -91,6 +91,9 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="External.cs" />
+    <Compile Include="FolderSelectDialog.xaml.cs">
+      <DependentUpon>FolderSelectDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="PatchListEntry.cs" />
     <Compile Include="Resources\Text.Designer.cs">
@@ -102,6 +105,10 @@
     <Compile Include="FileSelectDialog.xaml.cs">
       <DependentUpon>FileSelectDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="FolderSelectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

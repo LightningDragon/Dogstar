@@ -3,20 +3,19 @@ using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
 
 namespace DogStar
 {
-	public partial class FileSelectDialog
+	public partial class FolderSelectDialog
 	{
-		private readonly OpenFileDialog _openFileDialog = new OpenFileDialog();
+		private readonly OpenFolderDialog _openFolderDialog = new OpenFolderDialog();
 
 		public string Result => PathBox.Text;
 
-		public string Filter
+		public string RootFolder
 		{
-			get { return _openFileDialog.Filter; }
-			set { _openFileDialog.Filter = value; }
+			get { return _openFolderDialog.RootFolder; }
+			set { _openFolderDialog.RootFolder = value; }
 		}
 
 		public string Message
@@ -25,7 +24,7 @@ namespace DogStar
 			set { MessageBlock.Text = value; }
 		}
 
-		public FileSelectDialog(MetroWindow parentWindow, MetroDialogSettings settings) : base(parentWindow, settings)
+		public FolderSelectDialog(MetroWindow parentWindow, MetroDialogSettings settings) : base(parentWindow, settings)
 		{
 			InitializeComponent();
 			AffirmativeButton.Content = settings.AffirmativeButtonText;
@@ -34,9 +33,9 @@ namespace DogStar
 
 		private void FileBrowse_Click(object sender, RoutedEventArgs e)
 		{
-			if (_openFileDialog.ShowDialog(OwningWindow).GetValueOrDefault())
+			if (_openFolderDialog.ShowDialog(OwningWindow).GetValueOrDefault())
 			{
-				PathBox.Text = _openFileDialog.FileName;
+				PathBox.Text = _openFolderDialog.SelectedPath;
 			}
 		}
 

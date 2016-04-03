@@ -18,5 +18,14 @@ namespace DogStar
 			await window.HideMetroDialogAsync(dialog);
 			return result;
 		}
+
+		public static async Task<string> ShowFolderSelectAsync(this MetroWindow window, string title, string message, string rootFolder, MetroDialogSettings settings = null)
+		{
+			settings = settings ?? window.MetroDialogOptions;
+			var dialog = new FolderSelectDialog(window, settings) { Title = title, Message = message, RootFolder = rootFolder };
+			var result = await window.ShowMetroDialogAsync(dialog).ContinueWith(x => dialog.WaitForButtonPressAsync()).Unwrap();
+			await window.HideMetroDialogAsync(dialog);
+			return result;
+		}
 	}
 }

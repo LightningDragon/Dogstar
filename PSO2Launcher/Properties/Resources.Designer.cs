@@ -61,6 +61,15 @@ namespace DogStar.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to C:\Program Files (x86)\SEGA.
+        /// </summary>
+        internal static string DefaultInstallDir {
+            get {
+                return ResourceManager.GetString("DefaultInstallDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://rex.flyingcat.org/donate.
         /// </summary>
         internal static string DogstarDonation {

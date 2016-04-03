@@ -205,6 +205,15 @@ namespace DogStar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something appears to have gone wrong. Would you like to try again?.
+        /// </summary>
+        internal static string GoneWrong {
+            get {
+                return ResourceManager.GetString("GoneWrong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you have PSO2 installed?.
         /// </summary>
         internal static string HaveInstalled {
@@ -309,6 +318,15 @@ namespace DogStar.Resources {
         internal static string SelectExe {
             get {
                 return ResourceManager.GetString("SelectExe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select an install location..
+        /// </summary>
+        internal static string SelectInstallLocation {
+            get {
+                return ResourceManager.GetString("SelectInstallLocation", resourceCulture);
             }
         }
         
