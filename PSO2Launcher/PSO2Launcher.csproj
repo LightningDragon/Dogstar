@@ -91,6 +91,7 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="External.cs" />
+    <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="PatchListEntry.cs" />
     <Compile Include="Resources\Text.Designer.cs">
       <AutoGen>True</AutoGen>
