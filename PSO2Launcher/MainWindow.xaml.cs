@@ -21,17 +21,17 @@ using static DogStar.External;
 
 namespace DogStar
 {
-    // TODO: Prepatch https://social.msdn.microsoft.com/Forums/vstudio/en-US/9daab290-cf3a-4777-b046-3dc156b184c0/how-to-make-a-wpf-child-window-follow-its-parent?forum=wpf
-    // TODO: Make sure to keep patch lists, version.ver, version_precede.ver, management_beta, precede in documents\sega\phantasystaronline2
-    // TODO: figure out documents\sega\pso2\download patch lists
-    // TODO: Check for pre-patches (see official pso2 launcher)
-    // TODO: Implement the functionality behind the toggles on the enhancements menu
-    // TODO: hosts.ics check
-    // TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
-    // TODO: Classes with event handlers for things. You know the things.
-    // TODO: Write version.ver to PSO2 Tweaker registry
+	// TODO: Prepatch https://social.msdn.microsoft.com/Forums/vstudio/en-US/9daab290-cf3a-4777-b046-3dc156b184c0/how-to-make-a-wpf-child-window-follow-its-parent?forum=wpf
+	// TODO: Make sure to keep patch lists, version.ver, version_precede.ver, management_beta, precede in documents\sega\phantasystaronline2
+	// TODO: figure out documents\sega\pso2\download patch lists
+	// TODO: Check for pre-patches (see official pso2 launcher)
+	// TODO: Implement the functionality behind the toggles on the enhancements menu
+	// TODO: hosts.ics check
+	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
+	// TODO: Classes with event handlers for things. You know the things.
+	// TODO: Write version.ver to PSO2 Tweaker registry
 
-    public partial class MainWindow
+	public partial class MainWindow
 	{
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 		private bool _isCheckPaused;
@@ -87,7 +87,7 @@ namespace DogStar
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-            if (!Settings.Default.IsGameInstalled)
+			if (!Settings.Default.IsGameInstalled)
 			{
 				var gamefolder = GetTweakerGameFolder();
 
@@ -99,7 +99,7 @@ namespace DogStar
 				{
 					var result = await this.ShowMessageAsync(Text.GameDetected, $"\"{gamefolder}\"", AffirmNeg, YesNo);
 
-                    if (result == MessageDialogResult.Affirmative)
+					if (result == MessageDialogResult.Affirmative)
 					{
 						Settings.Default.GameFolder = gamefolder;
 						Settings.Default.IsGameInstalled = true;
@@ -452,10 +452,10 @@ namespace DogStar
 
 		private async Task InstallGame()
 		{
-            // TODO: Show file select message box
-            //Settings.Default.GameFolder = Result of message box;
-            //Settings.Default.IsGameInstalled = true;
-            await CheckGameFiles(UpdateMethod.FileCheck);
+			// TODO: Show file select message box
+			//Settings.Default.GameFolder = Result of message box;
+			//Settings.Default.IsGameInstalled = true;
+			await CheckGameFiles(UpdateMethod.FileCheck);
 			//Settings.Default.Save();
 		}
 
@@ -484,7 +484,7 @@ namespace DogStar
 
 			while (result == MessageDialogResult.Affirmative)
 			{
-                var gamePath = await this.ShowFileSelectAsync(string.Empty, Text.SelectExe, Properties.Resources.GameFilter);
+				var gamePath = await this.ShowFileSelectAsync(string.Empty, Text.SelectExe, Properties.Resources.GameFilter);
 
 				if (await Task.Run(() => !string.IsNullOrWhiteSpace(gamePath) && File.Exists(gamePath)))
 				{

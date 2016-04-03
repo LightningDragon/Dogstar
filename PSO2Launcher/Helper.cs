@@ -267,18 +267,18 @@ namespace DogStar
 
 		public static async Task<bool> IsGameUpToDate()
 		{
-		    try
-		    {
-		        var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
-		        using (var client = AquaClient)
-		        {
-		            return version == await client.DownloadStringTaskAsync(VersionUrl);
-		        }
-		    }
-		    catch
-		    {
-		        return false;
-		    }
+			try
+			{
+				var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
+				using (var client = AquaClient)
+				{
+					return version == await client.DownloadStringTaskAsync(VersionUrl);
+				}
+			}
+			catch
+			{
+				return false;
+			}
 		}
 	}
 }
