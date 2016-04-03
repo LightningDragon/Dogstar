@@ -98,6 +98,9 @@
       <DependentUpon>Text.resx</DependentUpon>
     </Compile>
     <Compile Include="UpdateMethod.cs" />
+    <Compile Include="FileSelectDialog.xaml.cs">
+      <DependentUpon>FileSelectDialog.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -113,6 +116,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileSelectDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
