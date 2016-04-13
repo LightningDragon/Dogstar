@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Reflection;
@@ -25,7 +24,7 @@ namespace DogStar
 
 		private static readonly string[] SizeSuffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
-		private static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
+		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
 
 		public static readonly MetroDialogSettings YesNo = new MetroDialogSettings { AffirmativeButtonText = Text.Yes, NegativeButtonText = Text.No };
 
@@ -69,7 +68,16 @@ namespace DogStar
 
 		public static IEnumerable<string> StripProxyEntries(IEnumerable<string> entries) => entries.Where(x => (x.StartsWith("#") || !x.Contains(".pso2gs.net")) && !x.StartsWith("# Dogstar"));
 
-		static string SizeSuffix(long value)
+		private static string HashFile(string file)
+		{
+			using (var stream = File.OpenRead(file))
+			using (var buffstream = new BufferedStream(stream, 0x8000))
+			{
+				return string.Join("", MD5.Create().ComputeHash(buffstream).Select(b => HexTable[b]));
+			}
+		}
+
+		public static string SizeSuffix(long value)
 		{
 			if (value < 0) { return "-" + SizeSuffix(-value); }
 			if (value == 0) { return "0.0 bytes"; }
@@ -80,15 +88,6 @@ namespace DogStar
 			return $"{adjustedSize:n1} {SizeSuffixes[mag]}";
 		}
 
-		private static string HashFile(string file)
-		{
-			using (var stream = File.OpenRead(file))
-			using (var buffstream = new BufferedStream(stream, 0x8000))
-			{
-				return string.Join("", MD5.Create().ComputeHash(buffstream).Select(b => HexTable[b]));
-			}
-		}
-
 		public static void CreateDirectoryIfNoneExists(string path)
 		{
 			if (!Directory.Exists(path))
@@ -97,7 +96,7 @@ namespace DogStar
 			}
 		}
 
-		private static void MoveAndOverwriteFile(string source, string destination)
+		public static void MoveAndOverwriteFile(string source, string destination)
 		{
 			if (File.Exists(destination))
 			{
@@ -145,39 +144,6 @@ namespace DogStar
 			catch
 			{
 				return false;
-			}
-		}
-
-		public static async Task DownloadPatchFile(string relativeAddress, string filePath, ProgressBar bar, Label label)
-		{
-			await Task.Run(() => CreateDirectoryIfNoneExists(Path.GetDirectoryName(filePath)));
-
-			using (var client = AquaClient)
-			{
-				client.DownloadProgressChanged += (s, e) =>
-				{
-					bar.Dispatcher.InvokeAsync(() =>
-					{
-						bar.Maximum = 100;
-						bar.Value = e.ProgressPercentage;
-						label.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
-					});
-				};
-
-				client.DownloadFileCompleted += (s, e) =>
-				{
-					bar.Dispatcher.InvokeAsync(() => bar.Value = 100);
-					MoveAndOverwriteFile(filePath, Path.ChangeExtension(filePath, null));
-				};
-
-				try
-				{
-					await client.DownloadFileTaskAsync(new Uri(BasePatch, relativeAddress), filePath);
-				}
-				catch
-				{
-					await client.DownloadFileTaskAsync(new Uri(BasePatchOld, relativeAddress), filePath);
-				}
 			}
 		}
 

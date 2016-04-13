@@ -22,8 +22,8 @@
                     <StackPanel>
                         <RichTextBox Height="300" VerticalScrollBarVisibility="Auto" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Copy" Margin="5" BorderBrush="{x:Null}"></Button>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" Content="Report" Margin="5" BorderBrush="{x:Null}"></Button>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" Content="Copy" Margin="5" BorderBrush="{x:Null}"></Button>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" Content="Report" Margin="5" BorderBrush="{x:Null}"></Button>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -78,8 +78,8 @@
                                         <TranslateTransform/>
                                     </TransformGroup>
                                 </StackPanel.RenderTransform>
-                                <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="CheckButton" Content="Check Files" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="CheckButton_Click"/>
-                                <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="LaunchButton" Content="Launch" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="LaunchButton_Click"/>
+                                <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CheckButton" Content="Check Files" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="CheckButton_Click"/>
+                                <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="LaunchButton" Content="Launch" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="LaunchButton_Click"/>
                             </StackPanel>
                             <StackPanel Height="294" VerticalAlignment="Top" Margin="0">
                                 <controls:Tile x:Name="Tile" Title="Game Settings (Resolution, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Change PSO2 Game Settings.">
@@ -120,8 +120,8 @@
                             <Label x:Name="CompletedCheckActionslabel" Margin="0,115,0,0" VerticalAlignment="Top" Height="27"/>
                             <Label x:Name="CurrentCheckActionlabel" Margin="0,141,0,0" VerticalAlignment="Top" Height="27"/>
                             <controls:MetroProgressBar x:Name="CheckProgressbar" Height="45" Margin="0,165,0,192"/>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="EnhancementsTabItem" IsEnabled="False">
@@ -153,21 +153,21 @@
                                 <Label Grid.Column="0" Grid.Row="8" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Damage Parser:</Label>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="0" x:Name="EnglishPatchToggle" VerticalAlignment="Center" Checked="EnglishPatchToggle_Checked" Unchecked="EnglishPatchToggle_Unchecked"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="1" x:Name="LargeFilesToggle" VerticalAlignment="Center" Checked="LargeFilesToggle_Checked" Unchecked="LargeFilesToggle_Unchecked"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JPECodesToggle" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JPEnemiesToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JpeCodesToggle" VerticalAlignment="Center"/>
+                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JpEnemiesToggle" VerticalAlignment="Center"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="4" x:Name="StoryPatchToggle" Checked="StoryPatchToggle_Checked" Unchecked="StoryPatchToggle_Checked" VerticalAlignment="Center"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="5" x:Name="Pso2ProxyToggle" Checked="Pso2ProxyToggle_Checked" Unchecked="Pso2ProxyToggle_Unchecked" VerticalAlignment="Center"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="6" x:Name="ItemTranslationToggle" VerticalAlignment="Center"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="7" x:Name="TitleTranslationToggle" VerticalAlignment="Center"/>
                                 <controls:ToggleSwitch Grid.Column="1" Grid.Row="8" x:Name="DamageParserToggle" VerticalAlignment="Center"/>
                             </Grid>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="OtherTabItem" IsEnabled="False">
                         <Grid>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click"/>
-                            <Button Style="{StaticResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
                         </Grid>
                     </TabItem>
                     <!--<TabItem x:Name="GeneralDownloadTab" IsEnabled="False">

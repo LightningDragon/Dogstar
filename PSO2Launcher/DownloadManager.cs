@@ -8,10 +8,14 @@ namespace DogStar
 {
 	class DownloadManager : IDisposable
 	{
-		private readonly WebClient _client = new WebClient();
+		private readonly AquaHttpClient _client = new AquaHttpClient();
 		private readonly Queue<Action> _actions = new Queue<Action>();
 
+		private bool _isDownloading;
+		private Task _paused = Task.Delay(0);
+
 		public event EventHandler DownloadCompleted = delegate { };
+		public event EventHandler<string> DownloadStarted = delegate { };
 		public event DownloadDataCompletedEventHandler DownloadDataCompleted = delegate { };
 		public event DownloadStringCompletedEventHandler DownloadStringCompleted = delegate { };
 		public event AsyncCompletedEventHandler DownloadFileCompleted = delegate { };
@@ -26,42 +30,72 @@ namespace DogStar
 			_client.DownloadDataCompleted += (s, e) => DownloadCompleted(s, e);
 			_client.DownloadStringCompleted += (s, e) => DownloadCompleted(s, e);
 			_client.DownloadFileCompleted += (s, e) => DownloadCompleted(s, e);
+			DownloadCompleted += ContinueOnCompleat;
 		}
 
-		private Task Noot(Task task)
+		private void ContinueOnCompleat(object sender, EventArgs args)
 		{
-			lock (_actions)
+			try
 			{
-				if (_actions.Count > 0)
+				lock (_actions)
 				{
-					return Task.Run(_actions.Dequeue()).ContinueWith(Shit);
+					if (_actions.Count > 0)
+					{
+						_paused.Wait();
+						Task.Run(_actions.Dequeue());
+					}
+					else
+					{
+						_isDownloading = false;
+					}
 				}
-
-				return Task.Delay(0);
+			}
+			catch
+			{
+				CancelDownloads();
 			}
 		}
 
-		private void Shit(Task task)
+		public void PauseDownloads(Task task)
 		{
-			task.ContinueWith(Noot);
+			lock (_actions)
+			{
+				_paused = task;
+			}
+		}
+
+		public void CancelDownloads()
+		{
+			lock (_actions)
+			{
+				_actions.Clear();
+				_client.CancelAsync();
+			}
 		}
 
 		public Task<byte[]> DownloadDataTaskAsync(Uri address)
 		{
 			lock (_actions)
 			{
-				if (_client.IsBusy)
+				var taskSource = new TaskCompletionSource<byte[]>();
+
+				Action action = async () =>
 				{
-					var taskSource = new TaskCompletionSource<byte[]>();
-					_actions.Enqueue(async () => taskSource.TrySetResult(await _client.DownloadDataTaskAsync(address)));
-					return taskSource.Task;
+					await Task.Run(() => DownloadStarted(this, address.ToString()));
+					taskSource.TrySetResult(await _client.DownloadDataTaskAsync(address));
+				};
+
+				if (_actions.Count > 0 || _client.IsBusy || _isDownloading)
+				{
+					_actions.Enqueue(action);
 				}
 				else
 				{
-					var task = _client.DownloadDataTaskAsync(address);
-					Task.Run(() => Shit(task));
-					return task;
+					_isDownloading = true;
+					Task.Run(() => action());
 				}
+
+				return taskSource.Task;
 			}
 		}
 
@@ -69,18 +103,25 @@ namespace DogStar
 		{
 			lock (_actions)
 			{
-				if (_client.IsBusy)
+				var taskSource = new TaskCompletionSource<string>();
+
+				Action action = async () =>
 				{
-					var taskSource = new TaskCompletionSource<string>();
-					_actions.Enqueue(async () => taskSource.TrySetResult(await _client.DownloadStringTaskAsync(address)));
-					return taskSource.Task;
+					await Task.Run(() => DownloadStarted(this, address.ToString()));
+					taskSource.TrySetResult(await _client.DownloadStringTaskAsync(address));
+				};
+
+				if (_actions.Count > 0 || _client.IsBusy || _isDownloading)
+				{
+					_actions.Enqueue(action);
 				}
 				else
 				{
-					var task = _client.DownloadStringTaskAsync(address);
-					Task.Run(() => Shit(task));
-					return task;
+					_isDownloading = true;
+					Task.Run(() => action());
 				}
+
+				return taskSource.Task;
 			}
 		}
 
@@ -88,18 +129,25 @@ namespace DogStar
 		{
 			lock (_actions)
 			{
-				if (_client.IsBusy)
+				var taskSource = new TaskCompletionSource<object>();
+
+				Action action = async () =>
 				{
-					var taskSource = new TaskCompletionSource<object>();
-					_actions.Enqueue(async () => await _client.DownloadFileTaskAsync(address, fileName).ContinueWith(x => taskSource.TrySetResult(null)));
-					return taskSource.Task;
+					await Task.Run(() => DownloadStarted(this, address.ToString()));
+					await _client.DownloadFileTaskAsync(address, fileName).ContinueWith(x => taskSource.TrySetResult(null));
+				};
+
+				if (_actions.Count > 0 || _client.IsBusy || _isDownloading)
+				{
+					_actions.Enqueue(action);
 				}
 				else
 				{
-					var task = _client.DownloadFileTaskAsync(address, fileName);
-					Task.Run(() => Shit(task));
-					return task;
+					_isDownloading = true;
+					Task.Run(() => action());
 				}
+
+				return taskSource.Task;
 			}
 		}
 

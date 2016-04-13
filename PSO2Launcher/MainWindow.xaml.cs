@@ -28,7 +28,6 @@ namespace DogStar
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
-	// TODO: Classes with event handlers for things. You know the things.
 	// TODO: Write version.ver to PSO2 Tweaker registry
 
 	public partial class MainWindow
@@ -264,126 +263,169 @@ namespace DogStar
 			CheckDownloadProgressbar.Value = 0;
 			CheckProgressbar.Value = 0;
 			FileCheckTabItem.IsSelected = true;
-			var currentDownload = Task.Delay(0);
 			var numberDownloaded = 0;
+			var numberToDownload = 3;
+			var fileOperations = new List<Task>();
 
-			try
+			using (var downloadManager = new DownloadManager())
 			{
-				await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
-
-				string launcherlist;
-				string newlist;
-				string oldlist;
-
-				using (var client = AquaClient)
+				downloadManager.DownloadStarted += (s, e) =>
 				{
-					launcherlist = await client.DownloadStringTaskAsync(LauncherListUrl);
-					newlist = await client.DownloadStringTaskAsync(PatchListUrl);
-					oldlist = await client.DownloadStringTaskAsync(PatchListOldUrl);
-				}
+					CurrentCheckDownloadActionlabel.Dispatcher.InvokeAsync(() =>
+					{
+						CurrentCheckDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
+					});
+				};
 
-				// TODO: Add patchlist things to download thing and redo download thing because it's shit
-				var launcherlistdata = ParsePatchList(launcherlist);
-				var newlistdata = ParsePatchList(newlist);
-				var oldlistdata = ParsePatchList(oldlist);
-
-				// TODO: Precede should download in the background. It doesn't affect the game immedately, so the game can be played. How do?
-				if (method != UpdateMethod.Precede)
+				downloadManager.DownloadProgressChanged += (s, e) =>
 				{
-					await RestoreAllPatchBackups();
-				}
+					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
+					{
+						CheckDownloadProgressbar.Maximum = 100;
+						CheckDownloadProgressbar.Value = e.ProgressPercentage;
+						CurrentCheckSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+					});
+				};
 
-				if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
+				downloadManager.DownloadCompleted += (s, e) =>
 				{
-					var entryComparer = new PatchListEntryComparer();
-
-					if (File.Exists(LauncherListPath))
+					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
-						var storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
-						launcherlistdata = launcherlistdata.Except(storedLauncherlist, entryComparer);
-					}
-
-					if (File.Exists(PatchListPath))
-					{
-						var storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
-						newlistdata = newlistdata.Except(storedNewlist, entryComparer);
-					}
-
-					if (File.Exists(PatchListOldPath))
-					{
-						var storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
-						oldlistdata = oldlistdata.Except(storedOldlist, entryComparer);
-					}
-				}
-
-				var groups = (from v in launcherlistdata.Concat(newlistdata.Concat(oldlistdata)).ToArray() group v by v.Name into d select d.First()).ToArray();
-
-				var index = 0;
-				var numberToDownload = 0;
-				var downloadQueue = new Queue<string>();
-				CheckProgressbar.Maximum = groups.Length;
-
-				while (index < groups.Length || downloadQueue.Count > 0)
-				{
-					_checkCancelSource.Token.ThrowIfCancellationRequested();
-
-					if (_isCheckPaused)
-					{
-						await Task.Delay(16);
-					}
-					else
-					{
+						numberDownloaded++;
 						CompletedCheckDownloadActionslabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
-						CompletedCheckActionslabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
+					});
+				};
 
-						if (index >= groups.Length)
+				Func<Task> pause = async () =>
+				{
+					var taskSource = new TaskCompletionSource<object>();
+					RoutedEventHandler unpause = (s, e) => taskSource.TrySetResult(null);
+					RoutedEventHandler cancel = (s, e) => taskSource.TrySetCanceled();
+
+					try
+					{
+						PauseCheckButton.Click += unpause;
+						CancelCheckButton.Click += cancel;
+						downloadManager.PauseDownloads(taskSource.Task);
+						await taskSource.Task;
+					}
+					finally
+					{
+						PauseCheckButton.Click -= unpause;
+						CancelCheckButton.Click -= cancel;
+					}
+				};
+
+				try
+				{
+					await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
+					await Task.Run(() => CreateDirectoryIfNoneExists(DataFolder));
+
+					var launcherlist = await downloadManager.DownloadStringTaskAsync(LauncherListUrl);
+					var newlist = await downloadManager.DownloadStringTaskAsync(PatchListUrl);
+					var oldlist = await downloadManager.DownloadStringTaskAsync(PatchListOldUrl);
+
+					var launcherlistdata = ParsePatchList(launcherlist).ToArray();
+					var newlistdata = ParsePatchList(newlist).ToArray();
+					var oldlistdata = ParsePatchList(oldlist).ToArray();
+
+					// TODO: Precede should download in the background. It doesn't affect the game immedately, so the game can be played. How do?
+					if (method != UpdateMethod.Precede)
+					{
+						await RestoreAllPatchBackups();
+					}
+
+					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
+					{
+						var entryComparer = new PatchListEntryComparer();
+
+						if (File.Exists(LauncherListPath))
 						{
-							await currentDownload;
+							var storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
+							launcherlistdata = launcherlistdata.Except(storedLauncherlist, entryComparer).ToArray();
 						}
 
-						if ((currentDownload.IsCompleted || currentDownload.IsFaulted || currentDownload.IsCanceled) && downloadQueue.Count > 0)
+						if (File.Exists(PatchListPath))
 						{
-							numberDownloaded++;
-							var url = downloadQueue.Dequeue();
-							CurrentCheckDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(url);
-							currentDownload = Task.Run(() => DownloadPatchFile(url, MakeLocalToGame(url), CheckDownloadProgressbar, CurrentCheckSizeActionLable));
+							var storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
+							newlistdata = newlistdata.Except(storedNewlist, entryComparer).ToArray();
 						}
 
-						if (index < groups.Length)
+						if (File.Exists(PatchListOldPath))
+						{
+							var storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
+							oldlistdata = oldlistdata.Except(storedOldlist, entryComparer).ToArray();
+						}
+					}
+
+					var lists = launcherlistdata.Concat(newlistdata.Concat(oldlistdata)).ToArray();
+					var groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
+
+					CheckProgressbar.Maximum = groups.Length;
+
+					for (var index = 0; index < groups.Length;)
+					{
+						_checkCancelSource.Token.ThrowIfCancellationRequested();
+
+						if (_isCheckPaused)
+						{
+							await pause();
+						}
+						else
 						{
 							var data = groups[index];
-							var fileName = Path.GetFileNameWithoutExtension(data.Name);
-							CurrentCheckActionlabel.Content = fileName;
+							CurrentCheckActionlabel.Content = Path.GetFileNameWithoutExtension(data.Name);
+							var filePath = MakeLocalToGame(Path.ChangeExtension(data.Name, null));
 
-							var upToDate = await Task.Run(() => IsFileUpToDate(MakeLocalToGame(Path.ChangeExtension(data.Name, null)), data.Size, data.Hash));
+							var upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
 							CheckProgressbar.Value = ++index;
+							CompletedCheckActionslabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
 
 							if (!upToDate)
 							{
-								downloadQueue.Enqueue(data.Name);
+								var patPath = MakeLocalToGame(data.Name);
+
+								fileOperations.Add(downloadManager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
+
 								numberToDownload++;
+								CompletedCheckDownloadActionslabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
 							}
 						}
 					}
+
+					await Task.Run(() =>
+					{
+						File.WriteAllText(LauncherListPath, launcherlist);
+						File.WriteAllText(PatchListPath, newlist);
+						File.WriteAllText(PatchListOldPath, oldlist);
+					});
+
+					numberToDownload++;
+					fileOperations.Add(downloadManager.DownloadFileTaskAsync(VersionUrl, VersionPath));
+
+					var downloads = Task.WhenAll(fileOperations);
+
+					while (!downloads.IsCompleted && !downloads.IsCanceled && !downloads.IsFaulted)
+					{
+						_checkCancelSource.Token.ThrowIfCancellationRequested();
+
+						if (_isCheckPaused)
+						{
+							await pause();
+						}
+						else
+						{
+							await Task.Delay(16);
+						}
+					}
+
+					await downloads;
 				}
-
-				await Task.Run(() =>
+				catch when (_checkCancelSource.IsCancellationRequested)
 				{
-					File.WriteAllText(LauncherListPath, launcherlist);
-					File.WriteAllText(PatchListPath, newlist);
-					File.WriteAllText(PatchListOldPath, oldlist);
-				});
-
-				using (var client = AquaClient)
-				{
-					await client.DownloadFileTaskAsync(VersionUrl, VersionPath);
+					downloadManager.CancelDownloads();
 				}
 			}
-			catch when (_checkCancelSource.IsCancellationRequested)
-			{
-			}
-
-			await currentDownload;
 
 			if (GameTabItem.IsSelected)
 			{

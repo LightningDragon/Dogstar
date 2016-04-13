@@ -1,0 +1,3 @@
+[submodule "PSO2HLib"]
+	path = PSO2HLib
+	url = https://github.com/VariantXYZ/PSO2HLib.git
