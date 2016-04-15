@@ -127,42 +127,45 @@
                     </TabItem>
                     <TabItem x:Name="EnhancementsTabItem" IsEnabled="False">
                         <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top">
-                            <Grid Margin="0,0,0,50" HorizontalAlignment="Center">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="96"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">English Patch:</Label>
-                                <Label Grid.Column="0" Grid.Row="1" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Large Files:</Label>
-                                <Label Grid.Column="0" Grid.Row="2" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP E-Codes:</Label>
-                                <Label Grid.Column="0" Grid.Row="3" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP Enemies:</Label>
-                                <Label Grid.Column="0" Grid.Row="4" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Story Patch:</Label>
-                                <Label Grid.Column="0" Grid.Row="5" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">PSO2 Proxy:</Label>
-                                <Label Grid.Column="0" Grid.Row="6" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Item Translation:</Label>
-                                <Label Grid.Column="0" Grid.Row="7" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Title Translation:</Label>
-                                <Label Grid.Column="0" Grid.Row="8" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Damage Parser:</Label>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="0" x:Name="EnglishPatchToggle" VerticalAlignment="Center" Checked="EnglishPatchToggle_Checked" Unchecked="EnglishPatchToggle_Unchecked"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="1" x:Name="LargeFilesToggle" VerticalAlignment="Center" Checked="LargeFilesToggle_Checked" Unchecked="LargeFilesToggle_Unchecked"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JpeCodesToggle" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JpEnemiesToggle" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="4" x:Name="StoryPatchToggle" Checked="StoryPatchToggle_Checked" Unchecked="StoryPatchToggle_Checked" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="5" x:Name="Pso2ProxyToggle" Checked="Pso2ProxyToggle_Checked" Unchecked="Pso2ProxyToggle_Unchecked" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="6" x:Name="ItemTranslationToggle" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="7" x:Name="TitleTranslationToggle" VerticalAlignment="Center"/>
-                                <controls:ToggleSwitch Grid.Column="1" Grid.Row="8" x:Name="DamageParserToggle" VerticalAlignment="Center"/>
-                            </Grid>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
+                            <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="96"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Grid.Row="0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">English Patch:</Label>
+                                    <Label Grid.Column="0" Grid.Row="1" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Large Files:</Label>
+                                    <Label Grid.Column="0" Grid.Row="2" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP E-Codes:</Label>
+                                    <Label Grid.Column="0" Grid.Row="3" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP Enemies:</Label>
+                                    <Label Grid.Column="0" Grid.Row="4" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Story Patch:</Label>
+                                    <Label Grid.Column="0" Grid.Row="5" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">PSO2 Proxy:</Label>
+                                    <Label Grid.Column="0" Grid.Row="6" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Item Translation:</Label>
+                                    <Label Grid.Column="0" Grid.Row="7" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Title Translation:</Label>
+                                    <Label Grid.Column="0" Grid.Row="8" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Damage Parser:</Label>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="0" x:Name="EnglishPatchToggle" VerticalAlignment="Center" Checked="EnglishPatchToggle_Checked" Unchecked="EnglishPatchToggle_Unchecked"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="1" x:Name="LargeFilesToggle" VerticalAlignment="Center" Checked="LargeFilesToggle_Checked" Unchecked="LargeFilesToggle_Unchecked"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JpeCodesToggle" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JpEnemiesToggle" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="4" x:Name="StoryPatchToggle" Checked="StoryPatchToggle_Checked" Unchecked="StoryPatchToggle_Checked" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="5" x:Name="Pso2ProxyToggle" Checked="Pso2ProxyToggle_Checked" Unchecked="Pso2ProxyToggle_Unchecked" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="6" x:Name="ItemTranslationToggle" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="7" x:Name="TitleTranslationToggle" VerticalAlignment="Center"/>
+                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="8" x:Name="DamageParserToggle" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ScrollViewer>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="7,0,119,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="AddPluginButton" Content="Add" Width="100" BorderBrush="{x:Null}" Margin="119,0,7,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" VerticalAlignment="Bottom" Click="AddPluginButton_Click"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="OtherTabItem" IsEnabled="False">

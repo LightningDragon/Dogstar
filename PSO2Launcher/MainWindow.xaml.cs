@@ -713,5 +713,10 @@ namespace DogStar
 		{
 			generalDownloadManager.Dispose();
 		}
+
+		private void AddPluginButton_Click(object sender, RoutedEventArgs e)
+		{
+			// TODO: Variant here's your button have fun.
+		}
 	}
 }
