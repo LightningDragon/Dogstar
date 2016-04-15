@@ -29,6 +29,7 @@ namespace DogStar
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Write version.ver to PSO2 Tweaker registry
+	// TODO: Figure out why vanilla launcher keeps deleting version.ver. _version.ver?
 
 	public partial class MainWindow : IDisposable
 	{
