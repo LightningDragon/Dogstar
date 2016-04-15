@@ -190,6 +190,8 @@ namespace DogStar
 			CurrentGeneralDownloadActionlabel.Dispatcher.InvokeAsync(() =>
 			{
 				GeneralDownloadProgressbar.Maximum = 100;
+				GeneralDownloadProgressbar.IsIndeterminate = false;
+				CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Visible;
 				CurrentGeneralDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
 			});
 		}
@@ -630,7 +632,11 @@ namespace DogStar
 				await generalDownloadManager.DownloadFileTaskAsync(url, filepath);
 			}
 
+			GeneralDownloadProgressbar.IsIndeterminate = true;
+			CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Hidden;
 			var succeeded = await Task.Run(() => InstallPatch(filepath, patchname));
+			CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Visible;
+			GeneralDownloadProgressbar.IsIndeterminate = false;
 
 			if (succeeded)
 			{
