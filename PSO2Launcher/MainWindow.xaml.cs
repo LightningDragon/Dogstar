@@ -30,8 +30,10 @@ namespace DogStar
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Write version.ver to PSO2 Tweaker registry
 
-	public partial class MainWindow
+	public partial class MainWindow : IDisposable
 	{
+		private readonly DownloadManager generalDownloadManager = new DownloadManager();
+
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 		private bool _isCheckPaused;
 
@@ -41,6 +43,10 @@ namespace DogStar
 		{
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
+
+			generalDownloadManager.DownloadStarted += DownloadStarted;
+			generalDownloadManager.DownloadProgressChanged += DownloadProgressChanged;
+
 			Topmost = Settings.Default.AlwaysOnTop;
 			Colors.SelectedIndex = Array.IndexOf(Dictionaries.GetColor().Values.ToArray(), Settings.Default.AccentColor);
 			Themes.SelectedIndex = Array.IndexOf(Dictionaries.GetTheme().Values.ToArray(), Settings.Default.Theme);
@@ -80,9 +86,6 @@ namespace DogStar
 
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
 
-		private async void EnglishPatchToggle_Checked(object sender, RoutedEventArgs e) => await DownloadEnglishPatch();
-
-		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e) => await DownloadLargeFiles();
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -156,16 +159,48 @@ namespace DogStar
 			}
 			else
 			{
-				if ((EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0) == true)
+				EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
+				LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
+
+				if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
 				{
-					await DownloadEnglishPatch();
-				}
-				if ((LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0) == true)
-				{
-					await DownloadLargeFiles();
+					var files = (JArray)(await GetArghlexJson()).files;
+					dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
+					dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
+
+					if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
+					{
+						GeneralDownloadTab.IsSelected = true;
+						await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
+						MainTabItem.IsSelected = true;
+					}
+					if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
+					{
+						GeneralDownloadTab.IsSelected = true;
+						await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
+						MainTabItem.IsSelected = true;
+					}
 				}
 			}
 
+		}
+
+		private void DownloadStarted(object sender, string e)
+		{
+			CurrentGeneralDownloadActionlabel.Dispatcher.InvokeAsync(() =>
+			{
+				GeneralDownloadProgressbar.Maximum = 100;
+				CurrentGeneralDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
+			});
+		}
+
+		private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+		{
+			CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
+			{
+				GeneralDownloadProgressbar.Value = e.ProgressPercentage;
+				CurrentGeneralDownloadSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+			});
 		}
 
 		private async void LaunchButton_Click(object sender, RoutedEventArgs e)
@@ -212,6 +247,26 @@ namespace DogStar
 				ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 				Settings.Default.Save();
 			}
+		}
+
+		private async void EnglishPatchToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			GeneralDownloadTab.IsSelected = true;
+			dynamic jsonData = await GetArghlexJson();
+			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
+			if (entry != null)
+				await DownloadEnglishPatch((string)entry.name, (int)entry.size, (int)entry.modtime);
+			EnhancementsTabItem.IsSelected = true;
+		}
+
+		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			GeneralDownloadTab.IsSelected = true;
+			dynamic jsonData = await GetArghlexJson();
+			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
+			if (entry != null)
+				await DownloadLargeFiles((string)entry.name, (int)entry.size, (int)entry.modtime);
+			EnhancementsTabItem.IsSelected = true;
 		}
 
 		private void StoryPatchToggle_Checked(object sender, RoutedEventArgs e)
@@ -273,6 +328,7 @@ namespace DogStar
 				{
 					CurrentCheckDownloadActionlabel.Dispatcher.InvokeAsync(() =>
 					{
+						CheckDownloadProgressbar.Maximum = 100;
 						CurrentCheckDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
 					});
 				};
@@ -281,7 +337,6 @@ namespace DogStar
 				{
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
-						CheckDownloadProgressbar.Maximum = 100;
 						CheckDownloadProgressbar.Value = e.ProgressPercentage;
 						CurrentCheckSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
 					});
@@ -566,121 +621,90 @@ namespace DogStar
 
 		private async Task<bool> DownloadLanguagePatch(Uri baseUri, string name, int size, string patchname)
 		{
-			using (var client = AquaClient)
+			var url = new Uri(baseUri, name);
+			var filepath = Path.Combine(Path.GetTempPath(), name);
+			var info = new FileInfo(filepath);
+
+			if (!info.Exists || info.Length != size)
 			{
-				var url = new Uri(baseUri, name);
-
-				// TODO: Make patch download tab progress thing
-				var filepath = Path.Combine(Path.GetTempPath(), name);
-				var info = new FileInfo(filepath);
-
-				if (!info.Exists || info.Length != size)
-				{
-					await client.DownloadFileTaskAsync(url, filepath);
-				}
-
-				var succeeded = await Task.Run(() => InstallPatch(filepath, patchname));
-
-				if (succeeded)
-				{
-					await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, patchname));
-				}
-				else
-				{
-					await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, patchname));
-				}
-
-				info.Refresh();
-				if (info.Exists)
-				{
-					File.Delete(filepath);
-				}
-
-				return succeeded;
+				await generalDownloadManager.DownloadFileTaskAsync(url, filepath);
 			}
+
+			var succeeded = await Task.Run(() => InstallPatch(filepath, patchname));
+
+			if (succeeded)
+			{
+				await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, patchname));
+			}
+			else
+			{
+				await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, patchname));
+			}
+
+			info.Refresh();
+			if (info.Exists)
+			{
+				File.Delete(filepath);
+			}
+
+			return succeeded;
 		}
 
-		// TODO: modularize since they're basically the same
-		private async Task DownloadEnglishPatch()
+		private async Task<bool> CheckEnglishPatchVersion(long modtime)
 		{
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
-
-			if (entry?.modtime != null)
+			if (Settings.Default.InstalledEnglishPatch != 0 && Settings.Default.InstalledEnglishPatch < modtime)
 			{
-				var modtime = (long)entry.modtime;
+				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "English Patch"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
+				return result == MessageDialogResult.Affirmative;
+			}
 
-				if (Settings.Default.InstalledEnglishPatch != 0)
-				{
-					if (Settings.Default.InstalledEnglishPatch == modtime)
-					{
-						return;
-					}
+			return false;
+		}
 
-					if (Settings.Default.InstalledEnglishPatch < modtime)
-					{
-						var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "English Patch"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
+		private async Task<bool> CheckLargeFilesVersion(long modtime)
+		{
+			if (Settings.Default.InstalledLargeFiles != 0 && Settings.Default.InstalledLargeFiles < modtime)
+			{
+				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "Large Files"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
+				return result == MessageDialogResult.Affirmative;
+			}
 
-						if (result != MessageDialogResult.Affirmative)
-						{
-							return;
-						}
-					}
-				}
+			return false;
+		}
 
-				if (await DownloadLanguagePatch(Arghlex, (string)entry.name, (int)entry.size, "EnglishPatch"))
-				{
-					Settings.Default.InstalledEnglishPatch = modtime;
-				}
-				else
-				{
-					EnglishPatchToggle.IsChecked = false;
-					Settings.Default.InstalledEnglishPatch = 0;
-				}
+		private async Task DownloadEnglishPatch(string name, int size, long modtime)
+		{
+			if (await DownloadLanguagePatch(Arghlex, name, size, "EnglishPatch"))
+			{
+				Settings.Default.InstalledEnglishPatch = modtime;
+			}
+			else
+			{
+				EnglishPatchToggle.IsChecked = false;
+				Settings.Default.InstalledEnglishPatch = 0;
 			}
 
 			Settings.Default.Save();
 		}
 
-		private async Task DownloadLargeFiles()
+		private async Task DownloadLargeFiles(string name, int size, long modtime)
 		{
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
-
-			if (entry?.modtime != null)
+			if (await DownloadLanguagePatch(Arghlex, name, size, "LargeFiles"))
 			{
-				var modtime = (long)entry.modtime;
-
-				if (Settings.Default.InstalledLargeFiles != 0)
-				{
-					if (Settings.Default.InstalledLargeFiles == modtime)
-					{
-						return;
-					}
-
-					if (Settings.Default.InstalledLargeFiles < modtime)
-					{
-						var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "Large Files"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
-
-						if (result != MessageDialogResult.Affirmative)
-						{
-							return;
-						}
-					}
-				}
-
-				if (await DownloadLanguagePatch(Arghlex, (string)entry.name, (int)entry.size, "LargeFiles"))
-				{
-					Settings.Default.InstalledLargeFiles = modtime;
-				}
-				else
-				{
-					LargeFilesToggle.IsChecked = false;
-					Settings.Default.InstalledLargeFiles = 0;
-				}
+				Settings.Default.InstalledLargeFiles = modtime;
+			}
+			else
+			{
+				LargeFilesToggle.IsChecked = false;
+				Settings.Default.InstalledLargeFiles = 0;
 			}
 
 			Settings.Default.Save();
+		}
+
+		public void Dispose()
+		{
+			generalDownloadManager.Dispose();
 		}
 	}
 }

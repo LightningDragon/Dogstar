@@ -170,12 +170,16 @@
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
                         </Grid>
                     </TabItem>
-                    <!--<TabItem x:Name="GeneralDownloadTab" IsEnabled="False">
-                        <Grid>
-                            <controls:MetroProgressBar x:Name="GeneralDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
-                            <Label x:Name="CurrentGeneralDownloadActionlabel" Margin="0,28,0,0" VerticalAlignment="Top" Height="27"/>
+                    <TabItem x:Name="GeneralDownloadTab" IsEnabled="False">
+                        <Grid Margin="10">
+                            <Label x:Name="CompletedGeneralDownloadActionlabel" VerticalAlignment="Top" Height="27" Margin="0,10,0,0"/>
+                            <Label x:Name="CurrentGeneralDownloadActionlabel" Margin="0,38,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Grid>
+                                <controls:MetroProgressBar x:Name="GeneralDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
+                                <Label x:Name="CurrentGeneralDownloadSizeActionLable" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
+                            </Grid>
                         </Grid>
-                    </TabItem>-->
+                    </TabItem>
                 </TabControl>
             </TabItem>
             <TabItem Header="Settings" controls:ControlsHelper.HeaderFontSize="21">
