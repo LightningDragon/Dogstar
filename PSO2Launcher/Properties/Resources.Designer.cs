@@ -124,6 +124,26 @@ namespace DogStar.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The MIT License (MIT)
+        ///
+        ///Copyright (c) 2007 James Newton-King
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy of
+        ///this software and associated documentation files (the &quot;Software&quot;), to deal in
+        ///the Software without restriction, including without limitation the rights to
+        ///use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+        ///the Software, and to permit persons to whom the Software is furnished to do so,
+        ///subject to the following conditions:
+        ///
+        ///The ab [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MitLicense {
+            get {
+                return ResourceManager.GetString("MitLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=UB7UN9MQ7WZ44.
         /// </summary>
         internal static string PolarisDonation {

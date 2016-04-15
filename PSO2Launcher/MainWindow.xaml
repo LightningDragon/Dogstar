@@ -10,8 +10,9 @@
         Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize">
 
     <controls:MetroWindow.Resources>
-        <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:Dictionaries}" MethodName="GetColor" />
-        <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:Dictionaries}" MethodName="GetTheme" />
+        <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:UiResources}" MethodName="GetColor" />
+        <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:UiResources}" MethodName="GetTheme" />
+        <ObjectDataProvider x:Key="License" ObjectType="{x:Type local:UiResources}" MethodName="GetMitLicense" />
         <ObjectDataProvider x:Key="Settings" ObjectType="{x:Type properties:Settings}"/>
     </controls:MetroWindow.Resources>
 
@@ -63,7 +64,7 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
 
-    <Grid>
+    <Grid DataContext="{Binding Source={StaticResource License}}">
         <TabControl x:Name="MainTabControl" Margin="10" controls:TabControlHelper.IsUnderlined="True">
             <TabItem x:Name="GameTabItem" Header="Game" controls:ControlsHelper.HeaderFontSize="21">
                 <TabControl x:Name="GameTabControl">
@@ -208,8 +209,64 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="About" controls:ControlsHelper.HeaderFontSize="21"/>
-            <TabItem Header="Support" controls:ControlsHelper.HeaderFontSize="21"/>
+            <TabItem Header="About" controls:ControlsHelper.HeaderFontSize="21">
+                <Grid Margin="10">
+                    <Label Content="License" VerticalAlignment="Top" FontSize="24" />
+                    <ScrollViewer VerticalAlignment="Top" Height="137" Margin="0,46,0,0">
+                        <TextBlock Text="{Binding Mode=OneWay}" TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                    <Label Content="Software Used by Dogstar" VerticalAlignment="Bottom" Margin="0,0,0,200" FontSize="24" />
+                    <ScrollViewer VerticalAlignment="Bottom" Height="137" Margin="0,0,0,61">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="70"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="229*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Grid.Row="0" Source="http://www.newtonsoft.com/content/images/nugeticon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Label Grid.Column="1" Grid.Row="0" Content="Newtonsoft.Json" VerticalAlignment="Center" />
+                            <Image Grid.Column="0" Grid.Row="1" Source="https://raw.github.com/Fody/Fody/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Label Grid.Column="1" Grid.Row="1" Content="Fody" VerticalAlignment="Center" />
+                            <Image Grid.Column="0" Grid.Row="2" Source="https://raw.github.com/Fody/Costura/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Label Grid.Column="1" Grid.Row="2" Content="Costura.Fody" VerticalAlignment="Center" />
+                            <Image Grid.Column="0" Grid.Row="3" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Label Grid.Column="1" Grid.Row="3" Content="MahApps.Metro" VerticalAlignment="Center" />
+                            <Image Grid.Column="0" Grid.Row="4" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Label Grid.Column="1" Grid.Row="4" Content="MahApps.Metro.Resources" VerticalAlignment="Center" />
+                            <Rectangle Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Top"  Height="64" Width="64">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_book_perspective_help}" />
+                                </Rectangle.OpacityMask>
+                                <Rectangle.Style>
+                                    <Style TargetType="{x:Type Rectangle}">
+                                        <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                            <Label Grid.Column="1" Grid.Row="5" Content="SharpCompress" VerticalAlignment="Center" />
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Support" controls:ControlsHelper.HeaderFontSize="21">
+                <Grid>
+                    <controls:ProgressRing Height="330" Margin="0,59" Width="330">
+                        <controls:ProgressRing.Effect>
+                            <DropShadowEffect/>
+                        </controls:ProgressRing.Effect>
+                        <controls:ProgressRing.Foreground>
+                            <ImageBrush ImageSource="Resources/Icon.ico" Stretch="UniformToFill"/>
+                        </controls:ProgressRing.Foreground>
+                    </controls:ProgressRing>
+                </Grid>
+            </TabItem>
         </TabControl>
 
         <Rectangle x:Name="Debug" Height="40" Width="40" Margin="67,451,245,18" MouseDown="Debug_MouseDown" ToolTip="Debug Window">

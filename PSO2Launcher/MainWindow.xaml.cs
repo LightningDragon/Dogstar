@@ -49,8 +49,8 @@ namespace DogStar
 			generalDownloadManager.DownloadProgressChanged += DownloadProgressChanged;
 
 			Topmost = Settings.Default.AlwaysOnTop;
-			Colors.SelectedIndex = Array.IndexOf(Dictionaries.GetColor().Values.ToArray(), Settings.Default.AccentColor);
-			Themes.SelectedIndex = Array.IndexOf(Dictionaries.GetTheme().Values.ToArray(), Settings.Default.Theme);
+			Colors.SelectedIndex = Array.IndexOf(UiResources.GetColor().Values.ToArray(), Settings.Default.AccentColor);
+			Themes.SelectedIndex = Array.IndexOf(UiResources.GetTheme().Values.ToArray(), Settings.Default.Theme);
 		}
 
 		#region Events

@@ -2,8 +2,10 @@
 
 namespace DogStar
 {
-	public class Dictionaries
+	public class UiResources
 	{
+		public static string GetMitLicense() => Properties.Resources.MitLicense;
+
 		public static Dictionary<string, string> GetTheme() => new Dictionary<string, string> { { "Dark", "BaseDark" }, { "Light", "BaseLight" } };
 
 		public static Dictionary<string, string> GetColor()
