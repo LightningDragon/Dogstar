@@ -243,7 +243,7 @@ namespace DogStar
 			}
 			catch
 			{
-				return false;
+				return true;
 			}
 		}
 	}
