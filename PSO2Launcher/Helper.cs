@@ -238,7 +238,9 @@ namespace DogStar
 				var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
 				using (var client = AquaClient)
 				{
-					return version == await client.DownloadStringTaskAsync(VersionUrl);
+					string _version = await client.DownloadStringTaskAsync(VersionUrl);
+					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), _version));
+					return version == _version;
 				}
 			}
 			catch
