@@ -33,7 +33,7 @@ namespace DogStar
 
 	public partial class MainWindow : IDisposable
 	{
-		private readonly DownloadManager generalDownloadManager = new DownloadManager();
+		private readonly DownloadManager _generalDownloadManager = new DownloadManager();
 
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 		private bool _isCheckPaused;
@@ -45,8 +45,8 @@ namespace DogStar
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
 
-			generalDownloadManager.DownloadStarted += DownloadStarted;
-			generalDownloadManager.DownloadProgressChanged += DownloadProgressChanged;
+			_generalDownloadManager.DownloadStarted += DownloadStarted;
+			_generalDownloadManager.DownloadProgressChanged += DownloadProgressChanged;
 
 			Topmost = Settings.Default.AlwaysOnTop;
 			Colors.SelectedIndex = Array.IndexOf(UiResources.GetColor().Values.ToArray(), Settings.Default.AccentColor);
@@ -630,7 +630,7 @@ namespace DogStar
 
 			if (!info.Exists || info.Length != size)
 			{
-				await generalDownloadManager.DownloadFileTaskAsync(url, filepath);
+				await _generalDownloadManager.DownloadFileTaskAsync(url, filepath);
 			}
 
 			GeneralDownloadProgressbar.IsIndeterminate = true;
@@ -711,7 +711,7 @@ namespace DogStar
 
 		public void Dispose()
 		{
-			generalDownloadManager.Dispose();
+			_generalDownloadManager.Dispose();
 		}
 
 		private void AddPluginButton_Click(object sender, RoutedEventArgs e)
