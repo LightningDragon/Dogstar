@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
-namespace DogStar
+namespace Dogstar
 {
 	public static class External
 	{

@@ -196,7 +196,7 @@
     <value>No</value>
   </data>
   <data name="NonJPPSO2" xml:space="preserve">
-    <value>Non-JP PSO2 is incompatible with DogStar. _(:３」∠)_</value>
+    <value>Non-JP PSO2 is incompatible with Dogstar. _(:３」∠)_</value>
   </data>
   <data name="ProxyRevert" xml:space="preserve">
     <value>Couldn't connect to proxy. Reverting changes.</value>

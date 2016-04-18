@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DogStar.Resources {
+namespace Dogstar.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DogStar.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DogStar.Resources.Text", typeof(Text).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Dogstar.Resources.Text", typeof(Text).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -295,7 +295,7 @@ namespace DogStar.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Non-JP PSO2 is incompatible with DogStar. _(:３」∠)_.
+        ///   Looks up a localized string similar to Non-JP PSO2 is incompatible with Dogstar. _(:３」∠)_.
         /// </summary>
         internal static string NonJPPSO2 {
             get {

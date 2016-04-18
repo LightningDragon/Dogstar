@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace DogStar
+namespace Dogstar
 {
 	public class AquaHttpClient : WebClient
 	{

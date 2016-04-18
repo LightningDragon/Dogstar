@@ -11,10 +11,10 @@ using SharpCompress.Reader;
 using Newtonsoft.Json;
 using Microsoft.Win32;
 using MahApps.Metro.Controls.Dialogs;
-using DogStar.Resources;
-using DogStar.Properties;
+using Dogstar.Resources;
+using Dogstar.Properties;
 
-namespace DogStar
+namespace Dogstar
 {
 	public static class Helper
 	{

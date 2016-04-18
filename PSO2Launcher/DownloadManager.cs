@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace DogStar
+namespace Dogstar
 {
 	class DownloadManager : IDisposable
 	{

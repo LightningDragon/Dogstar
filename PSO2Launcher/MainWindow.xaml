@@ -1,11 +1,11 @@
-﻿<controls:MetroWindow x:Name="MetroWindow" x:Class="DogStar.MainWindow"
+﻿<controls:MetroWindow x:Name="MetroWindow" x:Class="Dogstar.MainWindow"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DogStar"
-        xmlns:properties="clr-namespace:DogStar.Properties"
+        xmlns:local="clr-namespace:Dogstar"
+        xmlns:properties="clr-namespace:Dogstar.Properties"
         mc:Ignorable="d"
         Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize">
 
@@ -385,7 +385,7 @@
                 </Style>
             </Rectangle.Style>
         </Rectangle>
-        <Rectangle x:Name="Github" Height="40" Width="40" Margin="110,449,202,20" MouseDown="Github_MouseDown" ToolTip="DogStar Source Code">
+        <Rectangle x:Name="Github" Height="40" Width="40" Margin="110,449,202,20" MouseDown="Github_MouseDown" ToolTip="Dogstar Source Code">
             <Rectangle.OpacityMask>
                 <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_social_github_octocat_solid}" />
             </Rectangle.OpacityMask>
@@ -400,7 +400,7 @@
                 </Style>
             </Rectangle.Style>
         </Rectangle>
-        <Rectangle x:Name="Twitter" Height="40" Width="40" Margin="155,449,157,20" MouseDown="Twitter_MouseDown" ToolTip="TeamDogStar Twitter Account">
+        <Rectangle x:Name="Twitter" Height="40" Width="40" Margin="155,449,157,20" MouseDown="Twitter_MouseDown" ToolTip="TeamDogstar Twitter Account">
             <Rectangle.OpacityMask>
                 <VisualBrush Stretch="Uniform"
         			Visual="{StaticResource appbar_twitter_bird}" />

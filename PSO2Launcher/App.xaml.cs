@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using DogStar.Properties;
+using Dogstar.Properties;
 
-namespace DogStar
+namespace Dogstar
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

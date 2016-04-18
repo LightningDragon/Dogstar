@@ -13,14 +13,14 @@ using System.Windows.Navigation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
-using DogStar.Resources;
-using DogStar.Properties;
+using Dogstar.Resources;
+using Dogstar.Properties;
 
 using static MahApps.Metro.ThemeManager;
-using static DogStar.Helper;
-using static DogStar.External;
+using static Dogstar.Helper;
+using static Dogstar.External;
 
-namespace DogStar
+namespace Dogstar
 {
 	// TODO: Prepatch https://social.msdn.microsoft.com/Forums/vstudio/en-US/9daab290-cf3a-4777-b046-3dc156b184c0/how-to-make-a-wpf-child-window-follow-its-parent?forum=wpf
 	// TODO: Make sure to keep patch lists, version.ver, version_precede.ver, management_beta, precede in documents\sega\phantasystaronline2

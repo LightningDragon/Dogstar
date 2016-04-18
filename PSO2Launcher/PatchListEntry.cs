@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DogStar
+namespace Dogstar
 {
 	public class PatchListEntryComparer : IEqualityComparer<PatchListEntry>
 	{

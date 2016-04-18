@@ -1,4 +1,4 @@
-﻿namespace DogStar
+﻿namespace Dogstar
 {
 	enum UpdateMethod
 	{

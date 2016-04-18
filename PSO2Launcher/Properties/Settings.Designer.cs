@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DogStar.Properties {
+namespace Dogstar.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

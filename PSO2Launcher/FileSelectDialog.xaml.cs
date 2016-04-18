@@ -5,7 +5,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 
-namespace DogStar
+namespace Dogstar
 {
 	public partial class FileSelectDialog
 	{

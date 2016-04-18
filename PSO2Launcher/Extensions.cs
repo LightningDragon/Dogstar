@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
-namespace DogStar
+namespace Dogstar
 {
 	public static class Extensions
 	{
