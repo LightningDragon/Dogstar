@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Windows.Navigation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
@@ -76,17 +77,22 @@ namespace DogStar
 		private void DonateToDogstar_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.DogstarDonation);
 
 		private void DonateToPolaris_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.PolarisDonation);
-
-		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
-
+		
 		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => EnhancementsTabItem.IsSelected = true;
 
 		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => MainTabItem.IsSelected = true;
 
 		private void TileCopy1_Click(object sender, RoutedEventArgs e) => OtherTabItem.IsSelected = true;
+		
+		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
 
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
 
+		private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			Process.Start(e.Uri.ToString());
+			e.Handled = true;
+		}
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
