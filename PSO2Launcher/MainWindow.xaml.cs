@@ -90,6 +90,9 @@ namespace DogStar
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			var sdfasdf = new PrecedeWindow { Owner = this };
+			sdfasdf.Show();
+
 			if (!Settings.Default.IsGameInstalled)
 			{
 				var gamefolder = GetTweakerGameFolder();
