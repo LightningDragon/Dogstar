@@ -79,13 +79,13 @@ namespace Dogstar
 		private void DonateToDogstar_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.DogstarDonation);
 
 		private void DonateToPolaris_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.PolarisDonation);
-		
+
 		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => EnhancementsTabItem.IsSelected = true;
 
 		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => MainTabItem.IsSelected = true;
 
 		private void TileCopy1_Click(object sender, RoutedEventArgs e) => OtherTabItem.IsSelected = true;
-		
+
 		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
 
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
@@ -98,9 +98,6 @@ namespace Dogstar
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			var sdfasdf = new PrecedeWindow { Owner = this };
-			sdfasdf.Show();
-
 			if (!Settings.Default.IsGameInstalled)
 			{
 				var gamefolder = GetTweakerGameFolder();
@@ -171,6 +168,8 @@ namespace Dogstar
 			}
 			else
 			{
+				await CheckForPrecede();
+
 				EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
 				LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
 
@@ -194,7 +193,6 @@ namespace Dogstar
 					}
 				}
 			}
-
 		}
 
 		private void DownloadStarted(object sender, string e)
@@ -215,6 +213,29 @@ namespace Dogstar
 				GeneralDownloadProgressbar.Value = e.ProgressPercentage;
 				CurrentGeneralDownloadSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
 			});
+		}
+
+		public async Task CheckForPrecede()
+		{
+			using (var client = AquaClient)
+			{
+				var asdf = await client.DownloadStringTaskAsync(ManagementUrl);
+				var fdsa = asdf.LineSplit().Where(x => x.StartsWith("Precede")).ToArray();
+
+				if (fdsa.Length < 2)
+					return;
+
+				string version = fdsa.FirstOrDefault(x => x.StartsWith("PrecedeVersion")).Split('=')[1];
+				string listnum = fdsa.FirstOrDefault(x => x.StartsWith("PrecedeCurrent")).Split('=')[1];
+				string current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
+
+				if (string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}")
+				{
+					await this.ShowMessageAsync("itshappening.gif", @"\o/");
+					var sdfasdf = new PrecedeWindow { Owner = this };
+					sdfasdf.Show();
+				}
+			}
 		}
 
 		private async void LaunchButton_Click(object sender, RoutedEventArgs e)
@@ -398,14 +419,27 @@ namespace Dogstar
 					var newlistdata = ParsePatchList(newlist).ToArray();
 					var oldlistdata = ParsePatchList(oldlist).ToArray();
 
-					// TODO: Precede should download in the background. It doesn't affect the game immedately, so the game can be played. How do?
-					if (method != UpdateMethod.Precede)
-					{
-						await RestoreAllPatchBackups();
-					}
-
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
+						string precedePath = Path.Combine(Settings.Default.GameFolder, "_precede");
+						if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
+						{
+							string remote = await downloadManager.DownloadStringTaskAsync(VersionUrl);
+							string[] local = (await Task.Run(() => File.ReadAllText(PrecedeTxtPath))).Split('\t');
+
+							if (local.Length == 2 && local[0] == remote)
+							{
+								CurrentCheckDownloadActionlabel.Content = "Applying precede...";
+								await Task.Run(() =>
+								{
+									foreach (var i in Directory.EnumerateFiles(precedePath))
+										MoveAndOverwriteFile(i, Path.Combine(DataFolder, Path.GetFileName(i)));
+
+									Directory.Delete(precedePath, true);
+								});
+							}
+						}
+
 						var entryComparer = new PatchListEntryComparer();
 
 						if (File.Exists(LauncherListPath))

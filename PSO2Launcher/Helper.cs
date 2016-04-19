@@ -60,6 +60,8 @@ namespace Dogstar
 
 		public static readonly string VersionPath = Path.Combine(GameConfigFolder, "version.ver");
 
+		public static readonly string PrecedeTxtPath = Path.Combine(GameConfigFolder, "precede.txt");
+
 		public static AquaHttpClient AquaClient => new AquaHttpClient();
 
 		public static string MakeLocalToGame(string fileName) => Path.Combine(Settings.Default.GameFolder, fileName);
