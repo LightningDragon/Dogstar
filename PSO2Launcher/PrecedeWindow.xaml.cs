@@ -17,6 +17,7 @@ namespace Dogstar
 	public partial class PrecedeWindow
 	{
 		// TODO: Message box on completion
+		// TODO: wtf it's broken and it's probably IsFileUpToDate or whatever
 
 		private int numberDownloaded;
 		private int numberToDownload;
