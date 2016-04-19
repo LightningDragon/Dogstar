@@ -459,6 +459,8 @@ namespace Dogstar
 								// TODO: not this
 								CancelCheckButton.IsEnabled = true;
 								PauseCheckButton.IsEnabled = true;
+
+								method = UpdateMethod.FileCheck;
 							}
 						}
 					}
@@ -568,9 +570,9 @@ namespace Dogstar
 			if (GameTabItem.IsSelected)
 			{
 				FlashWindow(this, true);
-				if (numberDownloaded > 0)
+				if (numberDownloaded > 4)
 				{
-					await this.ShowMessageAsync(Text.Updated, string.Format(Text.FilesDownloaded, numberDownloaded));
+					await this.ShowMessageAsync(Text.Updated, string.Format(Text.FilesDownloaded, numberDownloaded - 4));
 				}
 				else
 				{
