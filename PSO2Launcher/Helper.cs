@@ -24,11 +24,11 @@ namespace Dogstar
 
 		private static readonly string[] SizeSuffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
-		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
-
 		public static readonly MetroDialogSettings YesNo = new MetroDialogSettings { AffirmativeButtonText = Text.Yes, NegativeButtonText = Text.No };
 
 		public static readonly MetroDialogSettings MovedDeleted = new MetroDialogSettings { AffirmativeButtonText = Text.Moved, NegativeButtonText = Text.Deleted };
+
+		public static readonly Uri BasePrePatch = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
 
 		public static readonly Uri BasePatch = new Uri("http://download.pso2.jp/patch_prod/patches/");
 
@@ -62,13 +62,25 @@ namespace Dogstar
 
 		public static readonly string PrecedeTxtPath = Path.Combine(GameConfigFolder, "precede.txt");
 
+		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
+
 		public static AquaHttpClient AquaClient => new AquaHttpClient();
+
+		public static Dictionary<string, string> ManagementData { get; private set; }
 
 		public static string MakeLocalToGame(string fileName) => Path.Combine(Settings.Default.GameFolder, fileName);
 
 		public static bool ProxyCheck() => File.ReadLines(HostsPath).Any(x => !x.StartsWith("#") && x.Contains(".pso2gs.net"));
 
 		public static IEnumerable<string> StripProxyEntries(IEnumerable<string> entries) => entries.Where(x => (x.StartsWith("#") || !x.Contains(".pso2gs.net")) && !x.StartsWith("# Dogstar"));
+
+		public static async Task PullManagementData()
+		{
+			using (var client = AquaClient)
+			{
+				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl)).LineSplit().ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
+			}
+		}
 
 		private static string HashFile(string file)
 		{
@@ -84,8 +96,8 @@ namespace Dogstar
 			if (value < 0) { return "-" + SizeSuffix(-value); }
 			if (value == 0) { return "0.0 bytes"; }
 
-			int mag = (int)Math.Log(value, 1024);
-			decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+			var mag = (int)Math.Log(value, 1024);
+			var adjustedSize = (decimal)value / (1L << (mag * 10));
 
 			return $"{adjustedSize:n1} {SizeSuffixes[mag]}";
 		}
@@ -171,7 +183,7 @@ namespace Dogstar
 		{
 			await Task.Run(() =>
 			{
-				string path = Path.Combine(DataFolder, "backup");
+				var path = Path.Combine(DataFolder, "backup");
 				if (Directory.Exists(path))
 				{
 					foreach (var entry in Directory.EnumerateDirectories(path))
@@ -240,7 +252,7 @@ namespace Dogstar
 				var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
 				using (var client = AquaClient)
 				{
-					string _version = await client.DownloadStringTaskAsync(VersionUrl);
+					var _version = await client.DownloadStringTaskAsync(VersionUrl);
 					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), _version));
 					return version == _version;
 				}

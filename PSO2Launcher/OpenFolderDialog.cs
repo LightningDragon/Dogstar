@@ -28,7 +28,7 @@ namespace Dogstar
 
 		protected override bool RunDialog(IntPtr hwndOwner)
 		{
-			IFileDialog fileDialog = (IFileDialog)new FileOpenDialogRCW();
+			var fileDialog = (IFileDialog)new FileOpenDialogRCW();
 			uint options;
 			IShellItem resultItem;
 			string szName;

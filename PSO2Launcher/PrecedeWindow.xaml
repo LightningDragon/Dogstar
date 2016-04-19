@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Dogstar"
         mc:Ignorable="d"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="PrecedeWindow" Height="192" Width="360" ResizeMode="NoResize" ShowTitleBar="False" ShowCloseButton="False">
+        Title="PrecedeWindow" Height="192" Width="360" ResizeMode="NoResize" ShowTitleBar="False" ShowCloseButton="False" Loaded="MetroWindow_Loaded">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="110"/>

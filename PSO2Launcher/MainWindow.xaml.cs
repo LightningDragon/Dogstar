@@ -145,11 +145,11 @@ namespace Dogstar
 
 			Settings.Default.Save();
 
-			string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
+			var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
 			if (File.Exists(editionPath))
 			{
-				string edition = await Task.Run(() => File.ReadAllText(editionPath));
+				var edition = await Task.Run(() => File.ReadAllText(editionPath));
 
 				if (edition != "jp")
 				{
@@ -159,7 +159,7 @@ namespace Dogstar
 
 			if (!await IsGameUpToDate())
 			{
-				var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, MessageDialogStyle.AffirmativeAndNegative, YesNo);
+				var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
 
 				if (result == MessageDialogResult.Affirmative)
 				{
@@ -168,8 +168,6 @@ namespace Dogstar
 			}
 			else
 			{
-				await CheckForPrecede();
-
 				EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
 				LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
 
@@ -193,6 +191,12 @@ namespace Dogstar
 					}
 				}
 			}
+
+			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync("itshappening.gif", @"\o/", AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+			{
+				var precedeWindow = new PrecedeWindow { Owner = this };
+				precedeWindow.Show();
+			}
 		}
 
 		private void DownloadStarted(object sender, string e)
@@ -215,42 +219,31 @@ namespace Dogstar
 			});
 		}
 
-		public async Task CheckForPrecede()
+		public async Task<bool> IsNewPrecedeAvailable()
 		{
-			using (var client = AquaClient)
+			await PullManagementData();
+
+			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
 			{
-				var asdf = await client.DownloadStringTaskAsync(ManagementUrl);
-				var fdsa = asdf.LineSplit().Where(x => x.StartsWith("Precede")).ToArray();
-
-				if (fdsa.Length < 2)
-					return;
-
-				string version = fdsa.FirstOrDefault(x => x.StartsWith("PrecedeVersion")).Split('=')[1];
-				string listnum = fdsa.FirstOrDefault(x => x.StartsWith("PrecedeCurrent")).Split('=')[1];
-				string current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
-
-				if (string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}")
-				{
-					await this.ShowMessageAsync("itshappening.gif", @"\o/");
-					var sdfasdf = new PrecedeWindow { Owner = this };
-					sdfasdf.Show();
-				}
+				var version = ManagementData["PrecedeVersion"];
+				var listnum = ManagementData["PrecedeCurrent"];
+				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
+				return (string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}");
 			}
+
+			return false;
 		}
 
 		private async void LaunchButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				using (var client = AquaClient)
+				await PullManagementData();
+				if (ManagementData.ContainsKey("ManagementData") && ManagementData["IsInMaintenance"] == "1")
 				{
-					string management = await client.DownloadStringTaskAsync(ManagementUrl);
-					if (management.Contains("IsInMaintenance=1"))
-					{
-						var result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
-						if (result != MessageDialogResult.Affirmative)
-							return;
-					}
+					var result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
+					if (result != MessageDialogResult.Affirmative)
+						return;
 				}
 
 				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch)
@@ -419,21 +412,27 @@ namespace Dogstar
 					var newlistdata = ParsePatchList(newlist).ToArray();
 					var oldlistdata = ParsePatchList(oldlist).ToArray();
 
+					await RestoreAllPatchBackups();
+
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
-						string precedePath = Path.Combine(Settings.Default.GameFolder, "_precede");
+						var precedePath = Path.Combine(Settings.Default.GameFolder, "_precede");
+
 						if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
 						{
-							string remote = await downloadManager.DownloadStringTaskAsync(VersionUrl);
-							string[] local = (await Task.Run(() => File.ReadAllText(PrecedeTxtPath))).Split('\t');
+							var remote = await downloadManager.DownloadStringTaskAsync(VersionUrl);
+							var local = (await Task.Run(() => File.ReadAllText(PrecedeTxtPath))).Split('\t');
 
 							if (local.Length == 2 && local[0] == remote)
 							{
-								CurrentCheckDownloadActionlabel.Content = "Applying precede...";
+								CompletedCheckDownloadActionslabel.Content = "Applying precede...";
+
 								await Task.Run(() =>
 								{
-									foreach (var i in Directory.EnumerateFiles(precedePath))
-										MoveAndOverwriteFile(i, Path.Combine(DataFolder, Path.GetFileName(i)));
+									foreach (var file in Directory.EnumerateFiles(precedePath))
+									{
+										MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty)));
+									}
 
 									Directory.Delete(precedePath, true);
 								});
@@ -706,7 +705,7 @@ namespace Dogstar
 		{
 			if (Settings.Default.InstalledEnglishPatch != 0 && Settings.Default.InstalledEnglishPatch < modtime)
 			{
-				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "English Patch"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
+				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "English Patch"), AffirmNeg, YesNo);
 				return result == MessageDialogResult.Affirmative;
 			}
 
@@ -717,7 +716,7 @@ namespace Dogstar
 		{
 			if (Settings.Default.InstalledLargeFiles != 0 && Settings.Default.InstalledLargeFiles < modtime)
 			{
-				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "Large Files"), MessageDialogStyle.AffirmativeAndNegative, YesNo);
+				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "Large Files"), AffirmNeg, YesNo);
 				return result == MessageDialogResult.Affirmative;
 			}
 
