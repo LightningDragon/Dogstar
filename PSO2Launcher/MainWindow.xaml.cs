@@ -34,6 +34,7 @@ namespace Dogstar
 	// TODO: Add change PSO2 dir to the Other tab
 	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
+	// TODO: Don't close on launch when precede is downloading
 
 	public partial class MainWindow : IDisposable
 	{
