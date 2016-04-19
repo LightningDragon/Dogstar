@@ -19,18 +19,26 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label x:Name="DownloadLabel" Content="thing 1" Grid.Row="0" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center"/>
-            <Controls:MetroProgressBar Name="DownloadProgress"  Grid.Row="1" Margin="0" VerticalAlignment="Stretch"/>
-            <Label x:Name="ScanLabel" Content="thing 2" Grid.Row="2" HorizontalAlignment="Left"  Margin="0" VerticalAlignment="Center"/>
-            <Controls:MetroProgressBar Name="ScanProgress" Grid.Row="3" Margin="0" VerticalAlignment="Stretch"/>
+
+            <Label x:Name="DownloadLabel" Content="" Grid.Row="0" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center"/>
+            <Grid Grid.Row="1">
+                <Controls:MetroProgressBar Name="DownloadProgress" Margin="0" VerticalAlignment="Stretch"/>
+                <Label x:Name="DownloadProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
+            </Grid>
+
+            <Label x:Name="ScanLabel" Content="" Grid.Row="2" HorizontalAlignment="Left"  Margin="0" VerticalAlignment="Center"/>
+            <Grid Grid.Row="3">
+                <Controls:MetroProgressBar Name="ScanProgress" Margin="0" VerticalAlignment="Stretch"/>
+                <Label x:Name="ScanProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
+            </Grid>
         </Grid>
         <Grid Grid.Row="1" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonPause" Content="Pause/Whaterverarfsdf" Margin="0,0,4,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True"/>
-            <Button Grid.Column="1" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonCancel" Content="Cancel" Margin="4,0,0,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True"/>
+            <Button Grid.Column="0" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonPause" Content="Pause/Whaterverarfsdf" Margin="0,0,4,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True" Click="buttonPause_Click"/>
+            <Button Grid.Column="1" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonCancel" Content="Cancel" Margin="4,0,0,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True" Click="buttonCancel_Click"/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

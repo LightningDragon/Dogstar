@@ -64,6 +64,8 @@ namespace Dogstar
 
 		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
 
+		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
+
 		public static AquaHttpClient AquaClient => new AquaHttpClient();
 
 		public static Dictionary<string, string> ManagementData { get; private set; }
@@ -78,7 +80,7 @@ namespace Dogstar
 		{
 			using (var client = AquaClient)
 			{
-				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl)).LineSplit().ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
+				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl)).LineSplit().Where(x => !string.IsNullOrWhiteSpace(x)).ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
 			}
 		}
 

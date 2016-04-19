@@ -8,6 +8,9 @@ namespace Dogstar
 {
 	class DownloadManager : IDisposable
 	{
+		// TODO: OnError event
+		// TODO: Retry download on connection loss (forever)
+
 		private readonly AquaHttpClient _client = new AquaHttpClient();
 		private readonly Queue<Action> _actions = new Queue<Action>();
 

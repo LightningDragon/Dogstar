@@ -33,6 +33,7 @@ namespace Dogstar
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver. _version.ver?
 	// TODO: Add change PSO2 dir to the Other tab
 	// TODO: Make game settings tab
+	// TODO: howtf are you supposed to tell if an update is paused
 
 	public partial class MainWindow : IDisposable
 	{
@@ -350,9 +351,9 @@ namespace Dogstar
 			var numberToDownload = 3;
 			var fileOperations = new List<Task>();
 
-			using (var downloadManager = new DownloadManager())
+			using (var manager = new DownloadManager())
 			{
-				downloadManager.DownloadStarted += (s, e) =>
+				manager.DownloadStarted += (s, e) =>
 				{
 					CurrentCheckDownloadActionlabel.Dispatcher.InvokeAsync(() =>
 					{
@@ -361,7 +362,7 @@ namespace Dogstar
 					});
 				};
 
-				downloadManager.DownloadProgressChanged += (s, e) =>
+				manager.DownloadProgressChanged += (s, e) =>
 				{
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
@@ -370,7 +371,7 @@ namespace Dogstar
 					});
 				};
 
-				downloadManager.DownloadCompleted += (s, e) =>
+				manager.DownloadCompleted += (s, e) =>
 				{
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
@@ -389,7 +390,7 @@ namespace Dogstar
 					{
 						PauseCheckButton.Click += unpause;
 						CancelCheckButton.Click += cancel;
-						downloadManager.PauseDownloads(taskSource.Task);
+						manager.PauseDownloads(taskSource.Task);
 						await taskSource.Task;
 					}
 					finally
@@ -404,9 +405,9 @@ namespace Dogstar
 					await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
 					await Task.Run(() => CreateDirectoryIfNoneExists(DataFolder));
 
-					var launcherlist = await downloadManager.DownloadStringTaskAsync(LauncherListUrl);
-					var newlist = await downloadManager.DownloadStringTaskAsync(PatchListUrl);
-					var oldlist = await downloadManager.DownloadStringTaskAsync(PatchListOldUrl);
+					var launcherlist = await manager.DownloadStringTaskAsync(LauncherListUrl);
+					var newlist = await manager.DownloadStringTaskAsync(PatchListUrl);
+					var oldlist = await manager.DownloadStringTaskAsync(PatchListOldUrl);
 
 					var launcherlistdata = ParsePatchList(launcherlist).ToArray();
 					var newlistdata = ParsePatchList(newlist).ToArray();
@@ -416,11 +417,11 @@ namespace Dogstar
 
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
-						var precedePath = Path.Combine(Settings.Default.GameFolder, "_precede");
+						var precedePath = PrecedeFolder;
 
 						if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
 						{
-							var remote = await downloadManager.DownloadStringTaskAsync(VersionUrl);
+							var remote = await manager.DownloadStringTaskAsync(VersionUrl);
 							var local = (await Task.Run(() => File.ReadAllText(PrecedeTxtPath))).Split('\t');
 
 							if (local.Length == 2 && local[0] == remote)
@@ -429,6 +430,7 @@ namespace Dogstar
 
 								await Task.Run(() =>
 								{
+									// TODO: check _precede/data/win32 pls
 									foreach (var file in Directory.EnumerateFiles(precedePath))
 									{
 										MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty)));
@@ -487,7 +489,7 @@ namespace Dogstar
 							{
 								var patPath = MakeLocalToGame(data.Name);
 
-								fileOperations.Add(downloadManager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
+								fileOperations.Add(manager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
 
 								numberToDownload++;
 								CompletedCheckDownloadActionslabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
@@ -503,7 +505,7 @@ namespace Dogstar
 					});
 
 					numberToDownload++;
-					fileOperations.Add(downloadManager.DownloadFileTaskAsync(VersionUrl, VersionPath));
+					fileOperations.Add(manager.DownloadFileTaskAsync(VersionUrl, VersionPath));
 
 					var downloads = Task.WhenAll(fileOperations);
 
@@ -525,7 +527,7 @@ namespace Dogstar
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
-					downloadManager.CancelDownloads();
+					manager.CancelDownloads();
 				}
 			}
 
