@@ -417,7 +417,7 @@ namespace Dogstar
 
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
-						var precedePath = PrecedeFolder;
+						var precedePath = Path.Combine(PrecedeFolder, "data", "win32");
 
 						if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
 						{
@@ -430,13 +430,12 @@ namespace Dogstar
 
 								await Task.Run(() =>
 								{
-									// TODO: check _precede/data/win32 pls
 									foreach (var file in Directory.EnumerateFiles(precedePath))
 									{
 										MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty)));
 									}
 
-									Directory.Delete(precedePath, true);
+									Directory.Delete(PrecedeFolder, true);
 								});
 							}
 						}
