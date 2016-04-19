@@ -112,14 +112,14 @@
                     </TabItem>
                     <TabItem x:Name="FileCheckTabItem" IsEnabled="False">
                         <Grid Margin="10">
-                            <Label x:Name="CompletedCheckDownloadActionslabel" VerticalAlignment="Top" Height="27" Margin="0,2,0,0"/>
-                            <Label x:Name="CurrentCheckDownloadActionlabel" Margin="0,28,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Label x:Name="CompletedCheckDownloadActionsLabel" VerticalAlignment="Top" Height="27" Margin="0,2,0,0"/>
+                            <Label x:Name="CurrentCheckDownloadActionLabel" Margin="0,28,0,0" VerticalAlignment="Top" Height="27"/>
                             <Grid>
                                 <controls:MetroProgressBar x:Name="CheckDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
-                                <Label x:Name="CurrentCheckSizeActionLable" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
+                                <Label x:Name="CurrentCheckSizeActionLabel" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
                             </Grid>
-                            <Label x:Name="CompletedCheckActionslabel" Margin="0,115,0,0" VerticalAlignment="Top" Height="27"/>
-                            <Label x:Name="CurrentCheckActionlabel" Margin="0,141,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Label x:Name="CompletedCheckActionsLabel" Margin="0,115,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Label x:Name="CurrentCheckActionLabel" Margin="0,141,0,0" VerticalAlignment="Top" Height="27"/>
                             <controls:MetroProgressBar x:Name="CheckProgressbar" Height="45" Margin="0,165,0,192"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
@@ -176,11 +176,11 @@
                     </TabItem>
                     <TabItem x:Name="GeneralDownloadTab" IsEnabled="False">
                         <Grid Margin="10">
-                            <Label x:Name="CompletedGeneralDownloadActionlabel" VerticalAlignment="Top" Height="27" Margin="0,10,0,0"/>
-                            <Label x:Name="CurrentGeneralDownloadActionlabel" Margin="0,38,0,0" VerticalAlignment="Top" Height="27"/>
+                            <Label x:Name="CompletedGeneralDownloadActionLabel" VerticalAlignment="Top" Height="27" Margin="0,10,0,0"/>
+                            <Label x:Name="CurrentGeneralDownloadActionLabel" Margin="0,38,0,0" VerticalAlignment="Top" Height="27"/>
                             <Grid>
                                 <controls:MetroProgressBar x:Name="GeneralDownloadProgressbar" Height="45" Margin="0,60,0,297"/>
-                                <Label x:Name="CurrentGeneralDownloadSizeActionLable" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
+                                <Label x:Name="CurrentGeneralDownloadSizeActionLabel" Margin="0,75,0,0" VerticalAlignment="Top" Height="27" MaxWidth="306" HorizontalAlignment="Center"/>
                             </Grid>
                         </Grid>
                     </TabItem>

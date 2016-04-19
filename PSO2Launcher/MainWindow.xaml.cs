@@ -194,6 +194,7 @@ namespace Dogstar
 				}
 			}
 
+			// TODO: text
 			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync("itshappening.gif", @"\o/", AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 			{
 				var precedeWindow = new PrecedeWindow { Owner = this };
@@ -203,12 +204,12 @@ namespace Dogstar
 
 		private void DownloadStarted(object sender, string e)
 		{
-			CurrentGeneralDownloadActionlabel.Dispatcher.InvokeAsync(() =>
+			CurrentGeneralDownloadActionLabel.Dispatcher.InvokeAsync(() =>
 			{
 				GeneralDownloadProgressbar.Maximum = 100;
 				GeneralDownloadProgressbar.IsIndeterminate = false;
-				CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Visible;
-				CurrentGeneralDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
+				CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Visible;
+				CurrentGeneralDownloadActionLabel.Content = Path.GetFileNameWithoutExtension(e);
 			});
 		}
 
@@ -217,7 +218,7 @@ namespace Dogstar
 			CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 			{
 				GeneralDownloadProgressbar.Value = e.ProgressPercentage;
-				CurrentGeneralDownloadSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+				CurrentGeneralDownloadSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
 			});
 		}
 
@@ -230,7 +231,7 @@ namespace Dogstar
 				var version = ManagementData["PrecedeVersion"];
 				var listnum = ManagementData["PrecedeCurrent"];
 				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
-				return (string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}");
+				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
 			}
 
 			return false;
@@ -340,11 +341,11 @@ namespace Dogstar
 		{
 			_checkCancelSource = new CancellationTokenSource();
 			_isCheckPaused = false;
-			CompletedCheckDownloadActionslabel.Content = string.Empty;
-			CompletedCheckActionslabel.Content = string.Empty;
-			CurrentCheckActionlabel.Content = string.Empty;
-			CurrentCheckDownloadActionlabel.Content = string.Empty;
-			CurrentCheckSizeActionLable.Content = string.Empty;
+			CompletedCheckDownloadActionsLabel.Content = string.Empty;
+			CompletedCheckActionsLabel.Content = string.Empty;
+			CurrentCheckActionLabel.Content = string.Empty;
+			CurrentCheckDownloadActionLabel.Content = string.Empty;
+			CurrentCheckSizeActionLabel.Content = string.Empty;
 			CheckDownloadProgressbar.Value = 0;
 			CheckProgressbar.Value = 0;
 			FileCheckTabItem.IsSelected = true;
@@ -356,10 +357,10 @@ namespace Dogstar
 			{
 				manager.DownloadStarted += (s, e) =>
 				{
-					CurrentCheckDownloadActionlabel.Dispatcher.InvokeAsync(() =>
+					CurrentCheckDownloadActionLabel.Dispatcher.InvokeAsync(() =>
 					{
 						CheckDownloadProgressbar.Maximum = 100;
-						CurrentCheckDownloadActionlabel.Content = Path.GetFileNameWithoutExtension(e);
+						CurrentCheckDownloadActionLabel.Content = Path.GetFileNameWithoutExtension(e);
 					});
 				};
 
@@ -368,7 +369,7 @@ namespace Dogstar
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
 						CheckDownloadProgressbar.Value = e.ProgressPercentage;
-						CurrentCheckSizeActionLable.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+						CurrentCheckSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
 					});
 				};
 
@@ -377,7 +378,7 @@ namespace Dogstar
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
 						numberDownloaded++;
-						CompletedCheckDownloadActionslabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+						CompletedCheckDownloadActionsLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
 					});
 				};
 
@@ -403,8 +404,64 @@ namespace Dogstar
 
 				try
 				{
-					await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
-					await Task.Run(() => CreateDirectoryIfNoneExists(DataFolder));
+					await Task.Run(() =>
+					{
+						CreateDirectoryIfNoneExists(GameConfigFolder);
+						CreateDirectoryIfNoneExists(DataFolder);
+					});
+
+					var precedePath = Path.Combine(PrecedeFolder, "data", "win32");
+
+					if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
+					{
+						await PullManagementData();
+						if (!ManagementData.ContainsKey("PrecedeVersion") || !ManagementData.ContainsKey("PrecedeCurrent"))
+						{
+							// TODO: Text
+							var result = await this.ShowMessageAsync("Apply Precede", "Would you like to apply the precede patch now?", AffirmNeg);
+
+							if (result == MessageDialogResult.Affirmative)
+							{
+								// TODO: not this
+								CancelCheckButton.IsEnabled = false;
+								PauseCheckButton.IsEnabled = false;
+
+								var files = await Task.Run(() => Directory.GetFiles(precedePath));
+								CheckProgressbar.Maximum = files.Length;
+
+								foreach (var file in files)
+								{
+									CurrentCheckActionLabel.Content = Path.GetFileName(file);
+
+									try
+									{
+										await Task.Run(() => MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty))));
+									}
+									catch (Exception)
+									{
+										// ignored
+									}
+
+									// TODO: Text
+									CompletedCheckActionsLabel.Content = $"Applying precede {++CheckProgressbar.Value}/{CheckProgressbar.Maximum}";
+								}
+
+								try
+								{
+									await Task.Run(() => Directory.Delete(PrecedeFolder, true));
+								}
+								catch (Exception)
+								{
+									// TODO: Text
+									await this.ShowMessageAsync("Error", "Unable to delete precede folder. Try deleting it manually.");
+								}
+
+								// TODO: not this
+								CancelCheckButton.IsEnabled = true;
+								PauseCheckButton.IsEnabled = true;
+							}
+						}
+					}
 
 					var launcherlist = await manager.DownloadStringTaskAsync(LauncherListUrl);
 					var newlist = await manager.DownloadStringTaskAsync(PatchListUrl);
@@ -418,29 +475,6 @@ namespace Dogstar
 
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
-						var precedePath = Path.Combine(PrecedeFolder, "data", "win32");
-
-						if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
-						{
-							var remote = await manager.DownloadStringTaskAsync(VersionUrl);
-							var local = (await Task.Run(() => File.ReadAllText(PrecedeTxtPath))).Split('\t');
-
-							if (local.Length == 2 && local[0] == remote)
-							{
-								CompletedCheckDownloadActionslabel.Content = "Applying precede...";
-
-								await Task.Run(() =>
-								{
-									foreach (var file in Directory.EnumerateFiles(precedePath))
-									{
-										MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty)));
-									}
-
-									Directory.Delete(PrecedeFolder, true);
-								});
-							}
-						}
-
 						var entryComparer = new PatchListEntryComparer();
 
 						if (File.Exists(LauncherListPath))
@@ -478,12 +512,12 @@ namespace Dogstar
 						else
 						{
 							var data = groups[index];
-							CurrentCheckActionlabel.Content = Path.GetFileNameWithoutExtension(data.Name);
+							CurrentCheckActionLabel.Content = Path.GetFileNameWithoutExtension(data.Name);
 							var filePath = MakeLocalToGame(Path.ChangeExtension(data.Name, null));
 
 							var upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
 							CheckProgressbar.Value = ++index;
-							CompletedCheckActionslabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
+							CompletedCheckActionsLabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
 
 							if (!upToDate)
 							{
@@ -492,7 +526,7 @@ namespace Dogstar
 								fileOperations.Add(manager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
 
 								numberToDownload++;
-								CompletedCheckDownloadActionslabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+								CompletedCheckDownloadActionsLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
 							}
 						}
 					}
@@ -680,9 +714,9 @@ namespace Dogstar
 			}
 
 			GeneralDownloadProgressbar.IsIndeterminate = true;
-			CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Hidden;
+			CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Hidden;
 			var succeeded = await Task.Run(() => InstallPatch(filepath, patchname));
-			CurrentGeneralDownloadSizeActionLable.Visibility = Visibility.Visible;
+			CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Visible;
 			GeneralDownloadProgressbar.IsIndeterminate = false;
 
 			if (succeeded)
