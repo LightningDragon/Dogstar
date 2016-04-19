@@ -418,7 +418,7 @@ namespace Dogstar
 						if (!ManagementData.ContainsKey("PrecedeVersion") || !ManagementData.ContainsKey("PrecedeCurrent"))
 						{
 							// TODO: Text
-							var result = await this.ShowMessageAsync("Apply Precede", "Would you like to apply the precede patch now?", AffirmNeg);
+							var result = await this.ShowMessageAsync("Apply Precede", "Would you like to apply the precede patch now?", AffirmNeg, YesNo);
 
 							if (result == MessageDialogResult.Affirmative)
 							{
