@@ -16,6 +16,8 @@ namespace Dogstar
 	/// </summary>
 	public partial class PrecedeWindow
 	{
+		// TODO: Message box on completion
+
 		private int numberDownloaded;
 		private int numberToDownload;
 		private long doneBytes;
