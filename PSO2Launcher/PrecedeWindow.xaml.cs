@@ -126,10 +126,10 @@ namespace Dogstar
 								var data = groups[index];
 								var name = Path.ChangeExtension(data.Name, null);
 								var filePath = Path.Combine(precedePath, name);
-								ScanLabel.Content = name;
+								ScanProgressLabel.Content = name;
 								var upToDate = await Task.Run(() => IsFileUpToDate(File.Exists(filePath) ? filePath : MakeLocalToGame(name), data.Size, data.Hash));
 								ScanProgress.Value = ++index;
-								ScanProgressLabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
+								ScanLabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
 
 								if (upToDate)
 								{
@@ -153,8 +153,6 @@ namespace Dogstar
 
 									DownloadLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
 								}
-
-								index++;
 							}
 						}
 
