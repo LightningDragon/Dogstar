@@ -66,6 +66,10 @@ namespace Dogstar
 
 		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
 
+		public const string JpEnemiesFile = "ceffe0e2386e8d39f188358303a92a7d";
+
+		public const string JpeCodesFile = "057aa975bdd2b372fe092614b0f4399e";
+
 		public static AquaHttpClient AquaClient => new AquaHttpClient();
 
 		public static Dictionary<string, string> ManagementData { get; private set; }
@@ -150,6 +154,15 @@ namespace Dogstar
 			}
 		}
 
+		public static async Task<dynamic> GetArghlexJson(string subdir)
+		{
+			using (var client = AquaClient)
+			{
+				var json = await client.DownloadStringTaskAsync(new Uri(new Uri(Arghlex, subdir), "?sort=modtime&order=desc&json"));
+				return JsonConvert.DeserializeObject(json);
+			}
+		}
+
 		public static bool IsFileUpToDate(string file, long size, string hash)
 		{
 			try
@@ -186,8 +199,12 @@ namespace Dogstar
 			await Task.Run(() =>
 			{
 				var path = Path.Combine(DataFolder, "backup");
+
 				if (Directory.Exists(path))
 				{
+					RestorePatchBackup("JPECodes");
+					RestorePatchBackup("JPEnemies");
+
 					foreach (var entry in Directory.EnumerateDirectories(path))
 					{
 						RestorePatchBackup(entry);
@@ -202,7 +219,7 @@ namespace Dogstar
 			// TODO: story patch
 		}
 
-		public static bool InstallPatch(string filename, string patchname)
+		public static bool InstallPatchArchive(string filename, string patchname)
 		{
 			if (!File.Exists(filename))
 			{

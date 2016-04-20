@@ -35,6 +35,9 @@ namespace Dogstar
 	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
 	// TODO: Don't close on launch when precede is downloading
+	// TODO: General download tab needs pause/cancel. Oohhhh boy.
+	// TODO: Switch to general download tab when restoring backups.
+	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 
 	public partial class MainWindow : IDisposable
 	{
@@ -86,6 +89,7 @@ namespace Dogstar
 
 		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => MainTabItem.IsSelected = true;
 
+		// TODO: what even is this
 		private void TileCopy1_Click(object sender, RoutedEventArgs e) => OtherTabItem.IsSelected = true;
 
 		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
@@ -170,8 +174,7 @@ namespace Dogstar
 			}
 			else
 			{
-				EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
-				LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
+				SetPatchToggleSwitches();
 
 				if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
 				{
@@ -206,9 +209,6 @@ namespace Dogstar
 		{
 			CurrentGeneralDownloadActionLabel.Dispatcher.InvokeAsync(() =>
 			{
-				GeneralDownloadProgressbar.Maximum = 100;
-				GeneralDownloadProgressbar.IsIndeterminate = false;
-				CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Visible;
 				CurrentGeneralDownloadActionLabel.Content = Path.GetFileNameWithoutExtension(e);
 			});
 		}
@@ -220,21 +220,6 @@ namespace Dogstar
 				GeneralDownloadProgressbar.Value = e.ProgressPercentage;
 				CurrentGeneralDownloadSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
 			});
-		}
-
-		public async Task<bool> IsNewPrecedeAvailable()
-		{
-			await PullManagementData();
-
-			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
-			{
-				var version = ManagementData["PrecedeVersion"];
-				var listnum = ManagementData["PrecedeCurrent"];
-				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
-				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
-			}
-
-			return false;
 		}
 
 		private async void LaunchButton_Click(object sender, RoutedEventArgs e)
@@ -286,8 +271,11 @@ namespace Dogstar
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
 			if (entry != null)
+			{
 				await DownloadEnglishPatch((string)entry.name, (int)entry.size, (int)entry.modtime);
+			}
 			EnhancementsTabItem.IsSelected = true;
+			SetPatchToggleSwitches();
 		}
 
 		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e)
@@ -296,13 +284,90 @@ namespace Dogstar
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
 			if (entry != null)
+			{
 				await DownloadLargeFiles((string)entry.name, (int)entry.size, (int)entry.modtime);
+			}
 			EnhancementsTabItem.IsSelected = true;
 		}
 
-		private void StoryPatchToggle_Checked(object sender, RoutedEventArgs e)
+		private async void JpeCodesToggle_Checked(object sender, RoutedEventArgs e)
 		{
+			ResetGeneralDownloadTab();
+			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese E-Codes...";
+			GeneralDownloadIsIndeterminate(true);
 
+			GeneralDownloadTab.IsSelected = true;
+
+			dynamic jsonData = await GetArghlexJson();
+			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
+
+			GeneralDownloadIsIndeterminate(false);
+
+			if (entry != null)
+			{
+				var modtime = await DownloadJpFile((string)entry.name, JpeCodesFile, "JPECodes");
+
+				if (modtime == 0)
+				{
+					JpeCodesToggle.IsChecked = false;
+					await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, "JP E-Codes"));
+				}
+				else
+				{
+					Settings.Default.InstalledJPECodes = modtime;
+					Settings.Default.Save();
+					await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, "JP E-Codes"));
+				}
+			}
+
+			EnhancementsTabItem.IsSelected = true;
+		}
+
+		private async void JpeCodesToggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			await Task.Run(() => RestorePatchBackup("JPEcodes"));
+			Settings.Default.InstalledJPECodes = 0;
+			Settings.Default.Save();
+		}
+
+		private async void JpEnemiesToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			ResetGeneralDownloadTab();
+			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese Enemy Names...";
+			GeneralDownloadIsIndeterminate(true);
+
+			GeneralDownloadTab.IsSelected = true;
+
+			dynamic jsonData = await GetArghlexJson();
+			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
+
+			GeneralDownloadIsIndeterminate(false);
+
+			if (entry != null)
+			{
+				var modtime = await DownloadJpFile((string)entry.name, JpEnemiesFile, "JPEnemies");
+
+				if (modtime == 0)
+				{
+					JpEnemiesToggle.IsChecked = false;
+					await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, "JP Enemies"));
+				}
+				else
+				{
+					Settings.Default.InstalledJPEnemies = modtime;
+					Settings.Default.Save();
+					await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, "JP Enemies"));
+				}
+			}
+
+			EnhancementsTabItem.IsSelected = true;
+		}
+
+		private async void JpEnemiesToggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			await Task.Run(() => RestorePatchBackup("JPEnemies"));
+			Settings.Default.InstalledJPEnemies = 0;
+			Settings.Default.Save();
 		}
 
 		private async void Pso2ProxyToggle_Checked(object sender, RoutedEventArgs e)
@@ -325,17 +390,80 @@ namespace Dogstar
 
 		private async void EnglishPatchToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
-			await Task.Run(() => RestorePatchBackup("EnglishPatch"));
+			await Task.Run(() =>
+			{
+				RestorePatchBackup("JPECodes");
+				RestorePatchBackup("JPEnemies");
+				RestorePatchBackup("EnglishPatch");
+			});
+
 			Settings.Default.InstalledEnglishPatch = 0;
+			SetPatchToggleSwitches();
+			Settings.Default.Save();
 		}
 
 		private async void LargeFilesToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
 			await Task.Run(() => RestorePatchBackup("LargeFiles"));
 			Settings.Default.InstalledLargeFiles = 0;
+			Settings.Default.Save();
+		}
+
+		private void AddPluginButton_Click(object sender, RoutedEventArgs e)
+		{
+			// TODO: Variant here's your button have fun.
 		}
 
 		#endregion
+
+		private void SetPatchToggleSwitches()
+		{
+			EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
+			LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
+
+			JpeCodesToggle.IsEnabled = EnglishPatchToggle.IsChecked == true;
+			JpEnemiesToggle.IsEnabled = EnglishPatchToggle.IsChecked == true;
+
+			if (EnglishPatchToggle.IsChecked == false)
+			{
+				Settings.Default.InstalledJPECodes = 0;
+				Settings.Default.InstalledJPEnemies = 0;
+			}
+
+			JpeCodesToggle.IsChecked = JpeCodesToggle.IsEnabled && Settings.Default.InstalledJPECodes != 0;
+			JpEnemiesToggle.IsChecked = JpEnemiesToggle.IsEnabled && Settings.Default.InstalledJPEnemies != 0;
+		}
+
+		public async Task<bool> IsNewPrecedeAvailable()
+		{
+			await PullManagementData();
+
+			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
+			{
+				var version = ManagementData["PrecedeVersion"];
+				var listnum = ManagementData["PrecedeCurrent"];
+				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
+				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
+			}
+
+			return false;
+		}
+
+		private void ResetGeneralDownloadTab()
+		{
+			CompletedGeneralDownloadActionLabel.Content = string.Empty;
+			CurrentGeneralDownloadActionLabel.Content = string.Empty;
+			CurrentGeneralDownloadSizeActionLabel.Content = string.Empty;
+			GeneralDownloadProgressbar.Maximum = 100;
+			GeneralDownloadProgressbar.Value = 0;
+			GeneralDownloadIsIndeterminate(false);
+		}
+
+		private void GeneralDownloadIsIndeterminate(bool value)
+		{
+			CurrentGeneralDownloadSizeActionLabel.Visibility = value ? Visibility.Hidden : Visibility.Visible;
+			GeneralDownloadProgressbar.IsIndeterminate = value;
+		}
 
 		private async Task CheckGameFiles(UpdateMethod method)
 		{
@@ -474,6 +602,7 @@ namespace Dogstar
 					var oldlistdata = ParsePatchList(oldlist).ToArray();
 
 					await RestoreAllPatchBackups();
+					SetPatchToggleSwitches();
 
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
@@ -706,6 +835,8 @@ namespace Dogstar
 
 		private async Task<bool> DownloadLanguagePatch(Uri baseUri, string name, int size, string patchname)
 		{
+			ResetGeneralDownloadTab();
+
 			var url = new Uri(baseUri, name);
 			var filepath = Path.Combine(Path.GetTempPath(), name);
 			var info = new FileInfo(filepath);
@@ -715,11 +846,9 @@ namespace Dogstar
 				await _generalDownloadManager.DownloadFileTaskAsync(url, filepath);
 			}
 
-			GeneralDownloadProgressbar.IsIndeterminate = true;
-			CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Hidden;
-			var succeeded = await Task.Run(() => InstallPatch(filepath, patchname));
-			CurrentGeneralDownloadSizeActionLabel.Visibility = Visibility.Visible;
-			GeneralDownloadProgressbar.IsIndeterminate = false;
+			GeneralDownloadIsIndeterminate(true);
+			var succeeded = await Task.Run(() => InstallPatchArchive(filepath, patchname));
+			GeneralDownloadIsIndeterminate(false);
 
 			if (succeeded)
 			{
@@ -737,6 +866,44 @@ namespace Dogstar
 			}
 
 			return succeeded;
+		}
+
+		private async Task<long> DownloadJpFile(string dir, string filename, string patchname)
+		{
+			string dataFolder = DataFolder;
+			string backupFolder = Path.Combine(dataFolder, "backup");
+			string dataFilename = Path.Combine(dataFolder, filename);
+			string backupFilename = Path.Combine(backupFolder, patchname, filename);
+			string downloadFilename = Path.Combine(Path.GetTempPath(), filename);
+
+			dynamic jsonData = await GetArghlexJson(dir);
+			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => x.name == filename);
+
+			if (entry == null)
+				return 0;
+
+			var modtime = (long)entry.modtime;
+
+			try
+			{
+				await _generalDownloadManager.DownloadFileTaskAsync(new Uri(new Uri(Arghlex, dir + "/"), filename), downloadFilename);
+			}
+			catch (Exception)
+			{
+				return 0;
+			}
+
+			if (!File.Exists(backupFilename))
+			{
+				await Task.Run(() =>
+				{
+					CreateDirectoryIfNoneExists(Path.Combine(backupFolder, patchname));
+					File.Move(dataFilename, backupFilename);
+					File.Move(downloadFilename, dataFilename);
+				});
+			}
+
+			return modtime;
 		}
 
 		private async Task<bool> CheckEnglishPatchVersion(long modtime)
@@ -794,11 +961,6 @@ namespace Dogstar
 		public void Dispose()
 		{
 			_generalDownloadManager.Dispose();
-		}
-
-		private void AddPluginButton_Click(object sender, RoutedEventArgs e)
-		{
-			// TODO: Variant here's your button have fun.
 		}
 	}
 }
