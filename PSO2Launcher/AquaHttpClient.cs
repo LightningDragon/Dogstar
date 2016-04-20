@@ -8,7 +8,12 @@ namespace Dogstar
 		protected override WebRequest GetWebRequest(Uri address)
 		{
 			var request = base.GetWebRequest(address) as HttpWebRequest;
-			request.UserAgent = "AQUA_HTTP";
+
+			if (request != null)
+			{
+				request.UserAgent = "AQUA_HTTP";
+			}
+
 			return request;
 		}
 	}

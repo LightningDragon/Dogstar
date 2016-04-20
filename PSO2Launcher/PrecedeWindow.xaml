@@ -1,11 +1,10 @@
-﻿<Controls:MetroWindow x:Class="Dogstar.PrecedeWindow"
+﻿<controls:MetroWindow x:Class="Dogstar.PrecedeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Dogstar"
         mc:Ignorable="d"
-        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="PrecedeWindow" Height="192" Width="360" ResizeMode="NoResize" ShowTitleBar="False" ShowCloseButton="False" Loaded="MetroWindow_Loaded">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -22,13 +21,13 @@
 
             <Label x:Name="DownloadLabel" Content="" Grid.Row="0" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center"/>
             <Grid Grid.Row="1">
-                <Controls:MetroProgressBar Name="DownloadProgress" Margin="0" VerticalAlignment="Stretch"/>
+                <controls:MetroProgressBar Name="DownloadProgress" Margin="0" VerticalAlignment="Stretch"/>
                 <Label x:Name="DownloadProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
             </Grid>
 
             <Label x:Name="ScanLabel" Content="" Grid.Row="2" HorizontalAlignment="Left"  Margin="0" VerticalAlignment="Center"/>
             <Grid Grid.Row="3">
-                <Controls:MetroProgressBar Name="ScanProgress" Margin="0" VerticalAlignment="Stretch"/>
+                <controls:MetroProgressBar Name="ScanProgress" Margin="0" VerticalAlignment="Stretch"/>
                 <Label x:Name="ScanProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
@@ -37,8 +36,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonPause" Content="Pause/Whaterverarfsdf" Margin="0,0,4,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True" Click="buttonPause_Click"/>
-            <Button Grid.Column="1" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="buttonCancel" Content="Cancel" Margin="4,0,0,0" Width="75" Controls:ButtonHelper.PreserveTextCase="True" Click="buttonCancel_Click"/>
+            <Button Grid.Column="0" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="ButtonPause" Content="Pause/Whaterverarfsdf" Margin="0,0,4,0" Width="75" controls:ButtonHelper.PreserveTextCase="True" Click="ButtonPause_Click"/>
+            <Button Grid.Column="1" Style="{DynamicResource AccentedSquareButtonStyle}" BorderBrush="{x:Null}" x:Name="ButtonCancel" Content="Cancel" Margin="4,0,0,0" Width="75" controls:ButtonHelper.PreserveTextCase="True" Click="ButtonCancel_Click"/>
         </Grid>
     </Grid>
-</Controls:MetroWindow>
+</controls:MetroWindow>

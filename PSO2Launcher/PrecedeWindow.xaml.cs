@@ -19,10 +19,10 @@ namespace Dogstar
 		// TODO: Message box on completion
 		// TODO: wtf it's broken and it's probably IsFileUpToDate or whatever
 
-		private int numberDownloaded;
-		private int numberToDownload;
-		private long doneBytes;
-		private long totalBytes;
+		private int _numberDownloaded;
+		private int _numberToDownload;
+		private long _doneBytes;
+		private long _totalBytes;
 		private bool _isPaused;
 
 		private readonly CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
@@ -36,8 +36,8 @@ namespace Dogstar
 		{
 			ScanProgress.Dispatcher.InvokeAsync(() =>
 			{
-				DownloadProgress.Value = doneBytes + e.BytesReceived;
-				DownloadProgressLabel.Content = $"{SizeSuffix(doneBytes + e.BytesReceived)}/{SizeSuffix(totalBytes)}";
+				DownloadProgress.Value = _doneBytes + e.BytesReceived;
+				DownloadProgressLabel.Content = $"{SizeSuffix(_doneBytes + e.BytesReceived)}/{SizeSuffix(_totalBytes)}";
 			});
 		}
 
@@ -45,22 +45,22 @@ namespace Dogstar
 		{
 			DownloadLabel.Dispatcher.InvokeAsync(() =>
 			{
-				numberDownloaded++;
-				DownloadLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+				_numberDownloaded++;
+				DownloadLabel.Content = string.Format(Text.DownloadedOf, _numberDownloaded, _numberToDownload);
 			});
 		}
 
-		private void buttonPause_Click(object sender, RoutedEventArgs e) => _isPaused = !_isPaused;
+		private void ButtonPause_Click(object sender, RoutedEventArgs e) => _isPaused = !_isPaused;
 
-		private void buttonCancel_Click(object sender, RoutedEventArgs e) => _checkCancelSource.Cancel();
+		private void ButtonCancel_Click(object sender, RoutedEventArgs e) => _checkCancelSource.Cancel();
 
 		private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			await ZZZ();
+			await DownloadPrePatch();
 			Close();
 		}
 
-		private async Task ZZZ()
+		private async Task DownloadPrePatch()
 		{
 			using (var manager = new DownloadManager())
 			{
@@ -89,8 +89,8 @@ namespace Dogstar
 						var groups = (from v in listdatas.SelectMany(x => x) group v by v.Name into d select d.First()).ToArray();
 						var precedePath = PrecedeFolder;
 
-						totalBytes = groups.Select(x => x.Size).Sum();
-						DownloadProgress.Maximum = totalBytes;
+						_totalBytes = groups.Select(x => x.Size).Sum();
+						DownloadProgress.Maximum = _totalBytes;
 						ScanProgress.Maximum = groups.Length;
 
 						Func<Task> pause = async () =>
@@ -101,15 +101,15 @@ namespace Dogstar
 
 							try
 							{
-								buttonPause.Click += unpause;
-								buttonCancel.Click += cancel;
+								ButtonPause.Click += unpause;
+								ButtonCancel.Click += cancel;
 								manager.PauseDownloads(taskSource.Task);
 								await taskSource.Task;
 							}
 							finally
 							{
-								buttonPause.Click -= unpause;
-								buttonCancel.Click -= cancel;
+								ButtonPause.Click -= unpause;
+								ButtonCancel.Click -= cancel;
 							}
 						};
 
@@ -133,25 +133,25 @@ namespace Dogstar
 
 								if (upToDate)
 								{
-									totalBytes -= data.Size;
-									DownloadProgress.Maximum = totalBytes;
+									_totalBytes -= data.Size;
+									DownloadProgress.Maximum = _totalBytes;
 								}
 								else
 								{
-									numberToDownload++;
+									_numberToDownload++;
 
 									var patPath = Path.Combine(precedePath, data.Name);
 									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(BasePrePatch, data.Name), patPath).ContinueWith(x =>
 									{
 										lock (this)
 										{
-											doneBytes += data.Size;
+											_doneBytes += data.Size;
 										}
 
 										MoveAndOverwriteFile(patPath, filePath);
 									}));
 
-									DownloadLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+									DownloadLabel.Content = string.Format(Text.DownloadedOf, _numberDownloaded, _numberToDownload);
 								}
 							}
 						}

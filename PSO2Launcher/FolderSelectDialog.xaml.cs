@@ -42,7 +42,7 @@ namespace Dogstar
 		public Task<string> WaitForButtonPressAsync()
 		{
 			var taskSource = new TaskCompletionSource<string>();
-			Action cleanUp = null;
+			Action cleanUp = delegate { };
 
 			RoutedEventHandler buttonClick = (sender, e) =>
 			{
