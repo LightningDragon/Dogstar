@@ -434,21 +434,6 @@ namespace Dogstar
 			JpEnemiesToggle.IsChecked = JpEnemiesToggle.IsEnabled && Settings.Default.InstalledJPEnemies != 0;
 		}
 
-		public async Task<bool> IsNewPrecedeAvailable()
-		{
-			await PullManagementData();
-
-			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
-			{
-				var version = ManagementData["PrecedeVersion"];
-				var listnum = ManagementData["PrecedeCurrent"];
-				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
-				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
-			}
-
-			return false;
-		}
-
 		private void ResetGeneralDownloadTab()
 		{
 			CompletedGeneralDownloadActionLabel.Content = string.Empty;

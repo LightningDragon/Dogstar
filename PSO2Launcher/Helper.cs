@@ -281,5 +281,20 @@ namespace Dogstar
 				return true;
 			}
 		}
+
+		public static async Task<bool> IsNewPrecedeAvailable()
+		{
+			await PullManagementData();
+
+			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
+			{
+				var version = ManagementData["PrecedeVersion"];
+				var listnum = ManagementData["PrecedeCurrent"];
+				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
+				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
+			}
+
+			return false;
+		}
 	}
 }
