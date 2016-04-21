@@ -266,7 +266,11 @@ namespace Dogstar
 
 		private async void EnglishPatchToggle_Checked(object sender, RoutedEventArgs e)
 		{
+			ResetGeneralDownloadTab();
+			// TODO: text
+			CompletedGeneralDownloadActionLabel.Content = "Downloading English Patch...";
 			GeneralDownloadTab.IsSelected = true;
+
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
 			if (entry != null)
@@ -279,7 +283,11 @@ namespace Dogstar
 
 		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e)
 		{
+			ResetGeneralDownloadTab();
+			// TODO: text
+			CompletedGeneralDownloadActionLabel.Content = "Downloading Large Files...";
 			GeneralDownloadTab.IsSelected = true;
+
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
 			if (entry != null)
@@ -292,6 +300,7 @@ namespace Dogstar
 		private async void JpeCodesToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
+			// TODO: text
 			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese E-Codes...";
 			GeneralDownloadIsIndeterminate(true);
 
@@ -332,6 +341,7 @@ namespace Dogstar
 		private async void JpEnemiesToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
+			// TODO: text
 			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese Enemy Names...";
 			GeneralDownloadIsIndeterminate(true);
 
@@ -824,8 +834,6 @@ namespace Dogstar
 
 		private async Task<bool> DownloadLanguagePatch(Uri baseUri, string name, int size, string patchname)
 		{
-			ResetGeneralDownloadTab();
-
 			var url = new Uri(baseUri, name);
 			var filepath = Path.Combine(Path.GetTempPath(), name);
 			var info = new FileInfo(filepath);

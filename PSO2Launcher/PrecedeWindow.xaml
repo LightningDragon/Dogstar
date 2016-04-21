@@ -22,13 +22,13 @@
             <Label x:Name="DownloadLabel" Content="" Grid.Row="0" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center"/>
             <Grid Grid.Row="1">
                 <controls:MetroProgressBar Name="DownloadProgress" Margin="0" VerticalAlignment="Stretch"/>
-                <Label x:Name="DownloadProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
+                <Label x:Name="DownloadProgressLabel" Content="" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
             </Grid>
 
-            <Label x:Name="ScanLabel" Content="" Grid.Row="2" HorizontalAlignment="Left"  Margin="0" VerticalAlignment="Center"/>
+            <Label x:Name="ScanLabel" Content="" Grid.Row="2" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center"/>
             <Grid Grid.Row="3">
                 <controls:MetroProgressBar Name="ScanProgress" Margin="0" VerticalAlignment="Stretch"/>
-                <Label x:Name="ScanProgressLabel" Content="" HorizontalAlignment="Center"  Margin="0" VerticalAlignment="Center"/>
+                <Label x:Name="ScanProgressLabel" Content="" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="1" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
