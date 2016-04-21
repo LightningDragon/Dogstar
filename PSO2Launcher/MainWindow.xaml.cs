@@ -646,13 +646,6 @@ namespace Dogstar
 						}
 					}
 
-					await Task.Run(() =>
-					{
-						File.WriteAllText(LauncherListPath, launcherlist);
-						File.WriteAllText(PatchListPath, newlist);
-						File.WriteAllText(PatchListOldPath, oldlist);
-					});
-
 					numberToDownload++;
 					fileOperations.Add(manager.DownloadFileTaskAsync(VersionUrl, VersionPath));
 
@@ -676,6 +669,10 @@ namespace Dogstar
 
 					await Task.Run(() =>
 					{
+						File.WriteAllText(LauncherListPath, launcherlist);
+						File.WriteAllText(PatchListPath, newlist);
+						File.WriteAllText(PatchListOldPath, oldlist);
+
 						if (Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", null) != null)
 						{
 							Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", File.ReadAllText(VersionPath));
