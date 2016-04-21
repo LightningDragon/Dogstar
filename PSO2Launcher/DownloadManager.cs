@@ -33,10 +33,10 @@ namespace Dogstar
 			_client.DownloadDataCompleted += (s, e) => DownloadCompleted(s, e);
 			_client.DownloadStringCompleted += (s, e) => DownloadCompleted(s, e);
 			_client.DownloadFileCompleted += (s, e) => DownloadCompleted(s, e);
-			DownloadCompleted += ContinueOnCompleat;
+			DownloadCompleted += ContinueOnComplete;
 		}
 
-		private void ContinueOnCompleat(object sender, EventArgs args)
+		private void ContinueOnComplete(object sender, EventArgs args)
 		{
 			try
 			{
