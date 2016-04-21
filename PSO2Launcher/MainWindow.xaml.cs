@@ -23,14 +23,13 @@ using static Dogstar.External;
 namespace Dogstar
 {
 	// TODO: Prepatch https://social.msdn.microsoft.com/Forums/vstudio/en-US/9daab290-cf3a-4777-b046-3dc156b184c0/how-to-make-a-wpf-child-window-follow-its-parent?forum=wpf
-	// TODO: Make sure to keep patch lists, version.ver, version_precede.ver, management_beta, precede in documents\sega\phantasystaronline2
+	// TODO: Maybe save management_beta.txt to documents\sega\phantasystaronline2 because vanilla launcher does it
 	// TODO: figure out documents\sega\pso2\download patch lists
-	// TODO: Check for pre-patches (see official pso2 launcher)
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Write version.ver to PSO2 Tweaker registry
-	// TODO: Figure out why vanilla launcher keeps deleting version.ver. _version.ver?
+	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: Add change PSO2 dir to the Other tab
 	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
