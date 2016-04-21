@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Windows.Navigation;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
@@ -28,7 +29,6 @@ namespace Dogstar
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
-	// TODO: Write version.ver to PSO2 Tweaker registry
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: Add change PSO2 dir to the Other tab
 	// TODO: Make game settings tab
@@ -673,6 +673,14 @@ namespace Dogstar
 					}
 
 					await downloads;
+
+					await Task.Run(() =>
+					{
+						if (Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", null) != null)
+						{
+							Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", File.ReadAllText(VersionPath));
+						}
+					});
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
