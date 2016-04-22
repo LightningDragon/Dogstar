@@ -37,6 +37,7 @@ namespace Dogstar
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
+	// TODO: Update detection for enemies and e-codes
 
 	public partial class MainWindow : IDisposable
 	{
