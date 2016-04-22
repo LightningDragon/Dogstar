@@ -34,6 +34,7 @@ namespace Dogstar
 	// TODO: Switch to general download tab when restoring backups.
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
+	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
 
 	public partial class MainWindow : IDisposable
 	{
