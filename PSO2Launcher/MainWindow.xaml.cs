@@ -29,7 +29,6 @@ namespace Dogstar
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
-	// TODO: Add change PSO2 dir to the Other tab
 	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
 	// TODO: Don't close on launch when precede is downloading
@@ -101,6 +100,8 @@ namespace Dogstar
 
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
 
+		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e) => await SelectGameFolder();
+		
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_lastTop = Top;
@@ -838,6 +839,10 @@ namespace Dogstar
 					Settings.Default.GameFolder = Path.GetDirectoryName(gamePath);
 					Settings.Default.IsGameInstalled = true;
 					Settings.Default.Save();
+					result = MessageDialogResult.Negative;
+				}
+				else if (gamePath == null)
+				{
 					result = MessageDialogResult.Negative;
 				}
 				else

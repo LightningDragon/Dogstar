@@ -45,7 +45,7 @@ namespace Dogstar
 
 			RoutedEventHandler buttonClick = (sender, e) =>
 			{
-				taskSource.TrySetResult(ReferenceEquals(sender, AffirmativeButton) ? PathBox.Text : string.Empty);
+				taskSource.TrySetResult(ReferenceEquals(sender, AffirmativeButton) ? PathBox.Text : null);
 			};
 
 			AffirmativeButton.Click += buttonClick;

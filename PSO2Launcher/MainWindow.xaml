@@ -174,9 +174,18 @@
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="OtherTabItem" IsEnabled="False">
-                        <Grid>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click"/>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
+                        <Grid HorizontalAlignment="Center" Margin="0,0,0,50">
+                            <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="45"/>
+                                        <RowDefinition Height="45"/>
+                                    </Grid.RowDefinitions>
+                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
+                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherChangeGameDir" Content="Change game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherChangeGameDir_Click" VerticalAlignment="Top"/>
+                                </Grid>
+                            </ScrollViewer>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0,3,0,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="GeneralDownloadTab" IsEnabled="False">
