@@ -140,6 +140,17 @@ namespace Dogstar
 			}
 		}
 
+		public static void SetTweakerRemoteVersion(string version)
+		{
+			using (var regkey = Registry.CurrentUser.OpenSubKey(@"Software\AIDA"))
+			{
+				if (regkey?.GetValue("PSO2RemoteVersion") != null)
+				{
+					regkey.SetValue("PSO2RemoteVersion", version);
+				}
+			}
+		}
+
 		public static IEnumerable<PatchListEntry> ParsePatchList(string list)
 		{
 			return from l in list.LineSplit() where !string.IsNullOrWhiteSpace(l) let data = l.Split('\t') select new PatchListEntry(data[0], data[1], data[2]);

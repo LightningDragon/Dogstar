@@ -10,7 +10,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Windows.Navigation;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
@@ -711,11 +710,7 @@ namespace Dogstar
 						File.WriteAllText(LauncherListPath, launcherlist);
 						File.WriteAllText(PatchListPath, newlist);
 						File.WriteAllText(PatchListOldPath, oldlist);
-
-						if (Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", null) != null)
-						{
-							Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\AIDA", "PSO2RemoteVersion", File.ReadAllText(VersionPath));
-						}
+						SetTweakerRemoteVersion(File.ReadAllText(VersionPath));
 					});
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
