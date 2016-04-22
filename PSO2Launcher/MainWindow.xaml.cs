@@ -31,7 +31,6 @@ namespace Dogstar
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
-	// TODO: Don't close on launch when precede is downloading
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
@@ -43,6 +42,7 @@ namespace Dogstar
 		private readonly TabController _gameTabController;
 
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
+		private bool _isPrePatchDownloading;
 		private bool _isCheckPaused;
 		private double _lastTop;
 		private double _lastLeft;
@@ -101,7 +101,7 @@ namespace Dogstar
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
 
 		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e) => await SelectGameFolder();
-		
+
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_lastTop = Top;
@@ -204,7 +204,9 @@ namespace Dogstar
 			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 			{
 				var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
+				_isPrePatchDownloading = true;
 				precedeWindow.Show();
+				precedeWindow.Closed += delegate { _isPrePatchDownloading = false; };
 			}
 		}
 
@@ -247,15 +249,26 @@ namespace Dogstar
 		{
 			try
 			{
+				if (_isPrePatchDownloading && Settings.Default.CloseOnLaunch)
+				{
+					var result = await this.ShowMessageAsync(Text.DownloadInProgress, Text.LaunchDownloadInProgress, AffirmNeg, YesNo);
+					if (result != MessageDialogResult.Affirmative)
+					{
+						return;
+					}
+				}
+
 				await PullManagementData();
 				if (ManagementData.ContainsKey("ManagementData") && ManagementData["IsInMaintenance"] == "1")
 				{
 					var result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
+					{
 						return;
+					}
 				}
 
-				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch)
+				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch && !_isPrePatchDownloading)
 				{
 					Close();
 				}

@@ -178,6 +178,15 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download In Progress.
+        /// </summary>
+        internal static string DownloadInProgress {
+            get {
+                return ResourceManager.GetString("DownloadInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Would you like to download the latest preced?.
         /// </summary>
         internal static string DownloadLatestPreced {
@@ -318,6 +327,15 @@ namespace Dogstar.Resources {
         internal static string InvalidProxyURL {
             get {
                 return ResourceManager.GetString("InvalidProxyURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dogstar will continue running to complete the download. Would you like to continue anyway?.
+        /// </summary>
+        internal static string LaunchDownloadInProgress {
+            get {
+                return ResourceManager.GetString("LaunchDownloadInProgress", resourceCulture);
             }
         }
         

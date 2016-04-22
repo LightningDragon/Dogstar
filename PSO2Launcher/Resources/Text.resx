@@ -255,4 +255,10 @@
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="DownloadInProgress" xml:space="preserve">
+    <value>Download In Progress</value>
+  </data>
+  <data name="LaunchDownloadInProgress" xml:space="preserve">
+    <value>Dogstar will continue running to complete the download. Would you like to continue anyway?</value>
+  </data>
 </root>
