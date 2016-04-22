@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Dogstar"
         xmlns:properties="clr-namespace:Dogstar.Properties"
         mc:Ignorable="d"
-        Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize">
+        Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize" LocationChanged="MetroWindow_LocationChanged">
 
     <controls:MetroWindow.Resources>
         <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:UiResources}" MethodName="GetColor" />

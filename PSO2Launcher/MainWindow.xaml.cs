@@ -46,6 +46,8 @@ namespace Dogstar
 
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 		private bool _isCheckPaused;
+		private double _lastTop;
+		private double _lastLeft;
 
 		public string WindowTittle => $"{ApplicationInfo.Name} {ApplicationInfo.Version}";
 
@@ -98,14 +100,11 @@ namespace Dogstar
 
 		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
 
-		private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-		{
-			Process.Start(e.Uri.ToString());
-			e.Handled = true;
-		}
-
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			_lastTop = Top;
+			_lastLeft = Left;
+
 			if (!Settings.Default.IsGameInstalled)
 			{
 				var gamefolder = GetTweakerGameFolder();
@@ -202,9 +201,27 @@ namespace Dogstar
 			// TODO: Pre-patch or Preced?
 			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 			{
-				var precedeWindow = new PrecedeWindow { Owner = this };
+				var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
 				precedeWindow.Show();
 			}
+		}
+
+		private void MetroWindow_LocationChanged(object sender, EventArgs e)
+		{
+			foreach (Window window in OwnedWindows)
+			{
+				window.Top += Top - _lastTop;
+				window.Left += Left - _lastLeft;
+			}
+
+			_lastTop = Top;
+			_lastLeft = Left;
+		}
+
+		private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			Process.Start(e.Uri.ToString());
+			e.Handled = true;
 		}
 
 		private void DownloadStarted(object sender, string e)
