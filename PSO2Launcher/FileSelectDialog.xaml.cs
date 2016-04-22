@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -43,24 +42,16 @@ namespace Dogstar
 		public Task<string> WaitForButtonPressAsync()
 		{
 			var taskSource = new TaskCompletionSource<string>();
-			Action cleanUp = delegate { };
 
 			RoutedEventHandler buttonClick = (sender, e) =>
 			{
-				cleanUp();
 				taskSource.TrySetResult(ReferenceEquals(sender, AffirmativeButton) ? PathBox.Text : string.Empty);
-			};
-
-			cleanUp = () =>
-			{
-				AffirmativeButton.Click -= buttonClick;
-				NegativeButton.Click -= buttonClick;
 			};
 
 			AffirmativeButton.Click += buttonClick;
 			NegativeButton.Click += buttonClick;
 
-			return taskSource.Task;
+			return taskSource.Task.ContinueWith(x => { AffirmativeButton.Click -= buttonClick; NegativeButton.Click -= buttonClick; return x; }).Unwrap();
 		}
 	}
 }
