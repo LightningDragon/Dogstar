@@ -89,7 +89,6 @@ namespace Dogstar
 
 		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => MainTabItem.IsSelected = true;
 
-		// TODO: what even is this
 		private void TileCopy1_Click(object sender, RoutedEventArgs e) => OtherTabItem.IsSelected = true;
 
 		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
@@ -197,8 +196,8 @@ namespace Dogstar
 				}
 			}
 
-			// TODO: text
-			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync("itshappening.gif", @"\o/", AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+			// TODO: Pre-patch or Preced?
+			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 			{
 				var precedeWindow = new PrecedeWindow { Owner = this };
 				precedeWindow.Show();
@@ -268,8 +267,7 @@ namespace Dogstar
 		private async void EnglishPatchToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
-			// TODO: text
-			CompletedGeneralDownloadActionLabel.Content = "Downloading English Patch...";
+			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingEngPatch;
 			GeneralDownloadTab.IsSelected = true;
 
 			dynamic jsonData = await GetArghlexJson();
@@ -285,8 +283,7 @@ namespace Dogstar
 		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
-			// TODO: text
-			CompletedGeneralDownloadActionLabel.Content = "Downloading Large Files...";
+			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingLargeFiles;
 			GeneralDownloadTab.IsSelected = true;
 
 			dynamic jsonData = await GetArghlexJson();
@@ -301,8 +298,7 @@ namespace Dogstar
 		private async void JpeCodesToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
-			// TODO: text
-			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese E-Codes...";
+			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpECodes;
 			GeneralDownloadIsIndeterminate(true);
 
 			GeneralDownloadTab.IsSelected = true;
@@ -342,8 +338,7 @@ namespace Dogstar
 		private async void JpEnemiesToggle_Checked(object sender, RoutedEventArgs e)
 		{
 			ResetGeneralDownloadTab();
-			// TODO: text
-			CompletedGeneralDownloadActionLabel.Content = "Downloading Japanese Enemy Names...";
+			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpEnemyNames;
 			GeneralDownloadIsIndeterminate(true);
 
 			GeneralDownloadTab.IsSelected = true;
@@ -501,7 +496,7 @@ namespace Dogstar
 					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 					{
 						numberDownloaded++;
-						CompletedCheckDownloadActionsLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+						CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
 					});
 				};
 
@@ -540,8 +535,7 @@ namespace Dogstar
 						await PullManagementData();
 						if (!ManagementData.ContainsKey("PrecedeVersion") || !ManagementData.ContainsKey("PrecedeCurrent"))
 						{
-							// TODO: Text
-							var result = await this.ShowMessageAsync("Apply Precede", "Would you like to apply the precede patch now?", AffirmNeg, YesNo);
+							var result = await this.ShowMessageAsync(Text.ApplyPrecede, Text.ApplyPrecedeNow, AffirmNeg, YesNo);
 
 							if (result == MessageDialogResult.Affirmative)
 							{
@@ -565,8 +559,7 @@ namespace Dogstar
 										// ignored
 									}
 
-									// TODO: Text
-									CompletedCheckActionsLabel.Content = $"Applying precede {++CheckProgressbar.Value}/{CheckProgressbar.Maximum}";
+									CompletedCheckActionsLabel.Content = Text.ApplyingPrecede.Format(++CheckProgressbar.Value, CheckProgressbar.Maximum);
 								}
 
 								try
@@ -575,8 +568,7 @@ namespace Dogstar
 								}
 								catch (Exception)
 								{
-									// TODO: Text
-									await this.ShowMessageAsync("Error", "Unable to delete precede folder. Try deleting it manually.");
+									await this.ShowMessageAsync(Text.Error, Text.PrecedeDeleteFailed);
 								}
 
 								// TODO: not this
@@ -643,7 +635,7 @@ namespace Dogstar
 
 							var upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
 							CheckProgressbar.Value = ++index;
-							CompletedCheckActionsLabel.Content = string.Format(Text.CheckedOf, index, groups.Length);
+							CompletedCheckActionsLabel.Content = Text.CheckedOf.Format(index, groups.Length);
 
 							if (!upToDate)
 							{
@@ -652,7 +644,7 @@ namespace Dogstar
 								fileOperations.Add(manager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
 
 								numberToDownload++;
-								CompletedCheckDownloadActionsLabel.Content = string.Format(Text.DownloadedOf, numberDownloaded, numberToDownload);
+								CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
 							}
 						}
 					}
@@ -701,7 +693,7 @@ namespace Dogstar
 				FlashWindow(this, true);
 				if (numberDownloaded > 4)
 				{
-					await this.ShowMessageAsync(Text.Updated, string.Format(Text.FilesDownloaded, numberDownloaded - 4));
+					await this.ShowMessageAsync(Text.Updated, Text.FilesDownloaded.Format(numberDownloaded - 4));
 				}
 				else
 				{

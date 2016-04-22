@@ -9,6 +9,8 @@ namespace Dogstar
 	{
 		public static string[] LineSplit(this string str) => str.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
+		public static string Format(this string str, params object[] args) => string.Format(str, args);
+
 		public static async Task<string> ShowFileSelectAsync(this MetroWindow window, string title, string message, string filter, MetroDialogSettings settings = null)
 		{
 			settings = settings ?? window.MetroDialogOptions;

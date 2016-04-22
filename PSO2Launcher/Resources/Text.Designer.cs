@@ -39,7 +39,7 @@ namespace Dogstar.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    var temp = new global::System.Resources.ResourceManager("Dogstar.Resources.Text", typeof(Text).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Dogstar.Resources.Text", typeof(Text).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,6 +66,33 @@ namespace Dogstar.Resources {
         internal static string AllFilesValid {
             get {
                 return ResourceManager.GetString("AllFilesValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applying precede {0}/{1}.
+        /// </summary>
+        internal static string ApplyingPrecede {
+            get {
+                return ResourceManager.GetString("ApplyingPrecede", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply Precede.
+        /// </summary>
+        internal static string ApplyPrecede {
+            get {
+                return ResourceManager.GetString("ApplyPrecede", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like to apply the precede patch now?.
+        /// </summary>
+        internal static string ApplyPrecedeNow {
+            get {
+                return ResourceManager.GetString("ApplyPrecedeNow", resourceCulture);
             }
         }
         
@@ -115,11 +142,65 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading English Patch....
+        /// </summary>
+        internal static string DownloadingEngPatch {
+            get {
+                return ResourceManager.GetString("DownloadingEngPatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading Japanese E-Codes....
+        /// </summary>
+        internal static string DownloadingJpECodes {
+            get {
+                return ResourceManager.GetString("DownloadingJpECodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading Japanese Enemy Names....
+        /// </summary>
+        internal static string DownloadingJpEnemyNames {
+            get {
+                return ResourceManager.GetString("DownloadingJpEnemyNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading Large Files....
+        /// </summary>
+        internal static string DownloadingLargeFiles {
+            get {
+                return ResourceManager.GetString("DownloadingLargeFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like to download the latest preced?.
+        /// </summary>
+        internal static string DownloadLatestPreced {
+            get {
+                return ResourceManager.GetString("DownloadLatestPreced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter proxy JSON URL:.
         /// </summary>
         internal static string EnterProxy {
             get {
                 return ResourceManager.GetString("EnterProxy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
             }
         }
         
@@ -300,6 +381,24 @@ namespace Dogstar.Resources {
         internal static string NonJPPSO2 {
             get {
                 return ResourceManager.GetString("NonJPPSO2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Preced Available.
+        /// </summary>
+        internal static string PrecedAvailable {
+            get {
+                return ResourceManager.GetString("PrecedAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to delete precede folder. Try deleting it manually..
+        /// </summary>
+        internal static string PrecedeDeleteFailed {
+            get {
+                return ResourceManager.GetString("PrecedeDeleteFailed", resourceCulture);
             }
         }
         

@@ -120,6 +120,15 @@
   <data name="AllFilesValid" xml:space="preserve">
     <value>All files successfully validated.</value>
   </data>
+  <data name="ApplyingPrecede" xml:space="preserve">
+    <value>Applying precede {0}/{1}</value>
+  </data>
+  <data name="ApplyPrecede" xml:space="preserve">
+    <value>Apply Precede</value>
+  </data>
+  <data name="ApplyPrecedeNow" xml:space="preserve">
+    <value>Would you like to apply the precede patch now?</value>
+  </data>
   <data name="BadProxyVersion" xml:space="preserve">
     <value>Unsupported proxy version.</value>
   </data>
@@ -135,8 +144,26 @@
   <data name="DownloadedOf" xml:space="preserve">
     <value>Downloaded {0} of {1}</value>
   </data>
+  <data name="DownloadingEngPatch" xml:space="preserve">
+    <value>Downloading English Patch...</value>
+  </data>
+  <data name="DownloadingJpECodes" xml:space="preserve">
+    <value>Downloading Japanese E-Codes...</value>
+  </data>
+  <data name="DownloadingJpEnemyNames" xml:space="preserve">
+    <value>Downloading Japanese Enemy Names...</value>
+  </data>
+  <data name="DownloadingLargeFiles" xml:space="preserve">
+    <value>Downloading Large Files...</value>
+  </data>
+  <data name="DownloadLatestPreced" xml:space="preserve">
+    <value>Would you like to download the latest preced?</value>
+  </data>
   <data name="EnterProxy" xml:space="preserve">
     <value>Enter proxy JSON URL:</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
   </data>
   <data name="ExtractedOf" xml:space="preserve">
     <value>Extracted {0} of {1}</value>
@@ -197,6 +224,12 @@
   </data>
   <data name="NonJPPSO2" xml:space="preserve">
     <value>Non-JP PSO2 is incompatible with Dogstar. _(:３」∠)_</value>
+  </data>
+  <data name="PrecedAvailable" xml:space="preserve">
+    <value>New Preced Available</value>
+  </data>
+  <data name="PrecedeDeleteFailed" xml:space="preserve">
+    <value>Unable to delete precede folder. Try deleting it manually.</value>
   </data>
   <data name="ProxyRevert" xml:space="preserve">
     <value>Couldn't connect to proxy. Reverting changes.</value>
