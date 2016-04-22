@@ -42,6 +42,7 @@ namespace Dogstar
 	public partial class MainWindow : IDisposable
 	{
 		private readonly DownloadManager _generalDownloadManager = new DownloadManager();
+		private readonly TabController _gameTabController;
 
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 		private bool _isCheckPaused;
@@ -59,6 +60,8 @@ namespace Dogstar
 			Topmost = Settings.Default.AlwaysOnTop;
 			Colors.SelectedIndex = Array.IndexOf(UiResources.GetColor().Values.ToArray(), Settings.Default.AccentColor);
 			Themes.SelectedIndex = Array.IndexOf(UiResources.GetTheme().Values.ToArray(), Settings.Default.Theme);
+
+			_gameTabController = new TabController(GameTabControl);
 		}
 
 		#region Events
@@ -85,11 +88,11 @@ namespace Dogstar
 
 		private void DonateToPolaris_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.PolarisDonation);
 
-		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => EnhancementsTabItem.IsSelected = true;
+		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(EnhancementsTabItem);
 
-		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => MainTabItem.IsSelected = true;
+		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => _gameTabController.PreviousTab();
 
-		private void TileCopy1_Click(object sender, RoutedEventArgs e) => OtherTabItem.IsSelected = true;
+		private void TileCopy1_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(OtherTabItem);
 
 		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
 
@@ -183,15 +186,15 @@ namespace Dogstar
 
 					if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
 					{
-						GeneralDownloadTab.IsSelected = true;
+						_gameTabController.ChangeTab(GeneralDownloadTab);
 						await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
-						MainTabItem.IsSelected = true;
+						_gameTabController.PreviousTab();
 					}
 					if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
 					{
-						GeneralDownloadTab.IsSelected = true;
+						_gameTabController.ChangeTab(GeneralDownloadTab);
 						await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
-						MainTabItem.IsSelected = true;
+						_gameTabController.PreviousTab();
 					}
 				}
 			}
@@ -268,7 +271,7 @@ namespace Dogstar
 		{
 			ResetGeneralDownloadTab();
 			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingEngPatch;
-			GeneralDownloadTab.IsSelected = true;
+			_gameTabController.ChangeTab(GeneralDownloadTab);
 
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
@@ -276,7 +279,7 @@ namespace Dogstar
 			{
 				await DownloadEnglishPatch((string)entry.name, (int)entry.size, (int)entry.modtime);
 			}
-			EnhancementsTabItem.IsSelected = true;
+			_gameTabController.PreviousTab();
 			SetPatchToggleSwitches();
 		}
 
@@ -284,7 +287,7 @@ namespace Dogstar
 		{
 			ResetGeneralDownloadTab();
 			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingLargeFiles;
-			GeneralDownloadTab.IsSelected = true;
+			_gameTabController.ChangeTab(GeneralDownloadTab);
 
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
@@ -292,7 +295,7 @@ namespace Dogstar
 			{
 				await DownloadLargeFiles((string)entry.name, (int)entry.size, (int)entry.modtime);
 			}
-			EnhancementsTabItem.IsSelected = true;
+			_gameTabController.PreviousTab();
 		}
 
 		private async void JpeCodesToggle_Checked(object sender, RoutedEventArgs e)
@@ -301,7 +304,7 @@ namespace Dogstar
 			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpECodes;
 			GeneralDownloadIsIndeterminate(true);
 
-			GeneralDownloadTab.IsSelected = true;
+			_gameTabController.ChangeTab(GeneralDownloadTab);
 
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
@@ -325,7 +328,7 @@ namespace Dogstar
 				}
 			}
 
-			EnhancementsTabItem.IsSelected = true;
+			_gameTabController.PreviousTab();
 		}
 
 		private async void JpeCodesToggle_Unchecked(object sender, RoutedEventArgs e)
@@ -341,7 +344,7 @@ namespace Dogstar
 			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpEnemyNames;
 			GeneralDownloadIsIndeterminate(true);
 
-			GeneralDownloadTab.IsSelected = true;
+			_gameTabController.ChangeTab(GeneralDownloadTab);
 
 			dynamic jsonData = await GetArghlexJson();
 			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
@@ -365,7 +368,7 @@ namespace Dogstar
 				}
 			}
 
-			EnhancementsTabItem.IsSelected = true;
+			_gameTabController.PreviousTab();
 		}
 
 		private async void JpEnemiesToggle_Unchecked(object sender, RoutedEventArgs e)
@@ -457,6 +460,8 @@ namespace Dogstar
 
 		private async Task CheckGameFiles(UpdateMethod method)
 		{
+			_gameTabController.ChangeTab(FileCheckTabItem);
+
 			_checkCancelSource = new CancellationTokenSource();
 			_isCheckPaused = false;
 			CompletedCheckDownloadActionsLabel.Content = string.Empty;
@@ -466,7 +471,6 @@ namespace Dogstar
 			CurrentCheckSizeActionLabel.Content = string.Empty;
 			CheckDownloadProgressbar.Value = 0;
 			CheckProgressbar.Value = 0;
-			FileCheckTabItem.IsSelected = true;
 			var numberDownloaded = 0;
 			var numberToDownload = 3;
 			var fileOperations = new List<Task>();
@@ -701,7 +705,7 @@ namespace Dogstar
 				}
 			}
 
-			MainTabItem.IsSelected = true;
+			_gameTabController.PreviousTab();
 		}
 
 		public async Task<bool> ConfigProxy()
