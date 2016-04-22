@@ -83,7 +83,7 @@
                                 <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="LaunchButton" Content="Launch" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="5" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="LaunchButton_Click"/>
                             </StackPanel>
                             <StackPanel Height="294" VerticalAlignment="Top" Margin="0">
-                                <controls:Tile x:Name="Tile" Title="Game Settings (Resolution, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Change PSO2 Game Settings.">
+                                <controls:Tile x:Name="GameSettingsTile" Title="Game Settings (Resolution, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Change PSO2 Game Settings." Click="GameSettingsTile_Click">
                                     <Rectangle x:Name="SettingsIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
@@ -99,7 +99,7 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
-                                <controls:Tile x:Name="TileCopy1" Title="Other (PSO2Proxy, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Install PSO2, PSO2Proxy, Etc." Click="TileCopy1_Click">
+                                <controls:Tile x:Name="OtherTile" Title="Other (PSO2Proxy, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Install PSO2, PSO2Proxy, Etc." Click="OtherTile_Click">
                                     <Rectangle x:Name="OtherIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
@@ -123,6 +123,11 @@
                             <controls:MetroProgressBar x:Name="CheckProgressbar" Height="45" Margin="0,165,0,192"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="GameSettingsTabItem" IsEnabled="False">
+                        <Grid>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="GameSettingsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="EnhancementsTabItem" IsEnabled="False">
@@ -164,13 +169,13 @@
                                     <controls:ToggleSwitch Grid.Column="1" Grid.Row="8" x:Name="DamageParserToggle" VerticalAlignment="Center"/>
                                 </Grid>
                             </ScrollViewer>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="7,0,119,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click" VerticalAlignment="Bottom"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="7,0,119,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="AddPluginButton" Content="Add" Width="100" BorderBrush="{x:Null}" Margin="119,0,7,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" VerticalAlignment="Bottom" Click="AddPluginButton_Click"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="OtherTabItem" IsEnabled="False">
                         <Grid>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="EnhancementsBackButton_Click"/>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click"/>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="101,15,101,359" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="OtherProxyConfig_Click"/>
                         </Grid>
                     </TabItem>

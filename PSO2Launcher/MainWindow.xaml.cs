@@ -91,9 +91,11 @@ namespace Dogstar
 
 		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(EnhancementsTabItem);
 
-		private void EnhancementsBackButton_Click(object sender, RoutedEventArgs e) => _gameTabController.PreviousTab();
+		private void BackButton_Click(object sender, RoutedEventArgs e) => _gameTabController.PreviousTab();
 
-		private void TileCopy1_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(OtherTabItem);
+		private void OtherTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(OtherTabItem);
+
+		private void GameSettingsTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(GameSettingsTabItem);
 
 		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
 
