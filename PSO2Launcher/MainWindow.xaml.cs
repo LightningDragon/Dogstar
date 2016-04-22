@@ -23,7 +23,6 @@ using static Dogstar.External;
 
 namespace Dogstar
 {
-	// TODO: Prepatch https://social.msdn.microsoft.com/Forums/vstudio/en-US/9daab290-cf3a-4777-b046-3dc156b184c0/how-to-make-a-wpf-child-window-follow-its-parent?forum=wpf
 	// TODO: Maybe save management_beta.txt to documents\sega\phantasystaronline2 because vanilla launcher does it
 	// TODO: figure out documents\sega\pso2\download patch lists
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
