@@ -102,6 +102,8 @@ namespace Dogstar
 
 		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e) => await SelectGameFolder();
 
+		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start(Settings.Default.GameFolder);
+
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_lastTop = Top;
