@@ -28,7 +28,7 @@ namespace Dogstar
 
 		public static readonly MetroDialogSettings MovedDeleted = new MetroDialogSettings { AffirmativeButtonText = Text.Moved, NegativeButtonText = Text.Deleted };
 
-		public static readonly Uri BasePrePatch = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
+		public static readonly Uri BasePrecede = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
 
 		public static readonly Uri BasePatch = new Uri("http://download.pso2.jp/patch_prod/patches/");
 

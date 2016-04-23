@@ -403,11 +403,11 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Preced Available.
+        ///   Looks up a localized string similar to New Precede Available.
         /// </summary>
-        internal static string PrecedAvailable {
+        internal static string PrecedeAvailable {
             get {
-                return ResourceManager.GetString("PrecedAvailable", resourceCulture);
+                return ResourceManager.GetString("PrecedeAvailable", resourceCulture);
             }
         }
         

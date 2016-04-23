@@ -42,7 +42,7 @@ namespace Dogstar
 		private readonly TabController _gameTabController;
 
 		private CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
-		private bool _isPrePatchDownloading;
+		private bool _isPrecedeDownloading;
 		private bool _isCheckPaused;
 		private double _lastTop;
 		private double _lastLeft;
@@ -200,13 +200,12 @@ namespace Dogstar
 				}
 			}
 
-			// TODO: Pre-patch or Preced?
-			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 			{
 				var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
-				_isPrePatchDownloading = true;
+				_isPrecedeDownloading = true;
 				precedeWindow.Show();
-				precedeWindow.Closed += delegate { _isPrePatchDownloading = false; };
+				precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
 			}
 		}
 
@@ -249,7 +248,7 @@ namespace Dogstar
 		{
 			try
 			{
-				if (_isPrePatchDownloading && Settings.Default.CloseOnLaunch)
+				if (_isPrecedeDownloading && Settings.Default.CloseOnLaunch)
 				{
 					var result = await this.ShowMessageAsync(Text.DownloadInProgress, Text.LaunchDownloadInProgress, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
@@ -268,7 +267,7 @@ namespace Dogstar
 					}
 				}
 
-				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch && !_isPrePatchDownloading)
+				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch && !_isPrecedeDownloading)
 				{
 					Close();
 				}

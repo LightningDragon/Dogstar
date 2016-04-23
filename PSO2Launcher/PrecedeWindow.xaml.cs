@@ -55,11 +55,11 @@ namespace Dogstar
 
 		private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			await DownloadPrePatch();
+			await DownloadPrecede();
 			Close();
 		}
 
-		private async Task DownloadPrePatch()
+		private async Task DownloadPrecede()
 		{
 			using (var manager = new DownloadManager())
 			{
@@ -77,7 +77,7 @@ namespace Dogstar
 						{
 
 							var filename = $"patchlist{index}.txt";
-							var data = await manager.DownloadStringTaskAsync(new Uri(BasePrePatch, filename));
+							var data = await manager.DownloadStringTaskAsync(new Uri(BasePrecede, filename));
 							listdatas[index] = ParsePatchList(data).ToArray();
 							await Task.Run(() => File.WriteAllText(Path.Combine(PrecedeFolder, filename), data));
 						}
@@ -140,7 +140,7 @@ namespace Dogstar
 									_numberToDownload++;
 
 									var patPath = Path.Combine(precedePath, data.Name);
-									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(BasePrePatch, data.Name), patPath).ContinueWith(x =>
+									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(BasePrecede, data.Name), patPath).ContinueWith(x =>
 									{
 										lock (this)
 										{

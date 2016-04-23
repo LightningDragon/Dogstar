@@ -225,8 +225,8 @@
   <data name="NonJPPSO2" xml:space="preserve">
     <value>Non-JP PSO2 is incompatible with Dogstar. _(:３」∠)_</value>
   </data>
-  <data name="PrecedAvailable" xml:space="preserve">
-    <value>New Preced Available</value>
+  <data name="PrecedeAvailable" xml:space="preserve">
+    <value>New Precede Available</value>
   </data>
   <data name="PrecedeDeleteFailed" xml:space="preserve">
     <value>Unable to delete precede folder. Try deleting it manually.</value>
