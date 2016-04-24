@@ -10,9 +10,9 @@
         Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize" LocationChanged="MetroWindow_LocationChanged">
 
     <controls:MetroWindow.Resources>
-        <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:UiResources}" MethodName="GetColor" />
-        <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:UiResources}" MethodName="GetTheme" />
-        <ObjectDataProvider x:Key="License" ObjectType="{x:Type local:UiResources}" MethodName="GetMitLicense" />
+        <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:UiResources}" MethodName="GetColor"/>
+        <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:UiResources}" MethodName="GetTheme"/>
+        <ObjectDataProvider x:Key="License" ObjectType="{x:Type local:UiResources}" MethodName="GetMitLicense"/>
         <ObjectDataProvider x:Key="Settings" ObjectType="{x:Type properties:Settings}"/>
     </controls:MetroWindow.Resources>
 
@@ -21,7 +21,7 @@
             <controls:Flyout x:Name="DebugFlyout" Position="Right" Theme="Adapt" CloseButtonIsCancel="True">
                 <Grid Margin="10">
                     <StackPanel>
-                        <RichTextBox Height="300" VerticalScrollBarVisibility="Auto" />
+                        <RichTextBox Height="300" VerticalScrollBarVisibility="Auto"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" Content="Copy" Margin="5" BorderBrush="{x:Null}"></Button>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" Content="Report" Margin="5" BorderBrush="{x:Null}"></Button>
@@ -87,7 +87,7 @@
                                     <Rectangle x:Name="SettingsIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource appbar_settings}" />
+                                     Visual="{StaticResource appbar_settings}"/>
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
@@ -95,7 +95,7 @@
                                     <Rectangle x:Name="EnhancementIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource appbar_potion}" />
+                                     Visual="{StaticResource appbar_potion}"/>
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
@@ -103,7 +103,7 @@
                                     <Rectangle x:Name="OtherIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource appbar_resource}" />
+                                     Visual="{StaticResource appbar_resource}"/>
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
@@ -126,8 +126,87 @@
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="GameSettingsTabItem" IsEnabled="False">
-                        <Grid>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="GameSettingsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" VerticalAlignment="Bottom" Margin="0,0,0,70" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click"/>
+                        <Grid HorizontalAlignment="Center" Margin="0,0,0,50">
+                            <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
+                                <StackPanel Margin="10,0">
+                                    <Grid Margin="0,25,0,0">
+                                        <Label Content="Video" Foreground="{DynamicResource AccentColorBrush2}" HorizontalAlignment="Center" FontSize="22" VerticalAlignment="Top" Margin="0,-29,0,0"/>
+                                        <Rectangle Height="2" Margin="10,0">
+                                            <Rectangle.Style>
+                                                <Style TargetType="{x:Type Rectangle}">
+                                                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                                                </Style>
+                                            </Rectangle.Style>
+                                        </Rectangle>
+                                    </Grid>
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="96"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" Grid.Column="0" Content="Texture Resolution:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="1" Grid.Column="0" Content="Shader Quality:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="2" Grid.Column="0" Content="Lobby Monotor Playback:" VerticalAlignment="Top"/>
+                                        <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+                                        <Label Grid.Row="3" Grid.Column="0" Content="Window Mode:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="4" Grid.Column="0" Content="Resolution:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="5" Grid.Column="0" Content="Vsync:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="6" Grid.Column="0" Content="DPI:" VerticalAlignment="Top"/>
+                                        <ComboBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"/>
+                                    </Grid>
+
+                                    <Grid Margin="0,25,0,0">
+                                        <Label Content="Audio" Foreground="{DynamicResource AccentColorBrush2}" HorizontalAlignment="Center" FontSize="22" VerticalAlignment="Top" Margin="0,-29,0,0"/>
+                                        <Rectangle Height="2" Margin="10,0">
+                                            <Rectangle.Style>
+                                                <Style TargetType="{x:Type Rectangle}">
+                                                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                                                </Style>
+                                            </Rectangle.Style>
+                                        </Rectangle>
+                                    </Grid>
+
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="96"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" Grid.Column="0" Content="Music Volume:" VerticalAlignment="Top"/>
+                                        <Slider Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Label Grid.Row="1" Grid.Column="0" Content="Sound Effect Volume:" VerticalAlignment="Top"/>
+                                        <Slider Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Label Grid.Row="2" Grid.Column="0" Content="Voice Volume:" VerticalAlignment="Top"/>
+                                        <Slider Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Label Grid.Row="3" Grid.Column="0" Content="Video Volume:" VerticalAlignment="Top"/>
+                                        <Slider Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="GameSettingsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0,3,0,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="EnhancementsTabItem" IsEnabled="False">
@@ -208,11 +287,11 @@
                         <Label FontSize="14" FontWeight="Bold" Margin="0,5,0,0">Visual Settings</Label>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                             <Label FontSize="14">Launcher Color:</Label>
-                            <ComboBox x:Name="Colors" Width="75" SelectedValue="blue" SelectionChanged="Color_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Color}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="25,0,0,0" />
+                            <ComboBox x:Name="Colors" Width="75" SelectedValue="blue" SelectionChanged="Color_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Color}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="25,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                             <Label FontSize="14">Launcher Theme:</Label>
-                            <ComboBox x:Name="Themes" Width="75" SelectedValue="BaseDark" SelectionChanged="Theme_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Theme}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="16,0,0,0" />
+                            <ComboBox x:Name="Themes" Width="75" SelectedValue="BaseDark" SelectionChanged="Theme_OnSelectionChanged"  ItemsSource="{Binding Source={StaticResource Theme}}" SelectedValuePath="Value" DisplayMemberPath="Key" Height="10" Margin="16,0,0,0"/>
                         </StackPanel>
                         <Label FontSize="14" FontWeight="Bold" Margin="0,5,0,0">Launch Settings</Label>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
@@ -221,8 +300,8 @@
                                 <Label FontSize="14" Margin="0,6,0,0">Always on top:</Label>
                             </StackPanel>
                             <StackPanel Orientation="Vertical" Margin="0,0,0,0">
-                                <controls:ToggleSwitch x:Name="Launch" Margin="16,0,0,0" Checked="Launch_Changed" Unchecked="Launch_Changed" IsChecked="{Binding CloseOnLaunch, Mode=OneTime, Source={StaticResource Settings}}" />
-                                <controls:ToggleSwitch x:Name="AlwaysOnTop" Margin="16,0,0,0" Checked="AlwaysOnTop_Changed" Unchecked="AlwaysOnTop_Changed" IsChecked="{Binding AlwaysOnTop, Mode=OneTime, Source={StaticResource Settings}}" />
+                                <controls:ToggleSwitch x:Name="Launch" Margin="16,0,0,0" Checked="Launch_Changed" Unchecked="Launch_Changed" IsChecked="{Binding CloseOnLaunch, Mode=OneTime, Source={StaticResource Settings}}"/>
+                                <controls:ToggleSwitch x:Name="AlwaysOnTop" Margin="16,0,0,0" Checked="AlwaysOnTop_Changed" Unchecked="AlwaysOnTop_Changed" IsChecked="{Binding AlwaysOnTop, Mode=OneTime, Source={StaticResource Settings}}"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -230,11 +309,11 @@
             </TabItem>
             <TabItem Header="About" controls:ControlsHelper.HeaderFontSize="21">
                 <Grid Margin="10">
-                    <Label Content="License" VerticalAlignment="Top" FontSize="24" />
+                    <Label Content="License" VerticalAlignment="Top" FontSize="24"/>
                     <ScrollViewer VerticalAlignment="Top" Height="137" Margin="0,46,0,0">
                         <TextBlock Text="{Binding Mode=OneWay}" TextWrapping="Wrap"/>
                     </ScrollViewer>
-                    <Label Content="Software Used by Dogstar" VerticalAlignment="Bottom" Margin="0,0,0,200" FontSize="24" />
+                    <Label Content="Software Used by Dogstar" VerticalAlignment="Bottom" Margin="0,0,0,200" FontSize="24"/>
                     <ScrollViewer VerticalAlignment="Bottom" Height="137" Margin="0,0,0,61">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -249,38 +328,38 @@
                                 <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="229*"/>
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="0" Grid.Row="0" Source="http://www.newtonsoft.com/content/images/nugeticon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Image Grid.Column="0" Grid.Row="0" Source="http://www.newtonsoft.com/content/images/nugeticon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">  
                                 Newtonsoft.Json<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/JamesNK/Newtonsoft.Json">View source</Hyperlink>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md">View license</Hyperlink>
                             </TextBlock>
-                            <Image Grid.Column="0" Grid.Row="1" Source="https://raw.github.com/Fody/Fody/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Image Grid.Column="0" Grid.Row="1" Source="https://raw.github.com/Fody/Fody/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">  
                                 Fody<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Fody/Fody">View source</Hyperlink>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://opensource.org/licenses/mit-license.php">View license</Hyperlink>
                             </TextBlock>
-                            <Image Grid.Column="0" Grid.Row="2" Source="https://raw.github.com/Fody/Costura/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Image Grid.Column="0" Grid.Row="2" Source="https://raw.github.com/Fody/Costura/master/Icons/package_icon.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="2" VerticalAlignment="Center">  
                                 Costura.Fody<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/Fody/Costura">View source</Hyperlink>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://opensource.org/licenses/mit-license.php">View license</Hyperlink>
                             </TextBlock>
-                            <Image Grid.Column="0" Grid.Row="3" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Image Grid.Column="0" Grid.Row="3" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">  
                                 MahApps.Metro<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/MahApps/MahApps.Metro">View source</Hyperlink>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://opensource.org/licenses/MS-PL">View license</Hyperlink>
                             </TextBlock>
-                            <Image Grid.Column="0" Grid.Row="4" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64" />
+                            <Image Grid.Column="0" Grid.Row="4" Source="https://raw.githubusercontent.com/MahApps/MahApps.Metro/master/mahapps.metro.logo2.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="4" VerticalAlignment="Center">  
                                 MahApps.Metro.Resources<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.nuget.org/packages/MahApps.Metro.Resources/">View package and authors</Hyperlink>
                             </TextBlock>
                             <Rectangle Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Top"  Height="64" Width="64">
                                 <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_book_perspective_help}" />
+                                    <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_book_perspective_help}"/>
                                 </Rectangle.OpacityMask>
                                 <Rectangle.Style>
                                     <Style TargetType="{x:Type Rectangle}">
@@ -315,7 +394,7 @@
 
                     <Rectangle Margin="150,372,140,66" RenderTransformOrigin="0.024,0.548">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{StaticResource appbar_arrow_right}" />
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
                         </Rectangle.OpacityMask>
                         <Rectangle.Effect>
                             <DropShadowEffect/>
@@ -337,7 +416,7 @@
 
                     <Rectangle Margin="241,361,43,73" RenderTransformOrigin="0.003,0.535">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{StaticResource appbar_arrow_right}" />
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
                         </Rectangle.OpacityMask>
                         <Rectangle.Effect>
                             <DropShadowEffect/>
@@ -359,7 +438,7 @@
 
                     <Rectangle Margin="46,360,206,76" RenderTransformOrigin="0.019,0.505">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{StaticResource appbar_arrow_right}" />
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
                         </Rectangle.OpacityMask>
                         <Rectangle.Effect>
                             <DropShadowEffect/>
@@ -379,16 +458,16 @@
                         </Rectangle.Style>
                     </Rectangle>
 
-                    <Label Content="Tweet at @DogstarTeam." VerticalAlignment="Center" Margin="98,337,92,85" />
-                    <Label Content="Live chat on IRC." VerticalAlignment="Center" Margin="227,319,6,103" />
-                    <Label Content="Report a bug on Github." VerticalAlignment="Center" Margin="-1,311,193,111" />
+                    <Label Content="Tweet at @DogstarTeam." VerticalAlignment="Center" Margin="98,337,92,85"/>
+                    <Label Content="Live chat on IRC." VerticalAlignment="Center" Margin="227,319,6,103"/>
+                    <Label Content="Report a bug on Github." VerticalAlignment="Center" Margin="-1,311,193,111"/>
                 </Grid>
             </TabItem>
         </TabControl>
 
         <Rectangle x:Name="Debug" Height="40" Width="40" Margin="67,451,245,18" MouseDown="Debug_MouseDown" ToolTip="Debug Window">
             <Rectangle.OpacityMask>
-                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_bug_remove}" />
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_bug_remove}"/>
             </Rectangle.OpacityMask>
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
@@ -403,7 +482,7 @@
         </Rectangle>
         <Rectangle x:Name="Github" Height="40" Width="40" Margin="110,449,202,20" MouseDown="Github_MouseDown" ToolTip="Dogstar Source Code">
             <Rectangle.OpacityMask>
-                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_social_github_octocat_solid}" />
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_social_github_octocat_solid}"/>
             </Rectangle.OpacityMask>
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
@@ -419,7 +498,7 @@
         <Rectangle x:Name="Twitter" Height="40" Width="40" Margin="155,449,157,20" MouseDown="Twitter_MouseDown" ToolTip="TeamDogstar Twitter Account">
             <Rectangle.OpacityMask>
                 <VisualBrush Stretch="Uniform"
-        			Visual="{StaticResource appbar_twitter_bird}" />
+        			Visual="{StaticResource appbar_twitter_bird}"/>
             </Rectangle.OpacityMask>
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
@@ -435,7 +514,7 @@
         <Rectangle x:Name="Donate" Height="40" Width="40" Margin="202,447,110,22" MouseDown="Donate_MouseDown" ToolTip="Donate">
             <Rectangle.OpacityMask>
                 <VisualBrush Stretch="Uniform"
-        			Visual="{StaticResource appbar_money}" />
+        			Visual="{StaticResource appbar_money}"/>
             </Rectangle.OpacityMask>
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
@@ -451,7 +530,7 @@
         <Rectangle x:Name="Information" Height="40" Width="40" Margin="249,445,63,24" MouseDown="Information_MouseDown" ToolTip="Get Information On IRC">
             <Rectangle.OpacityMask>
                 <VisualBrush Stretch="Uniform"
-        			Visual="{StaticResource appbar_information_circle}" />
+        			Visual="{StaticResource appbar_information_circle}"/>
             </Rectangle.OpacityMask>
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
