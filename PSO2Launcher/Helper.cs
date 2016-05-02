@@ -142,11 +142,18 @@ namespace Dogstar
 
 		public static void SetTweakerRemoteVersion(string version)
 		{
-			using (var regkey = Registry.CurrentUser.OpenSubKey(@"Software\AIDA"))
+			using (var regkey = Registry.CurrentUser.OpenSubKey(@"Software\AIDA", true))
 			{
 				if (regkey?.GetValue("PSO2RemoteVersion") != null)
 				{
-					regkey.SetValue("PSO2RemoteVersion", version);
+					try
+					{
+						regkey.SetValue("PSO2RemoteVersion", version);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
 				}
 			}
 		}

@@ -712,7 +712,8 @@ namespace Dogstar
 						File.WriteAllText(LauncherListPath, launcherlist);
 						File.WriteAllText(PatchListPath, newlist);
 						File.WriteAllText(PatchListOldPath, oldlist);
-						SetTweakerRemoteVersion(File.ReadAllText(VersionPath));
+						if (File.Exists(VersionPath))
+							SetTweakerRemoteVersion(File.ReadAllText(VersionPath));
 					});
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
