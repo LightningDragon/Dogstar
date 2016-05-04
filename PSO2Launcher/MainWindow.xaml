@@ -260,10 +260,12 @@
                                         <RowDefinition Height="45"/>
                                         <RowDefinition Height="45"/>
                                         <RowDefinition Height="45"/>
+                                        <RowDefinition Height="45"/>
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
-                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherChangeGameDir" Content="Change game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherChangeGameDir_Click" VerticalAlignment="Top"/>
-                                    <Button Grid.Row="2" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherOpenGameDir" Content="Open game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherOpenGameDir_Click"/>
+                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherInstallGame" Content="Install Game" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherInstallGame_Click"/>
+                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
+                                    <Button Grid.Row="2" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherChangeGameDir" Content="Change game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherChangeGameDir_Click" VerticalAlignment="Top"/>
+                                    <Button Grid.Row="3" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherOpenGameDir" Content="Open game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherOpenGameDir_Click"/>
                                 </Grid>
                             </ScrollViewer>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0,3,0,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>

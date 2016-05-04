@@ -35,7 +35,6 @@ namespace Dogstar
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
 	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
-	// TODO: Change "Check Files" to "Install Game" if you click no when it asks to install
 
 	public partial class MainWindow : IDisposable
 	{
@@ -105,10 +104,15 @@ namespace Dogstar
 
 		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start(Settings.Default.GameFolder);
 
+		private async void OtherInstallGame_Click(object sender, RoutedEventArgs e) => await SetupGameInfo();
+
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_lastTop = Top;
 			_lastLeft = Left;
+
+			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
+			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
 
 			if (!Settings.Default.IsGameInstalled)
 			{
@@ -845,6 +849,9 @@ namespace Dogstar
 			{
 				await SelectGameFolder();
 			}
+
+			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
+			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
 		}
 
 		private async Task SelectGameFolder()
