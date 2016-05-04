@@ -724,6 +724,7 @@ namespace Dogstar
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
 					manager.CancelDownloads();
+					_gameTabController.PreviousTab();
 					return false;
 				}
 
