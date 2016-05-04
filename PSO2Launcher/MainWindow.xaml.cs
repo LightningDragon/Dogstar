@@ -35,6 +35,8 @@ namespace Dogstar
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
 	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
+	// TODO: Disable all the things that stuff if game.
+	// TODO: Fix all them WIN7 UIs
 
 	public partial class MainWindow : IDisposable
 	{
