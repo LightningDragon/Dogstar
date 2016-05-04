@@ -802,8 +802,9 @@ namespace Dogstar
 					Settings.Default.GameFolder = path;
 					Settings.Default.IsGameInstalled = true;
 					Settings.Default.Save();
-					return true;
 				}
+
+				return true;
 			}
 			catch (Exception)
 			{
