@@ -152,63 +152,63 @@ namespace Dogstar
 						await SetupGameInfo();
 					}
 				}
+
+				var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
+
+				if (File.Exists(editionPath))
+				{
+					var edition = await Task.Run(() => File.ReadAllText(editionPath));
+
+					if (edition != "jp")
+					{
+						await this.ShowMessageAsync(Text.Warning, Text.NonJPPSO2);
+					}
+				}
+
+				if (!await IsGameUpToDate())
+				{
+					var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
+
+					if (result == MessageDialogResult.Affirmative)
+					{
+						await CheckGameFiles(UpdateMethod.Update);
+					}
+				}
+				else
+				{
+					SetPatchToggleSwitches();
+
+					if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
+					{
+						var files = (JArray)(await GetArghlexJson()).files;
+						dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
+						dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
+
+						if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
+						{
+							_gameTabController.ChangeTab(GeneralDownloadTab);
+							await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
+							_gameTabController.PreviousTab();
+						}
+						if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
+						{
+							_gameTabController.ChangeTab(GeneralDownloadTab);
+							await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
+							_gameTabController.PreviousTab();
+						}
+					}
+				}
+
+				if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+				{
+					var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
+					_isPrecedeDownloading = true;
+					precedeWindow.Show();
+					precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
+				}
 			}
 
 			Settings.Default.Save();
-
-			var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
-
-			if (File.Exists(editionPath))
-			{
-				var edition = await Task.Run(() => File.ReadAllText(editionPath));
-
-				if (edition != "jp")
-				{
-					await this.ShowMessageAsync(Text.Warning, Text.NonJPPSO2);
-				}
-			}
-
-			if (!await IsGameUpToDate())
-			{
-				var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
-
-				if (result == MessageDialogResult.Affirmative)
-				{
-					await CheckGameFiles(UpdateMethod.Update);
-				}
-			}
-			else
-			{
-				SetPatchToggleSwitches();
-
-				if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
-				{
-					var files = (JArray)(await GetArghlexJson()).files;
-					dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
-					dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
-
-					if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
-					{
-						_gameTabController.ChangeTab(GeneralDownloadTab);
-						await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
-						_gameTabController.PreviousTab();
-					}
-					if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
-					{
-						_gameTabController.ChangeTab(GeneralDownloadTab);
-						await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
-						_gameTabController.PreviousTab();
-					}
-				}
-			}
-
-			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
-			{
-				var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
-				_isPrecedeDownloading = true;
-				precedeWindow.Show();
-				precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
-			}
 		}
 
 		private void MetroWindow_LocationChanged(object sender, EventArgs e)
@@ -722,7 +722,6 @@ namespace Dogstar
 					return false;
 				}
 
-				return true;
 			}
 
 			if (GameTabItem.IsSelected)
@@ -739,6 +738,8 @@ namespace Dogstar
 			}
 
 			_gameTabController.PreviousTab();
+
+			return true;
 		}
 
 		public async Task<bool> ConfigProxy()
