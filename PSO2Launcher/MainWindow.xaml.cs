@@ -491,7 +491,7 @@ namespace Dogstar
 			GeneralDownloadProgressbar.IsIndeterminate = value;
 		}
 
-		private async Task CheckGameFiles(UpdateMethod method)
+		private async Task<bool> CheckGameFiles(UpdateMethod method)
 		{
 			_gameTabController.ChangeTab(FileCheckTabItem);
 
@@ -719,7 +719,10 @@ namespace Dogstar
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
 					manager.CancelDownloads();
+					return false;
 				}
+
+				return true;
 			}
 
 			if (GameTabItem.IsSelected)
@@ -793,19 +796,23 @@ namespace Dogstar
 			try
 			{
 				CreateDirectoryIfNoneExists(path);
-				Settings.Default.GameFolder = path;
-				Settings.Default.IsGameInstalled = true;
-				await CheckGameFiles(UpdateMethod.FileCheck);
-				Settings.Default.Save();
-				return true;
+
+				if (await CheckGameFiles(UpdateMethod.FileCheck))
+				{
+					Settings.Default.GameFolder = path;
+					Settings.Default.IsGameInstalled = true;
+					Settings.Default.Save();
+					return true;
+				}
 			}
 			catch (Exception)
 			{
 				Settings.Default.GameFolder = string.Empty;
 				Settings.Default.IsGameInstalled = false;
 				Settings.Default.Save();
-				return false;
 			}
+
+			return false;
 		}
 
 		private async Task SetupGameInfo()
