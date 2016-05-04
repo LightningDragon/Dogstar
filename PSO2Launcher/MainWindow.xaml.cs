@@ -35,6 +35,7 @@ namespace Dogstar
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
 	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
+	// TODO: Change "Check Files" to "Install Game" if you click no when it asks to install
 
 	public partial class MainWindow : IDisposable
 	{
@@ -797,10 +798,10 @@ namespace Dogstar
 			try
 			{
 				CreateDirectoryIfNoneExists(path);
+				Settings.Default.GameFolder = path;
 
 				if (await CheckGameFiles(UpdateMethod.FileCheck))
 				{
-					Settings.Default.GameFolder = path;
 					Settings.Default.IsGameInstalled = true;
 					Settings.Default.Save();
 				}
