@@ -39,7 +39,7 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-				var match = Regex.Match(_data, $"\\s*{name}\\s*=\\s*{{*\"*(.+)\"*}}*,");
+				var match = Regex.Match(_data, $@"\s*{name}\s*=\s*{{*""*(.+)""*}}*,");
 				return (T)Convert.ChangeType(match.Groups[1].Value, typeof(T));
 			}
 			catch
@@ -53,10 +53,11 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-				_data = Regex.Replace(_data, $"(?<start>\\s*{name}\\s*=\\s*{{*\"*).+(?<end>\"*}}*,)", $"${{start}}{value}${{end}}");
+				_data = Regex.Replace(_data, $@"(?<start>\s*{name}\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
 			}
 			catch
 			{
+				// ignored
 			}
 		}
 
