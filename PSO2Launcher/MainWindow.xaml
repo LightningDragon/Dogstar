@@ -155,7 +155,11 @@
                                             <ColumnDefinition Width="96"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Grid.Row="0" Grid.Column="0" Content="Texture Resolution:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="TextureComboBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="TextureComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="Low" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="Medium" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="High" HorizontalAlignment="Left" Width="94"/>
+                                        </ComboBox>
                                         <Label Grid.Row="1" Grid.Column="0" Content="Shader Quality:" VerticalAlignment="Top"/>
                                         <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
                                         <Label Grid.Row="2" Grid.Column="0" Content="Lobby Monitor Playback:" VerticalAlignment="Top"/>

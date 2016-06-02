@@ -462,42 +462,58 @@ namespace Dogstar
 			// TODO: Variant here's your button have fun.
 		}
 
-		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
+		private async void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
 		{
+			await PsoSettings.Reload();
+
+			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
 			WindowModeComboBox.SelectedIndex = Convert.ToInt32(PsoSettings.FullScreen) + Convert.ToInt32(PsoSettings.VirtualFullScreen);
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
+			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
 		}
 
-		private void VsyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private async void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (IsLoaded)
+			{
+				PsoSettings.TextureResolution = TextureComboBox.SelectedIndex;
+				await PsoSettings.Save();
+			}
+		}
+
+		private async void VsyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
 				PsoSettings.Vsync = ((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0");
-				PsoSettings.Save();
+				await PsoSettings.Save();
 			}
 		}
 
-		private void WindowModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private async void WindowModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
 				var index = WindowModeComboBox.SelectedIndex;
 				PsoSettings.FullScreen = index != 0;
 				PsoSettings.VirtualFullScreen = index == 2;
-				PsoSettings.Save();
+				await PsoSettings.Save();
 			}
 		}
 
-		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
+		private async void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
+			await PsoSettings.Save();
 		}
 
-		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		private async void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
+			await PsoSettings.Save();
 		}
+
 		#endregion
 
 		#region Functions
@@ -1049,5 +1065,6 @@ namespace Dogstar
 			_generalDownloadManager.Dispose();
 		}
 		#endregion Functions
+
 	}
 }
