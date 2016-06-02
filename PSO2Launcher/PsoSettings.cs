@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Dogstar.Helper;
@@ -80,6 +81,18 @@ namespace Dogstar
 			set { Cashe["Se"] = value; }
 		}
 
+		public static dynamic WindowHight
+		{
+			get { return Get<int>("Windows.Height"); }
+			set { Cashe["Windows.Height"] = value; }
+		}
+
+		public static dynamic WindowWidth
+		{
+			get { return Get<int>("Windows.Width"); }
+			set { Cashe["Windows.Width"] = value; }
+		}
+
 		private static T Get<T>(string name)
 		{
 			try
@@ -102,7 +115,15 @@ namespace Dogstar
 		private static string GetValue(string name)
 		{
 			LoadCheck();
-			var match = Regex.Match(_data, $@"\s*{name}\s*=\s*{{*""*(.+)""*}}*,");
+			var data = _data;
+			var subStrings = name.Split('.');
+
+			for (int index = 1; index < subStrings.Length; index++)
+			{
+				data = Regex.Match(data, $"{subStrings[index - 1]}.+", RegexOptions.Singleline).Value;
+			}
+
+			var match = Regex.Match(data, $@"\s*{subStrings.Last()}\s*=\s*{{*""*(.+)""*}}*,");
 			return match.Groups[1].Value;
 		}
 
@@ -111,7 +132,25 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-				_data = Regex.Replace(_data, $@"(?<start>\s*{name}\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
+				var result = _data;
+				var subStrings = name.Split('.');
+				var replacementTrace = new string[subStrings.Length];
+
+				for (int index = 1; index < subStrings.Length; index++)
+				{
+					replacementTrace[index - 1] = result;
+					result = Regex.Match(result, $"{subStrings[index - 1]}.+", RegexOptions.Singleline).Value;
+				}
+
+				replacementTrace[replacementTrace.Length - 1] = result;
+				result = Regex.Replace(result, $@"(?<start>\s*{subStrings.Last()}\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
+
+				for (int index = replacementTrace.Length - 1; index > 0; index--)
+				{
+					result = replacementTrace[index - 1].Replace(replacementTrace[index], result);
+				}
+
+				_data = result;
 			}
 			catch
 			{

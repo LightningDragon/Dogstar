@@ -110,6 +110,8 @@ namespace Dogstar
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			PsoSettings.Vsync = 60;
+			await PsoSettings.Save();
 			_lastTop = Top;
 			_lastLeft = Left;
 
@@ -533,29 +535,13 @@ namespace Dogstar
 			await PsoSettings.Save();
 		}
 
-		private async void MusicSlider_DragLeave(object sender, DragEventArgs e)
-		{
-			PsoSettings.Music = MusicSlider.Value;
-			await PsoSettings.Save();
-		}
+		private void MusicSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Music = (int)MusicSlider.Value;
 
-		private async void SoundSlider_DragLeave(object sender, DragEventArgs e)
-		{
-			PsoSettings.Sound = SoundSlider.Value;
-			await PsoSettings.Save();
-		}
+		private void SoundSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Sound = (int)SoundSlider.Value;
 
-		private async void VoiceSlider_DragLeave(object sender, DragEventArgs e)
-		{
-			PsoSettings.Voice = VoiceSlider.Value;
-			await PsoSettings.Save();
-		}
+		private void VoiceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Voice = (int)VoiceSlider.Value;
 
-		private async void VideoSlider_DragLeave(object sender, DragEventArgs e)
-		{
-			PsoSettings.Video = VideoSlider.Value;
-			await PsoSettings.Save();
-		}
+		private void VideoSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Video = (int)VideoSlider.Value;
 
 		#endregion
 

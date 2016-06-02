@@ -214,13 +214,13 @@
                                             <ColumnDefinition Width="96"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Grid.Row="0" Grid.Column="0" Content="Music Volume:" VerticalAlignment="Top"/>
-                                        <Slider x:Name="MusicSlider" Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="MusicSlider_DragLeave"/>
+                                        <Slider x:Name="MusicSlider" Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="MusicSlider_ValueChanged"/>
                                         <Label Grid.Row="1" Grid.Column="0" Content="Sound Effect Volume:" VerticalAlignment="Top"/>
-                                        <Slider x:Name="SoundSlider" Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="SoundSlider_DragLeave"/>
+                                        <Slider x:Name="SoundSlider" Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="SoundSlider_ValueChanged"/>
                                         <Label Grid.Row="2" Grid.Column="0" Content="Voice Volume:" VerticalAlignment="Top"/>
-                                        <Slider x:Name="VoiceSlider" Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="VoiceSlider_DragLeave"/>
+                                        <Slider x:Name="VoiceSlider" Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="VoiceSlider_ValueChanged"/>
                                         <Label Grid.Row="3" Grid.Column="0" Content="Video Volume:" VerticalAlignment="Top"/>
-                                        <Slider x:Name="VideoSlider" Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="VideoSlider_DragLeave"/>
+                                        <Slider x:Name="VideoSlider" Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="VideoSlider_ValueChanged"/>
                                     </Grid>
                                 </StackPanel>
                             </ScrollViewer>
