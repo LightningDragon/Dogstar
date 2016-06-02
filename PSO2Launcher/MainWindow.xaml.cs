@@ -466,7 +466,7 @@ namespace Dogstar
 		{
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
 			WindowModeComboBox.SelectedIndex = Convert.ToInt32(PsoSettings.FullScreen) + Convert.ToInt32(PsoSettings.VirtualFullScreen);
-			MonotorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
+			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 		}
 
 		private void VsyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -489,12 +489,12 @@ namespace Dogstar
 			}
 		}
 
-		private void MonotorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
+		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
 		}
 
-		private void MonotorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
 		}
