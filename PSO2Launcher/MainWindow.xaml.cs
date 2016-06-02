@@ -35,6 +35,8 @@ namespace Dogstar
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
 	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
+	// TODO: Disable all the things that stuff if game.
+	// TODO: Fix all them WIN7 UIs
 
 	public partial class MainWindow : IDisposable
 	{
@@ -104,10 +106,15 @@ namespace Dogstar
 
 		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start(Settings.Default.GameFolder);
 
+		private async void OtherInstallGame_Click(object sender, RoutedEventArgs e) => await SetupGameInfo();
+
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_lastTop = Top;
 			_lastLeft = Left;
+
+			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
+			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
 
 			if (!Settings.Default.IsGameInstalled)
 			{
@@ -152,63 +159,63 @@ namespace Dogstar
 						await SetupGameInfo();
 					}
 				}
+
+				var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
+
+				if (File.Exists(editionPath))
+				{
+					var edition = await Task.Run(() => File.ReadAllText(editionPath));
+
+					if (edition != "jp")
+					{
+						await this.ShowMessageAsync(Text.Warning, Text.NonJPPSO2);
+					}
+				}
+
+				if (!await IsGameUpToDate())
+				{
+					var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
+
+					if (result == MessageDialogResult.Affirmative)
+					{
+						await CheckGameFiles(UpdateMethod.Update);
+					}
+				}
+				else
+				{
+					SetPatchToggleSwitches();
+
+					if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
+					{
+						var files = (JArray)(await GetArghlexJson()).files;
+						dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
+						dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
+
+						if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
+						{
+							_gameTabController.ChangeTab(GeneralDownloadTab);
+							await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
+							_gameTabController.PreviousTab();
+						}
+						if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
+						{
+							_gameTabController.ChangeTab(GeneralDownloadTab);
+							await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
+							_gameTabController.PreviousTab();
+						}
+					}
+				}
+
+				if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+				{
+					var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
+					_isPrecedeDownloading = true;
+					precedeWindow.Show();
+					precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
+				}
 			}
 
 			Settings.Default.Save();
-
-			var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
-
-			if (File.Exists(editionPath))
-			{
-				var edition = await Task.Run(() => File.ReadAllText(editionPath));
-
-				if (edition != "jp")
-				{
-					await this.ShowMessageAsync(Text.Warning, Text.NonJPPSO2);
-				}
-			}
-
-			if (!await IsGameUpToDate())
-			{
-				var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
-
-				if (result == MessageDialogResult.Affirmative)
-				{
-					await CheckGameFiles(UpdateMethod.Update);
-				}
-			}
-			else
-			{
-				SetPatchToggleSwitches();
-
-				if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
-				{
-					var files = (JArray)(await GetArghlexJson()).files;
-					dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
-					dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
-
-					if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
-					{
-						_gameTabController.ChangeTab(GeneralDownloadTab);
-						await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
-						_gameTabController.PreviousTab();
-					}
-					if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
-					{
-						_gameTabController.ChangeTab(GeneralDownloadTab);
-						await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
-						_gameTabController.PreviousTab();
-					}
-				}
-			}
-
-			if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
-			{
-				var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
-				_isPrecedeDownloading = true;
-				precedeWindow.Show();
-				precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
-			}
 		}
 
 		private void MetroWindow_LocationChanged(object sender, EventArgs e)
@@ -757,10 +764,10 @@ namespace Dogstar
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
 					manager.CancelDownloads();
+					_gameTabController.PreviousTab();
 					return false;
 				}
 
-				return true;
 			}
 
 			if (GameTabItem.IsSelected)
@@ -777,6 +784,8 @@ namespace Dogstar
 			}
 
 			_gameTabController.PreviousTab();
+
+			return true;
 		}
 
 		public async Task<bool> ConfigProxy()
@@ -834,10 +843,10 @@ namespace Dogstar
 			try
 			{
 				CreateDirectoryIfNoneExists(path);
+				Settings.Default.GameFolder = path;
 
 				if (await CheckGameFiles(UpdateMethod.FileCheck))
 				{
-					Settings.Default.GameFolder = path;
 					Settings.Default.IsGameInstalled = true;
 					Settings.Default.Save();
 				}
@@ -881,6 +890,9 @@ namespace Dogstar
 			{
 				await SelectGameFolder();
 			}
+
+			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
+			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
 		}
 
 		private async Task SelectGameFolder()
