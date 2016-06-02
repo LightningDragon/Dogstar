@@ -53,7 +53,7 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-			_data = Regex.Replace(_data, $"(?<start>\\s*{name}\\s*=\\s*{{*\"*).+(?<end>\"*}}*,)", $"${{start}}{value}${{end}}");
+				_data = Regex.Replace(_data, $"(?<start>\\s*{name}\\s*=\\s*{{*\"*).+(?<end>\"*}}*,)", $"${{start}}{value}${{end}}");
 			}
 			catch
 			{

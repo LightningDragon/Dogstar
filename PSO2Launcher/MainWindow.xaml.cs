@@ -473,7 +473,7 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.Vsync = ((dynamic) VsyncComboBox.SelectedValue).Content.Replace("Off", "0");
+				PsoSettings.Vsync = ((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0");
 				PsoSettings.Save();
 			}
 		}
