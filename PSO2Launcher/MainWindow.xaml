@@ -125,7 +125,7 @@
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="160,245,24,109" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="GameSettingsTabItem" IsEnabled="False">
+                    <TabItem x:Name="GameSettingsTabItem" IsEnabled="False" Selector.Selected="GameSettingsTabItem_OnSelected">
                         <Grid HorizontalAlignment="Center" Margin="0,0,0,50">
                             <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
                                 <StackPanel Margin="10,0">
@@ -159,13 +159,23 @@
                                         <Label Grid.Row="1" Grid.Column="0" Content="Shader Quality:" VerticalAlignment="Top"/>
                                         <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
                                         <Label Grid.Row="2" Grid.Column="0" Content="Lobby Monotor Playback:" VerticalAlignment="Top"/>
-                                        <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+                                        <CheckBox x:Name="MonotorPlaybackCheckBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Checked="MonotorPlaybackCheckBox_Checked" Unchecked="MonotorPlaybackCheckBox_Unchecked"/>
                                         <Label Grid.Row="3" Grid.Column="0" Content="Window Mode:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="WindowModeComboBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="WindowModeComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="Windowed" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="Fullscreen" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="Virtual Fullscreen" HorizontalAlignment="Left" Width="94"/>
+                                        </ComboBox>
                                         <Label Grid.Row="4" Grid.Column="0" Content="Resolution:" VerticalAlignment="Top"/>
                                         <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
                                         <Label Grid.Row="5" Grid.Column="0" Content="Vsync:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="VsyncComboBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Top" SelectedIndex="0" SelectionChanged="VsyncComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="Off" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="30" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="60" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="90" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="120" HorizontalAlignment="Left" Width="94"/>
+                                        </ComboBox>
                                         <Label Grid.Row="6" Grid.Column="0" Content="DPI:" VerticalAlignment="Top"/>
                                         <ComboBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"/>
                                     </Grid>
