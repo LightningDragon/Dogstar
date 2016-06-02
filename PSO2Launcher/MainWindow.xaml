@@ -125,7 +125,7 @@
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="152,252,32,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="GameSettingsTabItem" IsEnabled="False" Selector.Selected="GameSettingsTabItem_OnSelected">
+                    <TabItem x:Name="GameSettingsTabItem" IsEnabled="False" Selector.Selected="GameSettingsTabItem_OnSelected" Selector.Unselected="GameSettingsTabItem_OnUnSelected">
                         <Grid HorizontalAlignment="Center" Margin="0,0,0,50">
                             <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
                                 <StackPanel Margin="10,0">
@@ -173,15 +173,19 @@
                                         <Label Grid.Row="4" Grid.Column="0" Content="Resolution:" VerticalAlignment="Top"/>
                                         <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
                                         <Label Grid.Row="5" Grid.Column="0" Content="Vsync:" VerticalAlignment="Top"/>
-                                        <ComboBox x:Name="VsyncComboBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Top" SelectedIndex="0" SelectionChanged="VsyncComboBox_SelectionChanged">
+                                        <ComboBox x:Name="VsyncComboBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="VsyncComboBox_SelectionChanged">
                                             <ComboBoxItem Content="Off" HorizontalAlignment="Left" Width="94"/>
                                             <ComboBoxItem Content="30" HorizontalAlignment="Left" Width="94"/>
                                             <ComboBoxItem Content="60" HorizontalAlignment="Left" Width="94"/>
                                             <ComboBoxItem Content="90" HorizontalAlignment="Left" Width="94"/>
                                             <ComboBoxItem Content="120" HorizontalAlignment="Left" Width="94"/>
                                         </ComboBox>
-                                        <Label Grid.Row="6" Grid.Column="0" Content="DPI:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <Label Grid.Row="6" Grid.Column="0" Content="Interface Size:" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="InterfaceSizeComboBox" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="InterfaceSizeComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="1x" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="1.25x" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="1.5x" HorizontalAlignment="Left" Width="94"/>
+                                        </ComboBox>
                                     </Grid>
 
                                     <Grid Margin="0,25,0,0">
@@ -210,13 +214,13 @@
                                             <ColumnDefinition Width="96"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Grid.Row="0" Grid.Column="0" Content="Music Volume:" VerticalAlignment="Top"/>
-                                        <Slider Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Slider x:Name="MusicSlider" Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="MusicSlider_DragLeave"/>
                                         <Label Grid.Row="1" Grid.Column="0" Content="Sound Effect Volume:" VerticalAlignment="Top"/>
-                                        <Slider Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Slider x:Name="SoundSlider" Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="SoundSlider_DragLeave"/>
                                         <Label Grid.Row="2" Grid.Column="0" Content="Voice Volume:" VerticalAlignment="Top"/>
-                                        <Slider Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Slider x:Name="VoiceSlider" Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="VoiceSlider_DragLeave"/>
                                         <Label Grid.Row="3" Grid.Column="0" Content="Video Volume:" VerticalAlignment="Top"/>
-                                        <Slider Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10"/>
+                                        <Slider x:Name="VideoSlider" Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" TickFrequency="10" DragLeave="VideoSlider_DragLeave"/>
                                     </Grid>
                                 </StackPanel>
                             </ScrollViewer>

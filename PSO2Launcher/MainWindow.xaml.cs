@@ -471,6 +471,16 @@ namespace Dogstar
 			WindowModeComboBox.SelectedIndex = Convert.ToInt32(PsoSettings.FullScreen) + Convert.ToInt32(PsoSettings.VirtualFullScreen);
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
+			InterfaceSizeComboBox.SelectedIndex = PsoSettings.InterfaceSize;
+			MusicSlider.Value = PsoSettings.Music;
+			SoundSlider.Value = PsoSettings.Sound;
+			VoiceSlider.Value = PsoSettings.Voice;
+			VideoSlider.Value = PsoSettings.Video;
+	}
+
+		private async void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+		{
+			await PsoSettings.Save();
 		}
 
 		private async void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -502,6 +512,15 @@ namespace Dogstar
 			}
 		}
 
+		private async void InterfaceSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (IsLoaded)
+			{
+				PsoSettings.InterfaceSize = InterfaceSizeComboBox.SelectedIndex;
+				await PsoSettings.Save();
+			}
+		}
+
 		private async void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
@@ -511,6 +530,30 @@ namespace Dogstar
 		private async void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
+			await PsoSettings.Save();
+		}
+
+		private async void MusicSlider_DragLeave(object sender, DragEventArgs e)
+		{
+			PsoSettings.Music = MusicSlider.Value;
+			await PsoSettings.Save();
+		}
+
+		private async void SoundSlider_DragLeave(object sender, DragEventArgs e)
+		{
+			PsoSettings.Sound = SoundSlider.Value;
+			await PsoSettings.Save();
+		}
+
+		private async void VoiceSlider_DragLeave(object sender, DragEventArgs e)
+		{
+			PsoSettings.Voice = VoiceSlider.Value;
+			await PsoSettings.Save();
+		}
+
+		private async void VideoSlider_DragLeave(object sender, DragEventArgs e)
+		{
+			PsoSettings.Video = VideoSlider.Value;
 			await PsoSettings.Save();
 		}
 

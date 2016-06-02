@@ -50,6 +50,36 @@ namespace Dogstar
 			set { Cashe["TextureResolution"] = value; }
 		}
 
+		public static dynamic InterfaceSize
+		{
+			get { return Get<int>("InterfaceSize"); }
+			set { Cashe["InterfaceSize"] = value; }
+		}
+
+		public static dynamic Music
+		{
+			get { return Get<int>("Bgm"); }
+			set { Cashe["Bgm"] = value; }
+		}
+
+		public static dynamic Voice
+		{
+			get { return Get<int>("Voice"); }
+			set { Cashe["Voice"] = value; }
+		}
+
+		public static dynamic Video
+		{
+			get { return Get<int>("Movie"); }
+			set { Cashe["Movie"] = value; }
+		}
+
+		public static dynamic Sound
+		{
+			get { return Get<int>("Se"); }
+			set { Cashe["Se"] = value; }
+		}
+
 		private static T Get<T>(string name)
 		{
 			try
