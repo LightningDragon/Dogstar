@@ -467,7 +467,7 @@ namespace Dogstar
 
 			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
-			WindowModeComboBox.SelectedIndex = Convert.ToInt32(PsoSettings.FullScreen) + Convert.ToInt32(PsoSettings.VirtualFullScreen);
+			WindowModeComboBox.SelectedIndex = (PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen));
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
 			ShaderQualityCombobox.SelectedIndex = PsoSettings.ShaderQuality;
