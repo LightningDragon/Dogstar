@@ -518,9 +518,6 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen);
-
-
 				if (WindowModeComboBox.SelectedIndex == 2)
 				{
 					PsoSettings.FullScreen = false;
