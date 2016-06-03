@@ -39,7 +39,7 @@ namespace Dogstar.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    var temp = new global::System.Resources.ResourceManager("Dogstar.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Dogstar.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -120,6 +120,46 @@ namespace Dogstar.Properties {
         internal static string HexTable {
             get {
                 return ResourceManager.GetString("HexTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function table_print (tt, indent, done)
+        ///  done = done or {}
+        ///  indent = indent or 0
+        ///  if type(tt) == &quot;table&quot; then
+        ///    local sb = {}
+        ///    for key, value in pairs (tt) do
+        ///      table.insert(sb, string.rep (&quot; &quot;, indent)) -- indent it
+        ///      if type (value) == &quot;table&quot; and not done [value] then
+        ///        done [value] = true
+        ///        table.insert(sb, &quot;{\n&quot;);
+        ///        table.insert(sb, table_print (value, indent + 2, done))
+        ///        table.insert(sb, string.rep (&quot; &quot;, indent)) -- indent it
+        ///        table.insert(sb [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Lua_table_print {
+            get {
+                return ResourceManager.GetString("Lua_table_print", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function to_string( tbl )
+        ///    if  &quot;nil&quot;       == type( tbl ) then
+        ///        return tostring(nil)
+        ///    elseif  &quot;table&quot; == type( tbl ) then
+        ///        return table_print(tbl)
+        ///    elseif  &quot;string&quot; == type( tbl ) then
+        ///        return tbl
+        ///    else
+        ///        return tostring(tbl)
+        ///    end
+        ///end.
+        /// </summary>
+        internal static string Lua_to_string {
+            get {
+                return ResourceManager.GetString("Lua_to_string", resourceCulture);
             }
         }
         

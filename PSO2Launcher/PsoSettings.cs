@@ -94,6 +94,12 @@ namespace Dogstar
 			set { Cashe["Ini.Windows.Width"] = value; }
 		}
 
+        static PsoSettings()
+        {
+            luaVM.DoString(Properties.Resources.Lua_table_print);
+            luaVM.DoString(Properties.Resources.Lua_to_string);
+        }
+
 		private static T Get<T>(string name)
 		{
 			try
@@ -157,14 +163,10 @@ namespace Dogstar
 			{
 				SetValue(kvp.Key, kvp.Value);
 			}
+            luaVM.DoString("WrapsIni = Ini");
+			luaVM.DoString("WrapsIni = to_string(WrapsIni))");
+            await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), luaVM["WrapsIni"].ToString()));
+        }
 
-			luaVM.DoString("LuaSave(ummmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm)");
-		}
-
-		[LuaAccessible]
-		public static async Task LuaSave(string data)
-		{
-			await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), data));
-		}
 	}
 }
