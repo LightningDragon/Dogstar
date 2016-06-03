@@ -41,7 +41,7 @@ namespace Dogstar
 
 		public static dynamic ShaderQuality
 		{
-			get { return Get<bool>("ShaderQuality"); }
+			get { return Get<int>("ShaderQuality"); }
 			set { Cashe["ShaderQuality"] = value; }
 		}
 

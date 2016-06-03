@@ -10,6 +10,7 @@
         Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize" LocationChanged="MetroWindow_LocationChanged">
 
     <controls:MetroWindow.Resources>
+        <ObjectDataProvider x:Key="Resolutions" ObjectType="{x:Type local:UiResources}" MethodName="GetResolutions"/>
         <ObjectDataProvider x:Key="Color" ObjectType="{x:Type local:UiResources}" MethodName="GetColor"/>
         <ObjectDataProvider x:Key="Theme" ObjectType="{x:Type local:UiResources}" MethodName="GetTheme"/>
         <ObjectDataProvider x:Key="License" ObjectType="{x:Type local:UiResources}" MethodName="GetMitLicense"/>
@@ -66,7 +67,7 @@
 
     <Grid DataContext="{Binding Source={StaticResource License}}">
         <TabControl x:Name="MainTabControl" Margin="10" controls:TabControlHelper.IsUnderlined="True">
-            <TabItem x:Name="GameTabItem" Header="Game" controls:ControlsHelper.HeaderFontSize="21">
+            <TabItem x:Name="GameTabItem" Header="Game" controls:ControlsHelper.HeaderFontSize="21" DataContext="{Binding Source={StaticResource Resolutions}}">
                 <TabControl x:Name="GameTabControl">
                     <TabItem x:Name="MainTabItem" IsEnabled="False">
                         <Grid>
@@ -161,7 +162,11 @@
                                             <ComboBoxItem Content="High" HorizontalAlignment="Left" Width="94"/>
                                         </ComboBox>
                                         <Label Grid.Row="1" Grid.Column="0" Content="Shader Quality:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="ShaderQualityCombobox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="ShaderQualityCombobox_SelectionChanged">
+                                            <ComboBoxItem Content="Low" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="Medium" HorizontalAlignment="Left" Width="94"/>
+                                            <ComboBoxItem Content="High" HorizontalAlignment="Left" Width="94"/>
+                                        </ComboBox>
                                         <Label Grid.Row="2" Grid.Column="0" Content="Lobby Monitor Playback:" VerticalAlignment="Top"/>
                                         <CheckBox x:Name="MonitorPlaybackCheckBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Checked="MonitorPlaybackCheckBox_Checked" Unchecked="MonitorPlaybackCheckBox_Unchecked"/>
                                         <Label Grid.Row="3" Grid.Column="0" Content="Window Mode:" VerticalAlignment="Top"/>
@@ -171,7 +176,7 @@
                                             <ComboBoxItem Content="Virtual Fullscreen" HorizontalAlignment="Left" Width="94"/>
                                         </ComboBox>
                                         <Label Grid.Row="4" Grid.Column="0" Content="Resolution:" VerticalAlignment="Top"/>
-                                        <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"/>
+                                        <ComboBox x:Name="ResolutionsCombobox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" ItemsSource="{Binding Mode=OneWay}" SelectionChanged="ResolutionsCombobox_SelectionChanged"/>
                                         <Label Grid.Row="5" Grid.Column="0" Content="Vsync:" VerticalAlignment="Top"/>
                                         <ComboBox x:Name="VsyncComboBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Top" SelectionChanged="VsyncComboBox_SelectionChanged">
                                             <ComboBoxItem Content="Off" HorizontalAlignment="Left" Width="94"/>

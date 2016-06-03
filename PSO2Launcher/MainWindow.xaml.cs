@@ -28,7 +28,6 @@ namespace Dogstar
 	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
-	// TODO: Make game settings tab
 	// TODO: howtf are you supposed to tell if an update is paused
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
@@ -110,8 +109,6 @@ namespace Dogstar
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.Vsync = 60;
-			await PsoSettings.Save();
 			_lastTop = Top;
 			_lastLeft = Left;
 
@@ -473,12 +470,17 @@ namespace Dogstar
 			WindowModeComboBox.SelectedIndex = Convert.ToInt32(PsoSettings.FullScreen) + Convert.ToInt32(PsoSettings.VirtualFullScreen);
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
+			ShaderQualityCombobox.SelectedIndex = PsoSettings.ShaderQuality;
 			InterfaceSizeComboBox.SelectedIndex = PsoSettings.InterfaceSize;
 			MusicSlider.Value = PsoSettings.Music;
 			SoundSlider.Value = PsoSettings.Sound;
 			VoiceSlider.Value = PsoSettings.Voice;
 			VideoSlider.Value = PsoSettings.Video;
-	}
+
+			var resolution = $"{PsoSettings.WindowWidth}x{PsoSettings.WindowHight}";
+			UiResources.GetResolutions().Add(resolution);
+			ResolutionsCombobox.SelectedItem = resolution;
+		}
 
 		private async void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
 		{
@@ -490,6 +492,15 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.TextureResolution = TextureComboBox.SelectedIndex;
+				await PsoSettings.Save();
+			}
+		}
+
+		private async void ShaderQualityCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (IsLoaded)
+			{
+				PsoSettings.ShaderQuality = ShaderQualityCombobox.SelectedIndex;
 				await PsoSettings.Save();
 			}
 		}
@@ -533,6 +544,18 @@ namespace Dogstar
 		{
 			PsoSettings.MoviePlay = false;
 			await PsoSettings.Save();
+		}
+
+		private async void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (IsLoaded)
+			{
+				var resolution = ResolutionsCombobox.SelectedItem.ToString().Split('x');
+
+				PsoSettings.WindowWidth = resolution[0];
+				PsoSettings.WindowHight = resolution[1];
+				await PsoSettings.Save();
+			}
 		}
 
 		private void MusicSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Music = (int)MusicSlider.Value;
