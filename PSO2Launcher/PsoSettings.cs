@@ -123,7 +123,7 @@ namespace Dogstar
 				data = Regex.Match(data, $"{subStrings[index - 1]}.+", RegexOptions.Singleline).Value;
 			}
 
-			var match = Regex.Match(data, $@"\s*{subStrings.Last()}\s*=\s*{{*""*(.+)""*}}*,");
+			var match = Regex.Match(data, $@"\s*\b{subStrings.Last()}\b\s*=\s*{{*""*(.+)""*}}*,");
 			return match.Groups[1].Value;
 		}
 
@@ -143,7 +143,7 @@ namespace Dogstar
 				}
 
 				replacementTrace[replacementTrace.Length - 1] = result;
-				result = Regex.Replace(result, $@"(?<start>\s*{subStrings.Last()}\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
+				result = Regex.Replace(result, $@"(?<start>\s*\b{subStrings.Last()}\b\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
 
 				for (int index = replacementTrace.Length - 1; index > 0; index--)
 				{
