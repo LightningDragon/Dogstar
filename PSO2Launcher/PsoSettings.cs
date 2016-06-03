@@ -4,104 +4,107 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using LuaInterface;
 using static Dogstar.Helper;
 
 namespace Dogstar
 {
 	public static class PsoSettings
 	{
+		private static readonly Lua luaVM = new Lua();
 		private static readonly Dictionary<string, dynamic> Cashe = new Dictionary<string, dynamic>();
 
 		private static bool _isLoaded;
-		private static string _data;
 
 		public static dynamic Vsync
 		{
-			get { return Get<float>("FrameKeep"); }
-			set { Cashe["FrameKeep"] = value; }
+			get { return Get<float>("Ini.FrameKeep"); }
+			set { Cashe["Ini.FrameKeep"] = value; }
 		}
 
 		public static dynamic FullScreen
 		{
-			get { return Get<bool>("FullScreen"); }
-			set { Cashe["FullScreen"] = value; }
+			get { return Get<bool>("Ini.Windows.FullScreen"); }
+			set { Cashe["Ini.Windows.FullScreen"] = value; }
 		}
 
 		public static dynamic VirtualFullScreen
 		{
-			get { return Get<bool>("VirtualFullScreen"); }
-			set { Cashe["VirtualFullScreen"] = value; }
+			get { return Get<bool>("Ini.Windows.VirtualFullScreen"); }
+			set { Cashe["Ini.Windows.VirtualFullScreen"] = value; }
 		}
 
 		public static dynamic MoviePlay
 		{
-			get { return Get<bool>("MoviePlay"); }
-			set { Cashe["MoviePlay"] = value; }
+			get { return Get<bool>("Ini.Config.Basic.MoviePlay"); }
+			set { Cashe["Ini.Config.Basic.MoviePlay"] = value; }
 		}
 
 		public static dynamic ShaderQuality
 		{
-			get { return Get<int>("ShaderLevel"); }
-			set { Cashe["ShaderLevel"] = value; }
+			get { return Get<int>("Ini.Config.Draw.ShaderLevel"); }
+			set { Cashe["Ini.Config.Draw.ShaderLevel"] = value; }
 		}
 
 		public static dynamic TextureResolution
 		{
-			get { return Get<int>("TextureResolution"); }
-			set { Cashe["TextureResolution"] = value; }
+			get { return Get<int>("Ini.Config.Draw.TextureResolution"); }
+			set { Cashe["Ini.Config.Draw.TextureResolution"] = value; }
 		}
 
 		public static dynamic InterfaceSize
 		{
-			get { return Get<int>("InterfaceSize"); }
-			set { Cashe["InterfaceSize"] = value; }
+			get { return Get<int>("Ini.Config.Screen.InterfaceSize"); }
+			set { Cashe["Ini.Config.Screen.InterfaceSize"] = value; }
 		}
 
 		public static dynamic Music
 		{
-			get { return Get<int>("Bgm"); }
-			set { Cashe["Bgm"] = value; }
+			get { return Get<int>("Ini.Config.Sound.Volume.Bgm"); }
+			set { Cashe["Ini.Config.Sound.Volume.Bgm"] = value; }
 		}
 
 		public static dynamic Voice
 		{
-			get { return Get<int>("Voice"); }
-			set { Cashe["Voice"] = value; }
+			get { return Get<int>("Ini.Config.Sound.Volume.Voice"); }
+			set { Cashe["Ini.Config.Sound.Volume.Voice"] = value; }
 		}
 
 		public static dynamic Video
 		{
-			get { return Get<int>("Movie"); }
-			set { Cashe["Movie"] = value; }
+			get { return Get<int>("Ini.Config.Sound.Volume.Movie"); }
+			set { Cashe["Ini.Config.Sound.Volume.Movie"] = value; }
 		}
 
 		public static dynamic Sound
 		{
-			get { return Get<int>("Se"); }
-			set { Cashe["Se"] = value; }
+			get { return Get<int>("Ini.Config.Sound.Volume.Se"); }
+			set { Cashe["Ini.Config.Sound.Volume.Se"] = value; }
 		}
 
 		public static dynamic WindowHight
 		{
-			get { return Get<int>("Windows.Height"); }
-			set { Cashe["Windows.Height"] = value; }
+			get { return Get<int>("Ini.Windows.Height"); }
+			set { Cashe["Ini.Windows.Height"] = value; }
 		}
 
 		public static dynamic WindowWidth
 		{
-			get { return Get<int>("Windows.Width"); }
-			set { Cashe["Windows.Width"] = value; }
+			get { return Get<int>("Ini.Windows.Width"); }
+			set { Cashe["Ini.Windows.Width"] = value; }
 		}
 
 		private static T Get<T>(string name)
 		{
 			try
 			{
+				LoadCheck();
 				dynamic result;
 
 				if (!Cashe.TryGetValue(name, out result))
 				{
-					Cashe[name] = result = GetValue(name);
+					luaVM.DoString($@"GetValue(""{name}"", {name})");
+					result = Cashe[name];
 				}
 
 				return Convert.ChangeType(result, typeof(T));
@@ -112,19 +115,10 @@ namespace Dogstar
 			}
 		}
 
-		private static string GetValue(string name)
+		[LuaAccessible]
+		private static void GetValue(string name, string data)
 		{
-			LoadCheck();
-			var data = _data;
-			var subStrings = name.Split('.');
-
-			for (int index = 1; index < subStrings.Length; index++)
-			{
-				data = Regex.Match(data, $"{subStrings[index - 1]}.+", RegexOptions.Singleline).Value;
-			}
-
-			var match = Regex.Match(data, $@"\s*\b{subStrings.Last()}\b\s*=\s*{{*""*(.+)""*}}*,");
-			return match.Groups[1].Value;
+			Cashe[name] = data;
 		}
 
 		private static void SetValue<T>(string name, T value)
@@ -132,25 +126,7 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-				var result = _data;
-				var subStrings = name.Split('.');
-				var replacementTrace = new string[subStrings.Length];
-
-				for (int index = 1; index < subStrings.Length; index++)
-				{
-					replacementTrace[index - 1] = result;
-					result = Regex.Match(result, $"{subStrings[index - 1]}.+", RegexOptions.Singleline).Value;
-				}
-
-				replacementTrace[replacementTrace.Length - 1] = result;
-				result = Regex.Replace(result, $@"(?<start>\s*\b{subStrings.Last()}\b\s*=\s*{{*""*).+(?<end>""*}}*,)", $"${{start}}{value}${{end}}");
-
-				for (int index = replacementTrace.Length - 1; index > 0; index--)
-				{
-					result = replacementTrace[index - 1].Replace(replacementTrace[index], result);
-				}
-
-				_data = result;
+				luaVM.DoString($"{name} = {value}");
 			}
 			catch
 			{
@@ -162,14 +138,14 @@ namespace Dogstar
 		{
 			if (!_isLoaded)
 			{
-				_data = File.ReadAllText(Path.Combine(GameConfigFolder, "user.pso2"));
+				luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
 				_isLoaded = true;
 			}
 		}
 
 		public static async Task Reload()
 		{
-			_data = await Task.Run(() => File.ReadAllText(Path.Combine(GameConfigFolder, "user.pso2")));
+			await Task.Run(() => luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2")));
 			_isLoaded = true;
 		}
 
@@ -182,7 +158,13 @@ namespace Dogstar
 				SetValue(kvp.Key, kvp.Value);
 			}
 
-			await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), _data));
+			luaVM.DoString("LuaSave(ummmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm)");
+		}
+
+		[LuaAccessible]
+		public static async Task LuaSave(string data)
+		{
+			await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), data));
 		}
 	}
 }
