@@ -41,8 +41,8 @@ namespace Dogstar
 
 		public static dynamic ShaderQuality
 		{
-			get { return Get<int>("ShaderQuality"); }
-			set { Cashe["ShaderQuality"] = value; }
+			get { return Get<int>("ShaderLevel"); }
+			set { Cashe["ShaderLevel"] = value; }
 		}
 
 		public static dynamic TextureResolution
