@@ -467,7 +467,7 @@ namespace Dogstar
 
 			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
-			WindowModeComboBox.SelectedIndex = (PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen));
+			WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen);
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
 			ShaderQualityCombobox.SelectedIndex = PsoSettings.ShaderQuality;
@@ -518,9 +518,20 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				var index = WindowModeComboBox.SelectedIndex;
-				PsoSettings.FullScreen = index != 0;
-				PsoSettings.VirtualFullScreen = index == 2;
+				WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen);
+
+
+				if (WindowModeComboBox.SelectedIndex == 2)
+				{
+					PsoSettings.FullScreen = false;
+					PsoSettings.VirtualFullScreen = true;
+				}
+				else
+				{
+					PsoSettings.FullScreen = Convert.ToBoolean(WindowModeComboBox.SelectedIndex);
+					PsoSettings.VirtualFullScreen = false;
+				}
+
 				await PsoSettings.Save();
 			}
 		}
