@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
 using NLua;
 using static Dogstar.Helper;
 
@@ -12,7 +8,7 @@ namespace Dogstar
 {
 	public static class PsoSettings
 	{
-		private static readonly Lua luaVM = new Lua();
+		private static readonly Lua LuaVm = new Lua();
 		private static readonly Dictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
 
 		private static bool _isLoaded;
@@ -98,8 +94,8 @@ namespace Dogstar
 
 		static PsoSettings()
 		{
-			luaVM.DoString(Properties.Resources.Lua_table_print);
-			luaVM.DoString(Properties.Resources.Lua_to_string);
+			LuaVm.DoString(Properties.Resources.Lua_table_print);
+			LuaVm.DoString(Properties.Resources.Lua_to_string);
 		}
 
 		private static T Get<T>(string name)
@@ -111,7 +107,7 @@ namespace Dogstar
 
 				if (!Cache.TryGetValue(name, out result))
 				{
-					Cache[name] = result = luaVM[name].ToString();
+					Cache[name] = result = LuaVm[name].ToString();
 				}
 
 				return Convert.ChangeType(result, typeof(T));
@@ -127,7 +123,7 @@ namespace Dogstar
 			try
 			{
 				LoadCheck();
-				luaVM[name] = value;
+				LuaVm[name] = value;
 			}
 			catch
 			{
@@ -139,14 +135,14 @@ namespace Dogstar
 		{
 			if (!_isLoaded)
 			{
-				luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
+				LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
 				_isLoaded = true;
 			}
 		}
 
 		public static void Reload()
 		{
-			luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
+			LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
 			_isLoaded = true;
 		}
 
@@ -158,9 +154,9 @@ namespace Dogstar
 			{
 				SetValue(kvp.Key, kvp.Value);
 			}
-			luaVM.DoString("WrapsIni = {Ini = Ini }");
-			luaVM.DoString("result = to_string(WrapsIni)");
-			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), luaVM["result"].ToString());
+			LuaVm.DoString("WrapsIni = {Ini = Ini }");
+			LuaVm.DoString("result = to_string(WrapsIni)");
+			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), LuaVm["result"].ToString());
 		}
 
 	}
