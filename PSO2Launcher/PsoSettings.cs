@@ -19,6 +19,7 @@ namespace Dogstar
 
 		public static dynamic Vsync
 		{
+			// TODO: ypu?????
 			get { return Get<float>("Ini.FrameKeep"); }
 			set { Cache["Ini.FrameKeep"] = value; }
 		}
