@@ -485,10 +485,7 @@ namespace Dogstar
 			ResolutionsCombobox.SelectedItem = resolution;
 		}
 
-		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
-		{
-			PsoSettings.Save();
-		}
+		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => PsoSettings.Save();
 
 		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -539,15 +536,9 @@ namespace Dogstar
 			}
 		}
 
-		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
-		{
-			PsoSettings.MoviePlay = true;
-		}
+		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e) => PsoSettings.MoviePlay = true;
 
-		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
-		{
-			PsoSettings.MoviePlay = false;
-		}
+		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.MoviePlay = false;
 
 		private void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
