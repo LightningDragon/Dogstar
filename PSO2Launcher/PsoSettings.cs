@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LuaInterface;
+using System.Windows;
+using NLua;
 using static Dogstar.Helper;
 
 namespace Dogstar
@@ -94,11 +95,11 @@ namespace Dogstar
 			set { Cache["Ini.Windows.Width"] = value; }
 		}
 
-        static PsoSettings()
-        {
-            luaVM.DoString(Properties.Resources.Lua_table_print);
-            luaVM.DoString(Properties.Resources.Lua_to_string);
-        }
+		static PsoSettings()
+		{
+			luaVM.DoString(Properties.Resources.Lua_table_print);
+			luaVM.DoString(Properties.Resources.Lua_to_string);
+		}
 
 		private static T Get<T>(string name)
 		{
@@ -109,7 +110,7 @@ namespace Dogstar
 
 				if (!Cache.TryGetValue(name, out result))
 				{
-					Cache[name] = result = luaVM.GetString(name);
+					Cache[name] = result = luaVM[name].ToString();
 				}
 
 				return Convert.ChangeType(result, typeof(T));
@@ -142,24 +143,25 @@ namespace Dogstar
 			}
 		}
 
-		public static async Task Reload()
+		public static void Reload()
 		{
-			await Task.Run(() => luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2")));
+			luaVM.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
 			_isLoaded = true;
 		}
 
-		public static async Task Save()
+		public static void Save()
 		{
-			await Reload();
+			Reload();
 
 			foreach (var kvp in Cache)
 			{
 				SetValue(kvp.Key, kvp.Value);
 			}
-            luaVM.DoString("WrapsIni = Ini");
-			luaVM.DoString("WrapsIni = to_string(WrapsIni))");
-            await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), luaVM["WrapsIni"].ToString()));
-        }
+
+			luaVM.DoString("WrapsIni = {Ini}");
+			luaVM.DoString("result = to_string(WrapsIni)");
+			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), luaVM["result"].ToString());
+		}
 
 	}
 }

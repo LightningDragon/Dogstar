@@ -463,7 +463,7 @@ namespace Dogstar
 
 		private async void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
 		{
-			await PsoSettings.Reload();
+			PsoSettings.Reload();
 
 			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
@@ -484,7 +484,7 @@ namespace Dogstar
 
 		private async void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
 		{
-			await PsoSettings.Save();
+			PsoSettings.Save();
 		}
 
 		private async void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -492,7 +492,7 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.TextureResolution = TextureComboBox.SelectedIndex;
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
@@ -501,7 +501,7 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.ShaderQuality = ShaderQualityCombobox.SelectedIndex;
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
@@ -510,7 +510,7 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.Vsync = ((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0");
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
@@ -529,7 +529,7 @@ namespace Dogstar
 					PsoSettings.VirtualFullScreen = false;
 				}
 
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
@@ -538,20 +538,20 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.InterfaceSize = InterfaceSizeComboBox.SelectedIndex;
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
 		private async void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
-			await PsoSettings.Save();
+			PsoSettings.Save();
 		}
 
 		private async void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
-			await PsoSettings.Save();
+			PsoSettings.Save();
 		}
 
 		private async void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -562,7 +562,7 @@ namespace Dogstar
 
 				PsoSettings.WindowWidth = resolution[0];
 				PsoSettings.WindowHight = resolution[1];
-				await PsoSettings.Save();
+				PsoSettings.Save();
 			}
 		}
 
