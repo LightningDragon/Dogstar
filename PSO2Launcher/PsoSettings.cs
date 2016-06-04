@@ -13,80 +13,79 @@ namespace Dogstar
 
 		private static bool _isLoaded;
 
-		public static dynamic Vsync
+		public static int Vsync
 		{
-			// TODO: ypu?????
-			get { return Get<float>("Ini.FrameKeep"); }
+			get { return Get<int>("Ini.FrameKeep"); }
 			set { Cache["Ini.FrameKeep"] = value; }
 		}
 
-		public static dynamic FullScreen
+		public static bool FullScreen
 		{
 			get { return Get<bool>("Ini.Windows.FullScreen"); }
 			set { Cache["Ini.Windows.FullScreen"] = value; }
 		}
 
-		public static dynamic VirtualFullScreen
+		public static bool VirtualFullScreen
 		{
 			get { return Get<bool>("Ini.Windows.VirtualFullScreen"); }
 			set { Cache["Ini.Windows.VirtualFullScreen"] = value; }
 		}
 
-		public static dynamic MoviePlay
+		public static bool MoviePlay
 		{
 			get { return Get<bool>("Ini.Config.Basic.MoviePlay"); }
 			set { Cache["Ini.Config.Basic.MoviePlay"] = value; }
 		}
 
-		public static dynamic ShaderQuality
+		public static int ShaderQuality
 		{
 			get { return Get<int>("Ini.Config.Draw.ShaderLevel"); }
 			set { Cache["Ini.Config.Draw.ShaderLevel"] = value; }
 		}
 
-		public static dynamic TextureResolution
+		public static int TextureResolution
 		{
 			get { return Get<int>("Ini.Config.Draw.TextureResolution"); }
 			set { Cache["Ini.Config.Draw.TextureResolution"] = value; }
 		}
 
-		public static dynamic InterfaceSize
+		public static int InterfaceSize
 		{
 			get { return Get<int>("Ini.Config.Screen.InterfaceSize"); }
 			set { Cache["Ini.Config.Screen.InterfaceSize"] = value; }
 		}
 
-		public static dynamic Music
+		public static int Music
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Bgm"); }
 			set { Cache["Ini.Config.Sound.Volume.Bgm"] = value; }
 		}
 
-		public static dynamic Voice
+		public static int Voice
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Voice"); }
 			set { Cache["Ini.Config.Sound.Volume.Voice"] = value; }
 		}
 
-		public static dynamic Video
+		public static int Video
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Movie"); }
 			set { Cache["Ini.Config.Sound.Volume.Movie"] = value; }
 		}
 
-		public static dynamic Sound
+		public static int Sound
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Se"); }
 			set { Cache["Ini.Config.Sound.Volume.Se"] = value; }
 		}
 
-		public static dynamic WindowHight
+		public static int WindowHight
 		{
 			get { return Get<int>("Ini.Windows.Height"); }
 			set { Cache["Ini.Windows.Height"] = value; }
 		}
 
-		public static dynamic WindowWidth
+		public static int WindowWidth
 		{
 			get { return Get<int>("Ini.Windows.Width"); }
 			set { Cache["Ini.Windows.Width"] = value; }
@@ -107,7 +106,7 @@ namespace Dogstar
 
 				if (!Cache.TryGetValue(name, out result))
 				{
-					Cache[name] = result = LuaVm[name].ToString();
+					Cache[name] = result = LuaVm[name];
 				}
 
 				return Convert.ChangeType(result, typeof(T));
@@ -135,8 +134,7 @@ namespace Dogstar
 		{
 			if (!_isLoaded)
 			{
-				LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
-				_isLoaded = true;
+				Reload();
 			}
 		}
 
@@ -154,9 +152,11 @@ namespace Dogstar
 			{
 				SetValue(kvp.Key, kvp.Value);
 			}
-			LuaVm.DoString("WrapsIni = {Ini = Ini }");
-			LuaVm.DoString("result = to_string(WrapsIni)");
-			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), LuaVm["result"].ToString());
+
+			LuaVm.DoString("WrapsIni = {Ini = Ini}");
+			string result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
+
+			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), result);
 		}
 
 	}

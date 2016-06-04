@@ -19,6 +19,7 @@ using Dogstar.Properties;
 using static MahApps.Metro.ThemeManager;
 using static Dogstar.Helper;
 using static Dogstar.External;
+using static System.Convert;
 
 namespace Dogstar
 {
@@ -467,7 +468,7 @@ namespace Dogstar
 
 			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
 			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
-			WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : Convert.ToInt32(PsoSettings.FullScreen);
+			WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : ToInt32(PsoSettings.FullScreen);
 			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
 			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
 			ShaderQualityCombobox.SelectedIndex = PsoSettings.ShaderQuality;
@@ -492,7 +493,6 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.TextureResolution = TextureComboBox.SelectedIndex;
-				PsoSettings.Save();
 			}
 		}
 
@@ -501,7 +501,6 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.ShaderQuality = ShaderQualityCombobox.SelectedIndex;
-				PsoSettings.Save();
 			}
 		}
 
@@ -509,8 +508,7 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.Vsync = ((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0");
-				PsoSettings.Save();
+				PsoSettings.Vsync = ToInt32(((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0"));
 			}
 		}
 
@@ -525,11 +523,9 @@ namespace Dogstar
 				}
 				else
 				{
-					PsoSettings.FullScreen = Convert.ToBoolean(WindowModeComboBox.SelectedIndex);
+					PsoSettings.FullScreen = ToBoolean(WindowModeComboBox.SelectedIndex);
 					PsoSettings.VirtualFullScreen = false;
 				}
-
-				PsoSettings.Save();
 			}
 		}
 
@@ -538,20 +534,17 @@ namespace Dogstar
 			if (IsLoaded)
 			{
 				PsoSettings.InterfaceSize = InterfaceSizeComboBox.SelectedIndex;
-				PsoSettings.Save();
 			}
 		}
 
 		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
-			PsoSettings.Save();
 		}
 
 		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
-			PsoSettings.Save();
 		}
 
 		private void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -560,9 +553,8 @@ namespace Dogstar
 			{
 				var resolution = ResolutionsCombobox.SelectedItem.ToString().Split('x');
 
-				PsoSettings.WindowWidth = resolution[0];
-				PsoSettings.WindowHight = resolution[1];
-				PsoSettings.Save();
+				PsoSettings.WindowWidth = ToInt32(resolution[0]);
+				PsoSettings.WindowHight = ToInt32(resolution[1]);
 			}
 		}
 

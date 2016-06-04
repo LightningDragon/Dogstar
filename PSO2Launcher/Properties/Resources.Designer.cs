@@ -130,12 +130,12 @@ namespace Dogstar.Properties {
         ///  if type(tt) == &quot;table&quot; then
         ///    local sb = {}
         ///    for key, value in pairs (tt) do
-        ///      table.insert(sb, string.rep (&quot; &quot;, indent)) -- indent it
+        ///      table.insert(sb, string.rep (&quot;  &quot;, indent)) -- indent it
         ///      if type (value) == &quot;table&quot; and not done [value] then
         ///        done [value] = true
         ///        table.insert(sb, string.format(&quot;%s = {\n&quot;, tostring(key)));
         ///        table.insert(sb, table_print (value, indent + 2, done))
-        ///        table.insert(sb, string.rep (&quot; &quot;, indent)) -- [rest of string was truncated]&quot;;.
+        ///        table.insert(sb, string.rep (&quot;  &quot;, indent))  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Lua_table_print {
             get {
