@@ -461,7 +461,7 @@ namespace Dogstar
 			// TODO: Variant here's your button have fun.
 		}
 
-		private async void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
+		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.Reload();
 
@@ -482,12 +482,12 @@ namespace Dogstar
 			ResolutionsCombobox.SelectedItem = resolution;
 		}
 
-		private async void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.Save();
 		}
 
-		private async void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -496,7 +496,7 @@ namespace Dogstar
 			}
 		}
 
-		private async void ShaderQualityCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void ShaderQualityCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -505,7 +505,7 @@ namespace Dogstar
 			}
 		}
 
-		private async void VsyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void VsyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -514,7 +514,7 @@ namespace Dogstar
 			}
 		}
 
-		private async void WindowModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void WindowModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -533,7 +533,7 @@ namespace Dogstar
 			}
 		}
 
-		private async void InterfaceSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void InterfaceSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -542,19 +542,19 @@ namespace Dogstar
 			}
 		}
 
-		private async void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
+		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = true;
 			PsoSettings.Save();
 		}
 
-		private async void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			PsoSettings.MoviePlay = false;
 			PsoSettings.Save();
 		}
 
-		private async void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{

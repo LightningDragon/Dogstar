@@ -157,9 +157,8 @@ namespace Dogstar
 			{
 				SetValue(kvp.Key, kvp.Value);
 			}
-
-			luaVM.DoString("WrapsIni = {Ini}");
-			luaVM.DoString("result = to_string(WrapsIni)");
+            luaVM.DoString("WrapsIni = {Ini = Ini }");
+            luaVM.DoString("result = to_string(WrapsIni)");
 			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), luaVM["result"].ToString());
 		}
 

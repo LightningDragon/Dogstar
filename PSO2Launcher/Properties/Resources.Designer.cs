@@ -133,10 +133,9 @@ namespace Dogstar.Properties {
         ///      table.insert(sb, string.rep (&quot; &quot;, indent)) -- indent it
         ///      if type (value) == &quot;table&quot; and not done [value] then
         ///        done [value] = true
-        ///        table.insert(sb, &quot;{\n&quot;);
+        ///        table.insert(sb, string.format(&quot;%s = {\n&quot;, tostring(key)));
         ///        table.insert(sb, table_print (value, indent + 2, done))
-        ///        table.insert(sb, string.rep (&quot; &quot;, indent)) -- indent it
-        ///        table.insert(sb [rest of string was truncated]&quot;;.
+        ///        table.insert(sb, string.rep (&quot; &quot;, indent)) -- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Lua_table_print {
             get {
@@ -149,7 +148,7 @@ namespace Dogstar.Properties {
         ///    if  &quot;nil&quot;       == type( tbl ) then
         ///        return tostring(nil)
         ///    elseif  &quot;table&quot; == type( tbl ) then
-        ///        return table_print(tbl)
+        ///        return string.sub(table_print(tbl), 1,-3)
         ///    elseif  &quot;string&quot; == type( tbl ) then
         ///        return tbl
         ///    else
