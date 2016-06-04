@@ -153,8 +153,12 @@
         table.insert(sb, string.rep (" ", indent)) -- indent it
         table.insert(sb, "},\n");
       elseif "number" == type(key) then
-        table.insert(sb, string.format("%s,\n", tostring(value)))
-      else
+		if type(value) == "number" or type(value) == "boolean" then
+			table.insert(sb, string.format("[%s] = %s,\n", tostring (key), tostring(value)))
+		else
+			table.insert(sb, string.format("[%s] = \"%s\",\n", tostring (key), tostring(value)))
+		end
+	  else
 		if type(value) == "number" or type(value) == "boolean" then
 			table.insert(sb, string.format("%s = %s,\n", tostring (key), tostring(value)))
 		else
