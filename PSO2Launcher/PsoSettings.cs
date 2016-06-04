@@ -55,6 +55,18 @@ namespace Dogstar
 			set { Cache["Ini.Config.Screen.InterfaceSize"] = value; }
 		}
 
+		public static bool Surround
+		{
+			get { return Get<bool>("Ini.Config.Sound.Play.Surround"); }
+			set { Cache["Ini.Config.Sound.Play.Surround"] = value; }
+		}
+
+		public static bool GlobalFocus
+		{
+			get { return Get<bool>("Ini.Config.Sound.Play.GlobalFocus"); }
+			set { Cache["Ini.Config.Sound.Play.GlobalFocus"] = value; }
+		}
+
 		public static int Music
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Bgm"); }

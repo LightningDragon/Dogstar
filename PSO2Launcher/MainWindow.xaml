@@ -212,20 +212,29 @@
                                             <RowDefinition Height="30"/>
                                             <RowDefinition Height="30"/>
                                             <RowDefinition Height="30"/>
-                                            <RowDefinition Height="30"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition Width="96"/>
                                         </Grid.ColumnDefinitions>
+
                                         <Label Grid.Row="0" Grid.Column="0" Content="Music Volume:" VerticalAlignment="Top"/>
                                         <Slider x:Name="MusicSlider" Grid.Row="0" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="MusicSlider_ValueChanged"/>
+
                                         <Label Grid.Row="1" Grid.Column="0" Content="Sound Effect Volume:" VerticalAlignment="Top"/>
                                         <Slider x:Name="SoundSlider" Grid.Row="1" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="SoundSlider_ValueChanged"/>
+
                                         <Label Grid.Row="2" Grid.Column="0" Content="Voice Volume:" VerticalAlignment="Top"/>
                                         <Slider x:Name="VoiceSlider" Grid.Row="2" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="VoiceSlider_ValueChanged"/>
+
                                         <Label Grid.Row="3" Grid.Column="0" Content="Video Volume:" VerticalAlignment="Top"/>
                                         <Slider x:Name="VideoSlider" Grid.Row="3" Grid.Column="1" Style="{DynamicResource FlatSlider}" ValueChanged="VideoSlider_ValueChanged"/>
+
+                                        <Label Grid.Row="4" Grid.Column="0" Content="Surround Sound:" VerticalAlignment="Top"/>
+                                        <CheckBox x:Name="SurroundToggle" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Checked="SurroundToggle_Checked" Unchecked="SurroundToggle_Unchecked"/>
+
+                                        <Label Grid.Row="5" Grid.Column="0" Content="Global Focus:" VerticalAlignment="Top"/>
+                                        <CheckBox x:Name="GlobalFocusToggle" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Checked="GlobalFocusToggle_Checked" Unchecked="GlobalFocusToggle_Unchecked"/>
                                     </Grid>
                                 </StackPanel>
                             </ScrollViewer>

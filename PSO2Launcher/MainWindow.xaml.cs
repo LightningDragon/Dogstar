@@ -477,6 +477,8 @@ namespace Dogstar
 			SoundSlider.Value = PsoSettings.Sound;
 			VoiceSlider.Value = PsoSettings.Voice;
 			VideoSlider.Value = PsoSettings.Video;
+			SurroundToggle.IsChecked = PsoSettings.Surround;
+			GlobalFocusToggle.IsChecked = PsoSettings.GlobalFocus;
 
 			var resolution = $"{PsoSettings.WindowWidth}x{PsoSettings.WindowHight}";
 			UiResources.GetResolutions().Add(resolution);
@@ -565,6 +567,14 @@ namespace Dogstar
 		private void VoiceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Voice = (int)VoiceSlider.Value;
 
 		private void VideoSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Video = (int)VideoSlider.Value;
+
+		private void SurroundToggle_Checked(object sender, RoutedEventArgs e) => PsoSettings.Surround = true;
+
+		private void SurroundToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.Surround = false;
+
+		private void GlobalFocusToggle_Checked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = true;
+
+		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = false;
 
 		#endregion
 
@@ -1117,6 +1127,5 @@ namespace Dogstar
 			_generalDownloadManager.Dispose();
 		}
 		#endregion Functions
-
 	}
 }
