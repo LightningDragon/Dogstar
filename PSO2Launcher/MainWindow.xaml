@@ -400,7 +400,7 @@
                             </TextBlock>
                             <Image Grid.Column="0" Grid.Row="6" Source="https://secure.gravatar.com/avatar/77ecf0fb9d8419be7715c6e822e66562" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Height="64"/>
                             <TextBlock Grid.Column="1" Grid.Row="6" VerticalAlignment="Center">  
-                                MahApps.Metro<LineBreak/>
+                                NLua<LineBreak/>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/NLua/NLua">View source</Hyperlink>
                                 <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.lua.org/license.html">View license</Hyperlink>
                             </TextBlock>
