@@ -34,6 +34,11 @@ namespace Dogstar
 			if (e.ApplicationExitCode == 0)
 			{
 				Settings.Default.Save();
+
+				if (Settings.Default.IsGameInstalled)
+				{
+					PsoSettings.Save();
+				}
 			}
 		}
 	}
