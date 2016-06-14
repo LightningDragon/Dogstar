@@ -35,7 +35,6 @@ namespace Dogstar
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
 	// TODO: Update detection for enemies and e-codes
 	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
-	// TODO: Disable all the things that stuff if game.
 	// TODO: Fix all them WIN7 UIs
 
 	public partial class MainWindow : IDisposable
@@ -104,7 +103,7 @@ namespace Dogstar
 
 		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e) => await SelectGameFolder();
 
-		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start(Settings.Default.GameFolder);
+		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start($"file://{Settings.Default.GameFolder}");
 
 		private async void OtherInstallGame_Click(object sender, RoutedEventArgs e) => await SetupGameInfo();
 
@@ -112,9 +111,6 @@ namespace Dogstar
 		{
 			_lastTop = Top;
 			_lastLeft = Left;
-
-			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
-			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
 
 			if (!Settings.Default.IsGameInstalled)
 			{
@@ -142,8 +138,6 @@ namespace Dogstar
 
 			if (Settings.Default.IsGameInstalled)
 			{
-				await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
-
 				if (!Directory.Exists(Settings.Default.GameFolder))
 				{
 					var result = await this.ShowMessageAsync(Text.MissingFolder, Text.MovedOrDeleted, AffirmNeg, MovedDeleted);
@@ -159,6 +153,11 @@ namespace Dogstar
 						await SetupGameInfo();
 					}
 				}
+			}
+
+			if (Settings.Default.IsGameInstalled)
+			{
+				await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
 
 				var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
@@ -215,6 +214,7 @@ namespace Dogstar
 				}
 			}
 
+			EnableGameButtions(Settings.Default.IsGameInstalled);
 			Settings.Default.Save();
 		}
 
@@ -570,6 +570,16 @@ namespace Dogstar
 		#endregion
 
 		#region Functions
+
+		private void EnableGameButtions(bool isEnabled)
+		{
+			CheckButton.IsEnabled = isEnabled;
+			LaunchButton.IsEnabled = isEnabled;
+			GameSettingsTile.IsEnabled = isEnabled;
+			EnhancementsTile.IsEnabled = isEnabled;
+			EnhancementsTile.IsEnabled = isEnabled;
+			OtherProxyConfig.IsEnabled = isEnabled;
+		}
 
 		private void SetPatchToggleSwitches()
 		{
@@ -960,8 +970,7 @@ namespace Dogstar
 				await SelectGameFolder();
 			}
 
-			CheckButton.IsEnabled = Settings.Default.IsGameInstalled;
-			LaunchButton.IsEnabled = Settings.Default.IsGameInstalled;
+			EnableGameButtions(Settings.Default.IsGameInstalled);
 		}
 
 		private async Task SelectGameFolder()
@@ -977,6 +986,7 @@ namespace Dogstar
 					Settings.Default.GameFolder = Path.GetDirectoryName(gamePath);
 					Settings.Default.IsGameInstalled = true;
 					Settings.Default.Save();
+					EnableGameButtions(Settings.Default.IsGameInstalled);
 					result = MessageDialogResult.Negative;
 				}
 				else if (gamePath == null)
