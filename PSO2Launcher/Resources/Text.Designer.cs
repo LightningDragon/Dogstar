@@ -61,6 +61,15 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type in the URL of the JSON configuration of the Plugin you want to add..
+        /// </summary>
+        internal static string AddPlugin {
+            get {
+                return ResourceManager.GetString("AddPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All files successfully validated..
         /// </summary>
         internal static string AllFilesValid {
@@ -318,6 +327,15 @@ namespace Dogstar.Resources {
         internal static string InvalidPathTryAgain {
             get {
                 return ResourceManager.GetString("InvalidPathTryAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid URL.
+        /// </summary>
+        internal static string InvalidPluginURL {
+            get {
+                return ResourceManager.GetString("InvalidPluginURL", resourceCulture);
             }
         }
         

@@ -20,6 +20,7 @@ using static MahApps.Metro.ThemeManager;
 using static Dogstar.Helper;
 using static Dogstar.External;
 using static System.Convert;
+using MahApps.Metro.Controls;
 
 namespace Dogstar
 {
@@ -429,7 +430,7 @@ namespace Dogstar
 			}
 			else
 			{
-				Pso2ProxyToggle.IsChecked = await ConfigProxy();
+				//Pso2ProxyToggle.IsChecked = await ConfigProxy();
 			}
 		}
 
@@ -460,9 +461,22 @@ namespace Dogstar
 			Settings.Default.Save();
 		}
 
-		private void AddPluginButton_Click(object sender, RoutedEventArgs e)
+		private async void AddPluginButton_Click(object sender, RoutedEventArgs e)
 		{
-			// TODO: Variant here's your button have fun.
+			string jsonURL = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
+
+			if (!string.IsNullOrWhiteSpace(jsonURL) && Uri.IsWellFormedUriString(jsonURL, UriKind.Absolute))
+			{
+				using (var client = AquaClient)
+				{
+					string json = await client.DownloadStringTaskAsync(jsonURL);
+					EnhancementsTabItem_OnLoaded_Sub(new PluginSetting(json, 0, true));
+				}
+			}
+			else
+			{
+				await this.ShowMessageAsync(Text.Error, Text.InvalidPluginURL);
+			}
 		}
 
 		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
@@ -490,17 +504,52 @@ namespace Dogstar
 
 		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => PsoSettings.Save();
 
-        private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
-        {
+		private void EnhancementsTabItem_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			PluginSetting[] plugins = PluginSetting.GetAllPluginSettings().ToArray();
+			foreach (PluginSetting p in plugins)
+			{
+				EnhancementsTabItem_OnLoaded_Sub(p);
+			}
+		}
 
-        }
+		private void EnhancementsTabItem_OnLoaded_Sub(PluginSetting p)
+		{
+			EnhancementsItemGrid.RowDefinitions.Add(new RowDefinition());
+			Label l = new Label
+			{
+				FontSize = 14,
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Center,
+				Margin = new Thickness(0, 0, 5, 0),
+				Content = p.Plugin.PluginName,
+				ToolTip = p.Plugin.PluginDescription
+			};
+			l.SetValue(Grid.ColumnProperty, 0);
+			l.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
 
-        private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
-        {
+			ToggleSwitch ts = new ToggleSwitch
+			{
+				Name = p.Plugin.PluginName + "Toggle",
+				VerticalAlignment = VerticalAlignment.Center,
+				IsChecked = p.isChecked,
+			};
 
-        }
+			ts.Checked += (x, y) => p.isChecked = true;
+			ts.Unchecked += (x, y) => p.isChecked = false;
+			ts.SetValue(Grid.ColumnProperty, 1);
+			ts.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
 
-        private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+			EnhancementsItemGrid.Children.Add(l);
+			EnhancementsItemGrid.Children.Add(ts);
+		}
+
+		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -580,11 +629,11 @@ namespace Dogstar
 
 		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = false;
 
-        #endregion
+		#endregion
 
-        #region Functions
+		#region Functions
 
-        private void EnableGameButtions(bool isEnabled)
+		private void EnableGameButtions(bool isEnabled)
 		{
 			CheckButton.IsEnabled = isEnabled;
 			LaunchButton.IsEnabled = isEnabled;
@@ -1143,8 +1192,8 @@ namespace Dogstar
 		{
 			_generalDownloadManager.Dispose();
 		}
-        #endregion Functions
+		#endregion Functions
 
 
-    }
+	}
 }

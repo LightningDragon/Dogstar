@@ -270,4 +270,10 @@
   <data name="Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
+  <data name="AddPlugin" xml:space="preserve">
+    <value>Type in the URL of the JSON configuration of the Plugin you want to add.</value>
+  </data>
+  <data name="InvalidPluginURL" xml:space="preserve">
+    <value>Invalid URL</value>
+  </data>
 </root>
