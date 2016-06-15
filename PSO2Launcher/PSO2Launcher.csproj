@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="PatchListEntry.cs" />
+    <Compile Include="PluginSetting.cs" />
     <Compile Include="PrecedeWindow.xaml.cs">
       <DependentUpon>PrecedeWindow.xaml</DependentUpon>
     </Compile>
