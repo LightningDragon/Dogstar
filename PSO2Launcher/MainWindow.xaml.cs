@@ -26,7 +26,6 @@ namespace Dogstar
 	// TODO: Maybe save management_beta.txt to documents\sega\phantasystaronline2 because vanilla launcher does it
 	// TODO: figure out documents\sega\pso2\download patch lists
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
-	// TODO: hosts.ics check
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: howtf are you supposed to tell if an update is paused
