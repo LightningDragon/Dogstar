@@ -261,4 +261,13 @@
   <data name="LaunchDownloadInProgress" xml:space="preserve">
     <value>Dogstar will continue running to complete the download. Would you like to continue anyway?</value>
   </data>
+  <data name="Pausing" xml:space="preserve">
+    <value>Pausing...</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
 </root>

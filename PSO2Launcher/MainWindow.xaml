@@ -122,8 +122,10 @@
                             <Label x:Name="CompletedCheckActionsLabel" Margin="0,115,0,0" VerticalAlignment="Top" Height="27"/>
                             <Label x:Name="CurrentCheckActionLabel" Margin="0,141,0,0" VerticalAlignment="Top" Height="27"/>
                             <controls:MetroProgressBar x:Name="CheckProgressbar" Height="45" Margin="0,165,0,192"/>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause/Resume" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="25,252,159,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click"/>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" Margin="152,252,32,115" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,11,0,100" HorizontalAlignment="Center">
+                                <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="PauseCheckButton" Content="Pause" BorderBrush="{x:Null}" VerticalAlignment="Center" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="PauseCheckButton_Click" Margin="0,0,10,0" Width="128"/>
+                                <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="CancelCheckButton" Content="Cancel" BorderBrush="{x:Null}" VerticalAlignment="Center" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="48" Click="CancelCheckButton_Click" Width="128"/>
+                            </StackPanel>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="GameSettingsTabItem" IsEnabled="False" Selector.Selected="GameSettingsTabItem_OnSelected" Selector.Unselected="GameSettingsTabItem_OnUnSelected">

@@ -403,6 +403,24 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        internal static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pausing....
+        /// </summary>
+        internal static string Pausing {
+            get {
+                return ResourceManager.GetString("Pausing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New Precede Available.
         /// </summary>
         internal static string PrecedeAvailable {
@@ -426,6 +444,15 @@ namespace Dogstar.Resources {
         internal static string ProxyRevert {
             get {
                 return ResourceManager.GetString("ProxyRevert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        internal static string Resume {
+            get {
+                return ResourceManager.GetString("Resume", resourceCulture);
             }
         }
         

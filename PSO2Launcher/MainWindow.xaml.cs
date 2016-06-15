@@ -28,7 +28,6 @@ namespace Dogstar
 	// TODO: Implement the functionality behind the toggles on the enhancements menu
 	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
-	// TODO: howtf are you supposed to tell if an update is paused
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
 	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
@@ -66,7 +65,6 @@ namespace Dogstar
 
 		#region Events
 
-		private void PauseCheckButton_Click(object sender, RoutedEventArgs e) => _isCheckPaused = !_isCheckPaused;
 
 		private void Debug_MouseDown(object sender, MouseButtonEventArgs e) => DebugFlyout.IsOpen = !DebugFlyout.IsOpen;
 
@@ -227,6 +225,12 @@ namespace Dogstar
 
 			_lastTop = Top;
 			_lastLeft = Left;
+		}
+
+		private void PauseCheckButton_Click(object sender, RoutedEventArgs e)
+		{
+			PauseCheckButton.Content = Text.Pausing;
+			_isCheckPaused = !_isCheckPaused;
 		}
 
 		private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -625,6 +629,7 @@ namespace Dogstar
 			CurrentCheckActionLabel.Content = string.Empty;
 			CurrentCheckDownloadActionLabel.Content = string.Empty;
 			CurrentCheckSizeActionLabel.Content = string.Empty;
+			PauseCheckButton.Content = Text.Pause;
 			CheckDownloadProgressbar.Value = 0;
 			CheckProgressbar.Value = 0;
 			var numberDownloaded = 0;
@@ -785,7 +790,9 @@ namespace Dogstar
 
 						if (_isCheckPaused)
 						{
+							PauseCheckButton.Content = Text.Resume;
 							await pause();
+							PauseCheckButton.Content = Text.Pause;
 						}
 						else
 						{
