@@ -490,7 +490,17 @@ namespace Dogstar
 
 		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => PsoSettings.Save();
 
-		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
@@ -570,11 +580,11 @@ namespace Dogstar
 
 		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = false;
 
-		#endregion
+        #endregion
 
-		#region Functions
+        #region Functions
 
-		private void EnableGameButtions(bool isEnabled)
+        private void EnableGameButtions(bool isEnabled)
 		{
 			CheckButton.IsEnabled = isEnabled;
 			LaunchButton.IsEnabled = isEnabled;
@@ -1133,6 +1143,8 @@ namespace Dogstar
 		{
 			_generalDownloadManager.Dispose();
 		}
-		#endregion Functions
-	}
+        #endregion Functions
+
+
+    }
 }
