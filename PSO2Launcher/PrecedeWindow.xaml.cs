@@ -73,7 +73,7 @@ namespace Dogstar
 
 						var listdatas = new PatchListEntry[int.Parse(ManagementData["PrecedeCurrent"]) + 1][];
 
-						for (int index = 0; index < listdatas.Length; index++)
+						for (var index = 0; index < listdatas.Length; index++)
 						{
 
 							var filename = $"patchlist{index}.txt";

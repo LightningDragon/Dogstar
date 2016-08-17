@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dogstar
 {
-	class DownloadManager : IDisposable
+	public class DownloadManager : IDisposable
 	{
 		// TODO: OnError event
 		// TODO: Retry download on connection loss (forever)

@@ -314,5 +314,11 @@ namespace Dogstar
 
 			return false;
 		}
+
+		public static void SavePluginSettings()
+		{
+			Settings.Default.PluginSettings = JsonConvert.SerializeObject(PluginManager.PluginSettings);
+			Settings.Default.Save();
+		}
 	}
 }

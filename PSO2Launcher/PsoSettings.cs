@@ -166,7 +166,7 @@ namespace Dogstar
 			}
 
 			LuaVm.DoString("WrapsIni = {Ini = Ini}");
-			string result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
+			var result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
 
 			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), result);
 		}

@@ -18,7 +18,7 @@ namespace Dogstar
 
 		public static IEnumerable<Devmode> GetDisplayModes(string device = null)
 		{
-			int index = 0;
+			var index = 0;
 			var mode = new Devmode();
 
 			while (EnumDisplaySettings(device, index++, ref mode))

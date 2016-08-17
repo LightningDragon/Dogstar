@@ -15,12 +15,12 @@ using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
 using Dogstar.Resources;
 using Dogstar.Properties;
+using MahApps.Metro.Controls;
 
 using static MahApps.Metro.ThemeManager;
 using static Dogstar.Helper;
 using static Dogstar.External;
 using static System.Convert;
-using MahApps.Metro.Controls;
 
 namespace Dogstar
 {
@@ -159,6 +159,15 @@ namespace Dogstar
 
 				var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
+				var plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
+				var pluginInfoPullArray = plugins.Select(x =>
+				{
+					using (var client = AquaClient)
+					{
+						return client.DownloadStringTaskAsync(x.Url);
+					}
+				}).ToArray();
+
 				if (File.Exists(editionPath))
 				{
 					var edition = await Task.Run(() => File.ReadAllText(editionPath));
@@ -202,6 +211,35 @@ namespace Dogstar
 						}
 					}
 				}
+
+				var updatedPluginInfos = (await Task.WhenAll(pluginInfoPullArray)).Select(JsonConvert.DeserializeObject<PluginInfo>).ToArray();
+				var pluginsUpdateingTasks = new List<Task>();
+				PluginManager.DownloadManager = _generalDownloadManager;
+
+				for (int index = 0; index < updatedPluginInfos.Length; index++)
+				{
+					if (updatedPluginInfos[index].CurrentVersion > plugins[index].CurrentVersion)
+					{
+						if (await this.ShowMessageAsync(Text.UpdateAvailable, string.Format(Text.DownloadLatest, plugins[index].Name), AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+						{
+							updatedPluginInfos[index].Url = plugins[index].Url;
+							var plugin = plugins[index] = updatedPluginInfos[index];
+
+							pluginsUpdateingTasks.Add(plugin.IsEnabled
+								? PluginManager.Install(plugin)
+								: PluginManager.Install(plugin).ContinueWith(x => PluginManager.Disable(plugin)));
+						}
+					}
+				}
+
+				if (pluginsUpdateingTasks.Count > 0)
+				{
+					_gameTabController.ChangeTab(GeneralDownloadTab);
+					await Task.WhenAll(pluginsUpdateingTasks);
+					_gameTabController.PreviousTab();
+				}
+
+				PluginManager.PluginSettings.AddRange(plugins);
 
 				if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 				{
@@ -430,7 +468,7 @@ namespace Dogstar
 			}
 			else
 			{
-				//Pso2ProxyToggle.IsChecked = await ConfigProxy();
+				//Pso2ProxyToggle.IsEnabled = await ConfigProxy();
 			}
 		}
 
@@ -461,22 +499,41 @@ namespace Dogstar
 			Settings.Default.Save();
 		}
 
+		private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
+		{
+			// TODO: Do this better
+			EnhancementsItemGrid.Children.RemoveRange(10, EnhancementsItemGrid.Children.Count - 10);
+
+			foreach (var plugin in PluginManager.PluginSettings)
+			{
+				EnhancementsTabAddSubItem(plugin);
+			}
+		}
+
+		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => SavePluginSettings();
+
 		private async void AddPluginButton_Click(object sender, RoutedEventArgs e)
 		{
-			string jsonURL = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
-
-			if (!string.IsNullOrWhiteSpace(jsonURL) && Uri.IsWellFormedUriString(jsonURL, UriKind.Absolute))
+			try
 			{
-				using (var client = AquaClient)
+				var jsonUrl = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
+				_gameTabController.ChangeTab(GeneralDownloadTab);
+
+				if (jsonUrl != null)
 				{
-					string json = await client.DownloadStringTaskAsync(jsonURL);
-					EnhancementsTabItem_OnLoaded_Sub(new PluginSetting(json, 0, true));
+					PluginManager.DownloadManager = _generalDownloadManager;
+					var info = await PluginManager.InfoFromUrl(new Uri(jsonUrl));
+					await PluginManager.Install(info);
+					EnhancementsTabAddSubItem(info);
+					PluginManager.PluginSettings.Add(info);
 				}
 			}
-			else
+			catch (Exception ex)
 			{
-				await this.ShowMessageAsync(Text.Error, Text.InvalidPluginURL);
+				await this.ShowMessageAsync(Text.Error, ex.Message);
 			}
+
+			_gameTabController.PreviousTab();
 		}
 
 		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
@@ -503,51 +560,6 @@ namespace Dogstar
 		}
 
 		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => PsoSettings.Save();
-
-		private void EnhancementsTabItem_OnLoaded(object sender, RoutedEventArgs e)
-		{
-			PluginSetting[] plugins = PluginSetting.GetAllPluginSettings().ToArray();
-			foreach (PluginSetting p in plugins)
-			{
-				EnhancementsTabItem_OnLoaded_Sub(p);
-			}
-		}
-
-		private void EnhancementsTabItem_OnLoaded_Sub(PluginSetting p)
-		{
-			EnhancementsItemGrid.RowDefinitions.Add(new RowDefinition());
-			Label l = new Label
-			{
-				FontSize = 14,
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Center,
-				Margin = new Thickness(0, 0, 5, 0),
-				Content = p.Plugin.PluginName,
-				ToolTip = p.Plugin.PluginDescription
-			};
-			l.SetValue(Grid.ColumnProperty, 0);
-			l.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
-
-			ToggleSwitch ts = new ToggleSwitch
-			{
-				Name = p.Plugin.PluginName + "Toggle",
-				VerticalAlignment = VerticalAlignment.Center,
-				IsChecked = p.isChecked,
-			};
-
-			ts.Checked += (x, y) => p.isChecked = true;
-			ts.Unchecked += (x, y) => p.isChecked = false;
-			ts.SetValue(Grid.ColumnProperty, 1);
-			ts.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
-
-			EnhancementsItemGrid.Children.Add(l);
-			EnhancementsItemGrid.Children.Add(ts);
-		}
-
-		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
-		{
-
-		}
 
 		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -675,6 +687,39 @@ namespace Dogstar
 		{
 			CurrentGeneralDownloadSizeActionLabel.Visibility = value ? Visibility.Hidden : Visibility.Visible;
 			GeneralDownloadProgressbar.IsIndeterminate = value;
+		}
+
+		private void EnhancementsTabAddSubItem(PluginInfo settings)
+		{
+			EnhancementsItemGrid.RowDefinitions.Add(new RowDefinition());
+
+			var lable = new Label
+			{
+				FontSize = 14,
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Center,
+				Margin = new Thickness(0, 0, 5, 0),
+				Content = $"{settings.Name}:",
+				ToolTip = settings.Description
+			};
+
+			lable.SetValue(Grid.ColumnProperty, 0);
+			lable.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
+
+			var toggleSwitch = new ToggleSwitch
+			{
+				Name = settings.Name + "Toggle",
+				VerticalAlignment = VerticalAlignment.Center,
+				IsChecked = settings.IsEnabled,
+			};
+
+			toggleSwitch.Checked += delegate { PluginManager.Enable(settings); settings.IsEnabled = true; };
+			toggleSwitch.Unchecked += delegate { PluginManager.Disable(settings); settings.IsEnabled = false; };
+			toggleSwitch.SetValue(Grid.ColumnProperty, 1);
+			toggleSwitch.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
+
+			EnhancementsItemGrid.Children.Add(lable);
+			EnhancementsItemGrid.Children.Add(toggleSwitch);
 		}
 
 		private async Task<bool> CheckGameFiles(UpdateMethod method)
@@ -934,13 +979,19 @@ namespace Dogstar
 
 		public async Task<bool> ConfigProxy()
 		{
-			var url = await this.ShowInputAsync(Text.EnterProxy, string.Empty);
-			if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
+			try
 			{
-				return await SetupProxy(url);
-			}
+				var url = await this.ShowInputAsync(Text.EnterProxy, string.Empty);
 
-			await this.ShowMessageAsync(Text.InvalidProxyURL, string.Empty);
+				if (url != null)
+				{
+					return await SetupProxy(url);
+				}
+			}
+			catch (Exception ex)
+			{
+				await this.ShowMessageAsync(Text.Error, ex.Message);
+			}
 
 			return false;
 		}
@@ -949,7 +1000,7 @@ namespace Dogstar
 		{
 			using (var client = AquaClient)
 			{
-				var json = await client.DownloadStringTaskAsync(url);
+				var json = await client.DownloadStringTaskAsync(new Uri(url));
 				dynamic jsonData = JsonConvert.DeserializeObject(json);
 
 				if (jsonData.version != 1)
@@ -1100,11 +1151,11 @@ namespace Dogstar
 
 		private async Task<long> DownloadJpFile(string dir, string filename, string patchname)
 		{
-			string dataFolder = DataFolder;
-			string backupFolder = Path.Combine(dataFolder, "backup");
-			string dataFilename = Path.Combine(dataFolder, filename);
-			string backupFilename = Path.Combine(backupFolder, patchname, filename);
-			string downloadFilename = Path.Combine(Path.GetTempPath(), filename);
+			var dataFolder = DataFolder;
+			var backupFolder = Path.Combine(dataFolder, "backup");
+			var dataFilename = Path.Combine(dataFolder, filename);
+			var backupFilename = Path.Combine(backupFolder, patchname, filename);
+			var downloadFilename = Path.Combine(Path.GetTempPath(), filename);
 
 			dynamic jsonData = await GetArghlexJson(dir);
 			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => x.name == filename);

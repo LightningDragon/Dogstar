@@ -243,8 +243,8 @@
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="GameSettingsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0,3,0,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="EnhancementsTabItem" IsEnabled="False" Loaded="EnhancementsTabItem_OnLoaded" Selector.Unselected="EnhancementsTabItem_OnUnSelected">
-                        <Grid HorizontalAlignment="Center" Margin="0" VerticalAlignment="Top">
+                    <TabItem x:Name="EnhancementsTabItem" IsEnabled="False" Selector.Selected="EnhancementsTabItem_OnSelected" Selector.Unselected="EnhancementsTabItem_OnUnSelected">
+                        <Grid HorizontalAlignment="Center" Margin="0,0,0,50" VerticalAlignment="Top">
                             <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
                                 <Grid Name="EnhancementsItemGrid">
                                     <Grid.RowDefinitions>

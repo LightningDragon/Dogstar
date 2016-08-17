@@ -196,6 +196,15 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Would you like to download the latest {0}?.
+        /// </summary>
+        internal static string DownloadLatest {
+            get {
+                return ResourceManager.GetString("DownloadLatest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Would you like to download the latest preced?.
         /// </summary>
         internal static string DownloadLatestPreced {
@@ -498,6 +507,15 @@ namespace Dogstar.Resources {
         internal static string ServerMaintenance {
             get {
                 return ResourceManager.GetString("ServerMaintenance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update available.
+        /// </summary>
+        internal static string UpdateAvailable {
+            get {
+                return ResourceManager.GetString("UpdateAvailable", resourceCulture);
             }
         }
         

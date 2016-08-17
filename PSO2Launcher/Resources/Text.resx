@@ -276,4 +276,10 @@
   <data name="InvalidPluginURL" xml:space="preserve">
     <value>Invalid URL</value>
   </data>
+  <data name="DownloadLatest" xml:space="preserve">
+    <value>Would you like to download the latest {0}?</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Update available</value>
+  </data>
 </root>

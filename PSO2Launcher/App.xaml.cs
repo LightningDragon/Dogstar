@@ -38,6 +38,7 @@ namespace Dogstar
 				if (Settings.Default.IsGameInstalled)
 				{
 					PsoSettings.Save();
+					Helper.SavePluginSettings();
 				}
 			}
 		}
