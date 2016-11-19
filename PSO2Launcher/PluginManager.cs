@@ -32,6 +32,18 @@ namespace Dogstar
 			//TODO: Config stuff
 		}
 
+		public static void Uninstall(PluginInfo info)
+		{
+			var pluginsFolder = MakeLocalToGame("Plugins");
+			var disabledFolder = Path.Combine(pluginsFolder, "disabled");
+			var enabledfilePath = Path.Combine(pluginsFolder, Path.ChangeExtension(info.Name, ".dll"));
+			var disabledFilePath = Path.Combine(disabledFolder, Path.GetFileName(enabledfilePath));
+
+			DeleteFileIfItExists(enabledfilePath);
+			DeleteFileIfItExists(disabledFilePath);
+			//TODO: Config stuff
+		}
+
 		public static void Disable(PluginInfo info)
 		{
 			var pluginsFolder = MakeLocalToGame("Plugins");
@@ -42,15 +54,9 @@ namespace Dogstar
 			CreateDirectoryIfNoneExists(pluginsFolder);
 			CreateDirectoryIfNoneExists(pluginsFolder);
 
-
 			if (File.Exists(enabledfilePath))
 			{
-				if (File.Exists(disabledFilePath))
-				{
-					File.Delete(disabledFilePath);
-				}
-
-				File.Move(enabledfilePath, disabledFilePath);
+				MoveAndOverwriteFile(enabledfilePath, disabledFilePath);
 			}
 
 			info.IsEnabled = false;
@@ -66,15 +72,9 @@ namespace Dogstar
 			CreateDirectoryIfNoneExists(pluginsFolder);
 			CreateDirectoryIfNoneExists(pluginsFolder);
 
-
 			if (File.Exists(disabledFilePath))
 			{
-				if (File.Exists(enabledfilePath))
-				{
-					File.Delete(enabledfilePath);
-				}
-
-				File.Move(disabledFilePath, enabledfilePath);
+				MoveAndOverwriteFile(disabledFilePath, enabledfilePath);
 			}
 
 			info.IsEnabled = true;

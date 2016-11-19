@@ -116,6 +116,14 @@ namespace Dogstar
 			}
 		}
 
+		public static void DeleteFileIfItExists(string path)
+		{
+			if (File.Exists(path))
+			{
+				File.Delete(path);
+			}
+		}
+
 		public static void MoveAndOverwriteFile(string source, string destination)
 		{
 			if (File.Exists(destination))
