@@ -911,6 +911,7 @@ namespace Dogstar
 							if (!upToDate)
 							{
 								var patPath = MakeLocalToGame(data.Name);
+								Directory.CreateDirectory(Path.GetDirectoryName(patPath));
 
 								fileOperations.Add(manager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
 
