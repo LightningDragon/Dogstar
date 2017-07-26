@@ -142,7 +142,7 @@
     <value>Deleted</value>
   </data>
   <data name="DownloadedOf" xml:space="preserve">
-    <value>Downloaded {0} of {1}</value>
+    <value>Downloaded {0} of {1} ({2} of {3})</value>
   </data>
   <data name="DownloadingEngPatch" xml:space="preserve">
     <value>Downloading English Patch...</value>

@@ -142,7 +142,7 @@ namespace Dogstar.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloaded {0} of {1}.
+        ///   Looks up a localized string similar to Downloaded {0} of {1} ({2} of {3}).
         /// </summary>
         internal static string DownloadedOf {
             get {

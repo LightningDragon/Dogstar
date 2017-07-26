@@ -721,38 +721,15 @@ namespace Dogstar
 			CheckDownloadProgressbar.Value = 0;
 			CheckProgressbar.Value = 0;
 			var numberDownloaded = 0;
-			var numberToDownload = 3;
+			var numberToDownload = 0;
 			var fileOperations = new List<Task>();
+
+			long totalBytesToDownload = 0;
+			long totalBytesDownloaded = 0;
+			long lastBytesDownloaded = 0;
 
 			using (var manager = new DownloadManager())
 			{
-				manager.DownloadStarted += (s, e) =>
-				{
-					CurrentCheckDownloadActionLabel.Dispatcher.InvokeAsync(() =>
-					{
-						CheckDownloadProgressbar.Maximum = 100;
-						CurrentCheckDownloadActionLabel.Content = Path.GetFileNameWithoutExtension(e);
-					});
-				};
-
-				manager.DownloadProgressChanged += (s, e) =>
-				{
-					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
-					{
-						CheckDownloadProgressbar.Value = e.ProgressPercentage;
-						CurrentCheckSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
-					});
-				};
-
-				manager.DownloadCompleted += (s, e) =>
-				{
-					CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
-					{
-						numberDownloaded++;
-						CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
-					});
-				};
-
 				async Task pause()
 				{
 					var taskSource = new TaskCompletionSource<object>();
@@ -874,6 +851,45 @@ namespace Dogstar
 					var masterUrl = new Uri(ManagementData["MasterURL"]);
 					var patchUrl = new Uri(ManagementData["PatchURL"]);
 
+					void setTopLabel()
+					{
+						CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf
+							.Format(numberDownloaded, numberToDownload, SizeSuffix(totalBytesDownloaded), SizeSuffix(totalBytesToDownload));
+					}
+
+					manager.DownloadStarted += (s, e) =>
+					{
+						CurrentCheckDownloadActionLabel.Dispatcher.InvokeAsync(() =>
+						{
+							lastBytesDownloaded = 0;
+							CheckDownloadProgressbar.Maximum = 100;
+							CurrentCheckDownloadActionLabel.Content = Path.GetFileNameWithoutExtension(e);
+						});
+					};
+
+					manager.DownloadProgressChanged += (s, e) =>
+					{
+						CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
+						{
+							CheckDownloadProgressbar.Value = e.ProgressPercentage;
+
+							totalBytesDownloaded += e.BytesReceived - lastBytesDownloaded;
+							lastBytesDownloaded = e.BytesReceived;
+							setTopLabel();
+
+							CurrentCheckSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+						});
+					};
+
+					manager.DownloadCompleted += (s, e) =>
+					{
+						CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
+						{
+							numberDownloaded++;
+							setTopLabel();
+						});
+					};
+
 					for (var index = 0; index < groups.Length;)
 					{
 						_checkCancelSource.Token.ThrowIfCancellationRequested();
@@ -930,7 +946,9 @@ namespace Dogstar
 							fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(uri, data.Name), patPath).ContinueWith(pat));
 
 							numberToDownload++;
-							CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
+							totalBytesToDownload += data.Size;
+
+							setTopLabel();
 						}
 					}
 
