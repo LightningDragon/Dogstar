@@ -30,10 +30,6 @@ namespace Dogstar
 
 		public static readonly Uri BasePrecede = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
 
-		public static readonly Uri BasePatch = new Uri("http://download.pso2.jp/patch_prod/patches/");
-
-		public static readonly Uri BasePatchOld = new Uri("http://download.pso2.jp/patch_prod/patches_old/");
-
 		public static readonly Uri PatchListOldUrl = new Uri("http://download.pso2.jp/patch_prod/patches_old/patchlist.txt");
 
 		public static readonly Uri LauncherListUrl = new Uri("http://download.pso2.jp/patch_prod/patches/launcherlist.txt");
@@ -42,7 +38,7 @@ namespace Dogstar
 
 		public static readonly Uri Arghlex = new Uri("http://pitchblack.arghlex.net/pso2/");
 
-		public static readonly Uri VersionUrl = new Uri(BasePatch, "version.ver");
+		public static readonly Uri VersionUrl = new Uri("http://download.pso2.jp/patch_prod/patches/version.ver");
 
 		public static readonly Uri ManagementUrl = new Uri("http://patch01.pso2gs.net/patch_prod/patches/management_beta.txt");
 
@@ -168,7 +164,7 @@ namespace Dogstar
 
 		public static IEnumerable<PatchListEntry> ParsePatchList(string list)
 		{
-			return from l in list.LineSplit() where !string.IsNullOrWhiteSpace(l) let data = l.Split('\t') select new PatchListEntry(data[0], data[1], data[2]);
+			return from l in list.LineSplit() where !string.IsNullOrWhiteSpace(l) select new PatchListEntry(l);
 		}
 
 		public static async Task<dynamic> GetArghlexJson()

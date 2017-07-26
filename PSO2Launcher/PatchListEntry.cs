@@ -10,21 +10,63 @@ namespace Dogstar
 		public int GetHashCode(PatchListEntry obj) => obj.Name.GetHashCode() ^ obj.Size.GetHashCode() ^ obj.Hash.GetHashCode();
 	}
 
+	public enum PatchListSource
+	{
+		None,
+		Master,
+		Patch
+	}
+
 	public class PatchListEntry
 	{
-		public string Name;
-		public long Size;
-		public string Hash;
+		public readonly string Name;
+		public readonly long Size;
+		public readonly string Hash;
+		public readonly PatchListSource Source;
+		private readonly string unknown;
 
-		public PatchListEntry(string name, string size, string hash) : this(name, Convert.ToInt64(size), hash)
+		public PatchListEntry(string s)
 		{
-		}
+			string[] split = s.Split('\t');
 
-		public PatchListEntry(string name, long size, string hash)
-		{
-			Name = name;
-			Size = size;
-			Hash = hash;
+			if (split.Length < 3)
+			{
+				throw new ArgumentOutOfRangeException();
+			}
+
+			if (split.Length <= 3)
+			{
+				Name = split[0];
+				Size = long.Parse(split[1]);
+				Hash = split[2];
+			}
+			else
+			{
+				Name = split[0];
+				Hash = split[1];
+				Size = long.Parse(split[2]);
+
+				switch (split[3])
+				{
+					case "m":
+						Source = PatchListSource.Master;
+						break;
+
+					case "p":
+						Source = PatchListSource.Patch;
+						break;
+				}
+
+				if (split.Length > 4)
+				{
+					unknown = split[4];
+				}
+			}
+
+			if (string.IsNullOrEmpty(Name))
+			{
+				throw new NullReferenceException();
+			}
 		}
 	}
 }

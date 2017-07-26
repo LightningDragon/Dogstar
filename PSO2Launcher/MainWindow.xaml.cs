@@ -460,24 +460,6 @@ namespace Dogstar
 			Settings.Default.Save();
 		}
 
-		private async void Pso2ProxyToggle_Checked(object sender, RoutedEventArgs e)
-		{
-			if (await Task.Run((Func<bool>)ProxyCheck))
-			{
-				// TODO: Put dll in plugins
-			}
-			else
-			{
-				//Pso2ProxyToggle.IsEnabled = await ConfigProxy();
-			}
-		}
-
-		private async void Pso2ProxyToggle_Unchecked(object sender, RoutedEventArgs e)
-		{
-			// TODO: Remove DLL
-			await Task.Run(() => File.WriteAllLines(HostsPath, StripProxyEntries(File.ReadAllLines(HostsPath))));
-		}
-
 		private async void EnglishPatchToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
 			await Task.Run(() =>
@@ -726,6 +708,8 @@ namespace Dogstar
 		{
 			_gameTabController.ChangeTab(FileCheckTabItem);
 
+			await PullManagementData();
+
 			_checkCancelSource = new CancellationTokenSource();
 			_isCheckPaused = false;
 			CompletedCheckDownloadActionsLabel.Content = string.Empty;
@@ -769,11 +753,11 @@ namespace Dogstar
 					});
 				};
 
-				Func<Task> pause = async () =>
+				async Task pause()
 				{
 					var taskSource = new TaskCompletionSource<object>();
-					RoutedEventHandler unpause = (s, e) => taskSource.TrySetResult(null);
-					RoutedEventHandler cancel = (s, e) => taskSource.TrySetCanceled();
+					void unpause(object s, RoutedEventArgs e) => taskSource.TrySetResult(null);
+					void cancel(object s, RoutedEventArgs e) => taskSource.TrySetCanceled();
 
 					try
 					{
@@ -787,7 +771,7 @@ namespace Dogstar
 						PauseCheckButton.Click -= unpause;
 						CancelCheckButton.Click -= cancel;
 					}
-				};
+				}
 
 				try
 				{
@@ -797,14 +781,13 @@ namespace Dogstar
 						CreateDirectoryIfNoneExists(DataFolder);
 					});
 
-					var precedePath = Path.Combine(PrecedeFolder, "data", "win32");
+					string precedePath = Path.Combine(PrecedeFolder, "data", "win32");
 
 					if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
 					{
-						await PullManagementData();
 						if (!ManagementData.ContainsKey("PrecedeVersion") || !ManagementData.ContainsKey("PrecedeCurrent"))
 						{
-							var result = await this.ShowMessageAsync(Text.ApplyPrecede, Text.ApplyPrecedeNow, AffirmNeg, YesNo);
+							MessageDialogResult result = await this.ShowMessageAsync(Text.ApplyPrecede, Text.ApplyPrecedeNow, AffirmNeg, YesNo);
 
 							if (result == MessageDialogResult.Affirmative)
 							{
@@ -812,10 +795,10 @@ namespace Dogstar
 								CancelCheckButton.IsEnabled = false;
 								PauseCheckButton.IsEnabled = false;
 
-								var files = await Task.Run(() => Directory.GetFiles(precedePath));
+								string[] files = await Task.Run(() => Directory.GetFiles(precedePath));
 								CheckProgressbar.Maximum = files.Length;
 
-								foreach (var file in files)
+								foreach (string file in files)
 								{
 									CurrentCheckActionLabel.Content = Path.GetFileName(file);
 
@@ -849,13 +832,13 @@ namespace Dogstar
 						}
 					}
 
-					var launcherlist = await manager.DownloadStringTaskAsync(LauncherListUrl);
-					var newlist = await manager.DownloadStringTaskAsync(PatchListUrl);
-					var oldlist = await manager.DownloadStringTaskAsync(PatchListOldUrl);
+					string launcherlist = await manager.DownloadStringTaskAsync(LauncherListUrl);
+					string newlist = await manager.DownloadStringTaskAsync(PatchListUrl);
+					string oldlist = await manager.DownloadStringTaskAsync(PatchListOldUrl);
 
-					var launcherlistdata = ParsePatchList(launcherlist).ToArray();
-					var newlistdata = ParsePatchList(newlist).ToArray();
-					var oldlistdata = ParsePatchList(oldlist).ToArray();
+					PatchListEntry[] launcherlistdata = ParsePatchList(launcherlist).ToArray();
+					PatchListEntry[] newlistdata = ParsePatchList(newlist).ToArray();
+					PatchListEntry[] oldlistdata = ParsePatchList(oldlist).ToArray();
 
 					await RestoreAllPatchBackups();
 					SetPatchToggleSwitches();
@@ -866,27 +849,30 @@ namespace Dogstar
 
 						if (File.Exists(LauncherListPath))
 						{
-							var storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
+							IEnumerable<PatchListEntry> storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
 							launcherlistdata = launcherlistdata.Except(storedLauncherlist, entryComparer).ToArray();
 						}
 
 						if (File.Exists(PatchListPath))
 						{
-							var storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
+							IEnumerable<PatchListEntry> storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
 							newlistdata = newlistdata.Except(storedNewlist, entryComparer).ToArray();
 						}
 
 						if (File.Exists(PatchListOldPath))
 						{
-							var storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
+							IEnumerable<PatchListEntry> storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
 							oldlistdata = oldlistdata.Except(storedOldlist, entryComparer).ToArray();
 						}
 					}
 
-					var lists = launcherlistdata.Concat(newlistdata.Concat(oldlistdata)).ToArray();
-					var groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
+					PatchListEntry[] lists = launcherlistdata.Concat(newlistdata.Concat(oldlistdata)).ToArray();
+					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
 
 					CheckProgressbar.Maximum = groups.Length;
+
+					var masterUrl = new Uri(ManagementData["MasterURL"]);
+					var patchUrl = new Uri(ManagementData["PatchURL"]);
 
 					for (var index = 0; index < groups.Length;)
 					{
@@ -900,24 +886,51 @@ namespace Dogstar
 						}
 						else
 						{
-							var data = groups[index];
+							PatchListEntry data = groups[index];
 							CurrentCheckActionLabel.Content = Path.GetFileNameWithoutExtension(data.Name);
-							var filePath = MakeLocalToGame(Path.ChangeExtension(data.Name, null));
+							string filePath = MakeLocalToGame(Path.ChangeExtension(data.Name, null));
 
-							var upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
+							bool upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
 							CheckProgressbar.Value = ++index;
 							CompletedCheckActionsLabel.Content = Text.CheckedOf.Format(index, groups.Length);
 
-							if (!upToDate)
+							if (upToDate)
 							{
-								var patPath = MakeLocalToGame(data.Name);
-								Directory.CreateDirectory(Path.GetDirectoryName(patPath));
-
-								fileOperations.Add(manager.DownloadFileTaskAsync(newlistdata.Contains(data) || launcherlistdata.Contains(data) ? new Uri(BasePatch, data.Name) : new Uri(BasePatchOld, data.Name), patPath).ContinueWith(x => MoveAndOverwriteFile(patPath, filePath)));
-
-								numberToDownload++;
-								CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
+								continue;
 							}
+
+							string patPath = MakeLocalToGame(data.Name);
+							Directory.CreateDirectory(Path.GetDirectoryName(patPath));
+
+							void pat(Task t) => MoveAndOverwriteFile(patPath, filePath);
+							Uri uri;
+
+							switch (data.Source)
+							{
+								case PatchListSource.None:
+									if (newlistdata.Contains(data) || launcherlistdata.Contains(data))
+									{
+										goto case PatchListSource.Master;
+									}
+
+									goto case PatchListSource.Patch;
+
+								case PatchListSource.Master:
+									uri = masterUrl;
+									break;
+
+								case PatchListSource.Patch:
+									uri = patchUrl;
+									break;
+
+								default:
+									throw new ArgumentOutOfRangeException();
+							}
+
+							fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(uri, data.Name), patPath).ContinueWith(pat));
+
+							numberToDownload++;
+							CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf.Format(numberDownloaded, numberToDownload);
 						}
 					}
 
