@@ -248,26 +248,11 @@
                             <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
                                 <Grid Name="EnhancementsItemGrid">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="96"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Grid.Row="0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">English Patch:</Label>
-                                    <Label Grid.Column="0" Grid.Row="1" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Large Files:</Label>
-                                    <Label Grid.Column="0" Grid.Row="2" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP E-Codes:</Label>
-                                    <Label Grid.Column="0" Grid.Row="3" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">JP Enemies:</Label>
-                                    <Label Grid.Column="0" Grid.Row="4" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,5,0">Story Patch:</Label>
-                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="0" x:Name="EnglishPatchToggle" VerticalAlignment="Center" Checked="EnglishPatchToggle_Checked" Unchecked="EnglishPatchToggle_Unchecked"/>
-                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="1" x:Name="LargeFilesToggle" VerticalAlignment="Center" Checked="LargeFilesToggle_Checked" Unchecked="LargeFilesToggle_Unchecked"/>
-                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="2" x:Name="JpeCodesToggle" VerticalAlignment="Center" Checked="JpeCodesToggle_Checked" Unchecked="JpeCodesToggle_Unchecked"/>
-                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="3" x:Name="JpEnemiesToggle" VerticalAlignment="Center" Checked="JpEnemiesToggle_Checked" Unchecked="JpEnemiesToggle_Unchecked"/>
-                                    <controls:ToggleSwitch Grid.Column="1" Grid.Row="4" x:Name="StoryPatchToggle" VerticalAlignment="Center"/>
                                 </Grid>
                             </ScrollViewer>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="7,0,119,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom"/>

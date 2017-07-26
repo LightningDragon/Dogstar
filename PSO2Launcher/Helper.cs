@@ -62,10 +62,6 @@ namespace Dogstar
 
 		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
 
-		public const string JpEnemiesFile = "ceffe0e2386e8d39f188358303a92a7d";
-
-		public const string JpeCodesFile = "057aa975bdd2b372fe092614b0f4399e";
-
 		public static AquaHttpClient AquaClient => new AquaHttpClient();
 
 		public static Dictionary<string, string> ManagementData { get; private set; }
@@ -233,12 +229,6 @@ namespace Dogstar
 					}
 				}
 			});
-
-			Settings.Default.InstalledEnglishPatch = 0;
-			Settings.Default.InstalledLargeFiles = 0;
-			Settings.Default.InstalledJPECodes = 0;
-			Settings.Default.InstalledJPEnemies = 0;
-			// TODO: story patch
 		}
 
 		public static bool InstallPatchArchive(string filename, string patchname)

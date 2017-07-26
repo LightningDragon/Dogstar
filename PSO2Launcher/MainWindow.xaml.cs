@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Windows.Navigation;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using MahApps.Metro.Controls.Dialogs;
 using Dogstar.Resources;
 using Dogstar.Properties;
@@ -31,9 +30,6 @@ namespace Dogstar
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
-	// TODO: Static strings for all patch names (e.g EnglishPatch, JPEnemies)
-	// TODO: Update detection for enemies and e-codes
-	// TODO: After ^, when an English Patch update is detected, "uninstall" JP patches since they overlap.
 	// TODO: Fix all them WIN7 UIs
 
 	public partial class MainWindow : IDisposable
@@ -187,30 +183,6 @@ namespace Dogstar
 						await CheckGameFiles(UpdateMethod.Update);
 					}
 				}
-				else
-				{
-					SetPatchToggleSwitches();
-
-					if (EnglishPatchToggle.IsChecked == true || LargeFilesToggle.IsChecked == true)
-					{
-						var files = (JArray)(await GetArghlexJson()).files;
-						dynamic entryEn = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
-						dynamic entryLarge = files.Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
-
-						if (entryEn != null && await CheckEnglishPatchVersion((long)entryEn.modtime))
-						{
-							_gameTabController.ChangeTab(GeneralDownloadTab);
-							await DownloadEnglishPatch((string)entryEn.name, (int)entryEn.size, (long)entryEn.modtime);
-							_gameTabController.PreviousTab();
-						}
-						if (entryLarge != null && await CheckLargeFilesVersion((long)entryLarge.modtime))
-						{
-							_gameTabController.ChangeTab(GeneralDownloadTab);
-							await DownloadLargeFiles((string)entryLarge.name, (int)entryLarge.size, (long)entryLarge.modtime);
-							_gameTabController.PreviousTab();
-						}
-					}
-				}
 
 				var updatedPluginInfos = (await Task.WhenAll(pluginInfoPullArray)).Select(JsonConvert.DeserializeObject<PluginInfo>).ToArray();
 				var pluginsUpdateingTasks = new List<Task>();
@@ -347,138 +319,6 @@ namespace Dogstar
 				ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 				Settings.Default.Save();
 			}
-		}
-
-		private async void EnglishPatchToggle_Checked(object sender, RoutedEventArgs e)
-		{
-			ResetGeneralDownloadTab();
-			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingEngPatch;
-			_gameTabController.ChangeTab(GeneralDownloadTab);
-
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).StartsWith("patch_"));
-			if (entry != null)
-			{
-				await DownloadEnglishPatch((string)entry.name, (int)entry.size, (int)entry.modtime);
-			}
-			_gameTabController.PreviousTab();
-			SetPatchToggleSwitches();
-		}
-
-		private async void LargeFilesToggle_Checked(object sender, RoutedEventArgs e)
-		{
-			ResetGeneralDownloadTab();
-			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingLargeFiles;
-			_gameTabController.ChangeTab(GeneralDownloadTab);
-
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => ((string)x.name).EndsWith("_largefiles.rar"));
-			if (entry != null)
-			{
-				await DownloadLargeFiles((string)entry.name, (int)entry.size, (int)entry.modtime);
-			}
-			_gameTabController.PreviousTab();
-		}
-
-		private async void JpeCodesToggle_Checked(object sender, RoutedEventArgs e)
-		{
-			ResetGeneralDownloadTab();
-			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpECodes;
-			GeneralDownloadIsIndeterminate(true);
-
-			_gameTabController.ChangeTab(GeneralDownloadTab);
-
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
-
-			GeneralDownloadIsIndeterminate(false);
-
-			if (entry != null)
-			{
-				var modtime = await DownloadJpFile((string)entry.name, JpeCodesFile, "JPECodes");
-
-				if (modtime == 0)
-				{
-					JpeCodesToggle.IsChecked = false;
-					await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, "JP E-Codes"));
-				}
-				else
-				{
-					Settings.Default.InstalledJPECodes = modtime;
-					Settings.Default.Save();
-					await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, "JP E-Codes"));
-				}
-			}
-
-			_gameTabController.PreviousTab();
-		}
-
-		private async void JpeCodesToggle_Unchecked(object sender, RoutedEventArgs e)
-		{
-			await Task.Run(() => RestorePatchBackup("JPEcodes"));
-			Settings.Default.InstalledJPECodes = 0;
-			Settings.Default.Save();
-		}
-
-		private async void JpEnemiesToggle_Checked(object sender, RoutedEventArgs e)
-		{
-			ResetGeneralDownloadTab();
-			CompletedGeneralDownloadActionLabel.Content = Text.DownloadingJpEnemyNames;
-			GeneralDownloadIsIndeterminate(true);
-
-			_gameTabController.ChangeTab(GeneralDownloadTab);
-
-			dynamic jsonData = await GetArghlexJson();
-			dynamic entry = ((JArray)jsonData.folders).Select(x => (dynamic)x).FirstOrDefault(x => x.name != "docs" && x.name != "psu" && x.name != "temp");
-
-			GeneralDownloadIsIndeterminate(false);
-
-			if (entry != null)
-			{
-				var modtime = await DownloadJpFile((string)entry.name, JpEnemiesFile, "JPEnemies");
-
-				if (modtime == 0)
-				{
-					JpEnemiesToggle.IsChecked = false;
-					await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, "JP Enemies"));
-				}
-				else
-				{
-					Settings.Default.InstalledJPEnemies = modtime;
-					Settings.Default.Save();
-					await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, "JP Enemies"));
-				}
-			}
-
-			_gameTabController.PreviousTab();
-		}
-
-		private async void JpEnemiesToggle_Unchecked(object sender, RoutedEventArgs e)
-		{
-			await Task.Run(() => RestorePatchBackup("JPEnemies"));
-			Settings.Default.InstalledJPEnemies = 0;
-			Settings.Default.Save();
-		}
-
-		private async void EnglishPatchToggle_Unchecked(object sender, RoutedEventArgs e)
-		{
-			await Task.Run(() =>
-			{
-				RestorePatchBackup("JPECodes");
-				RestorePatchBackup("JPEnemies");
-				RestorePatchBackup("EnglishPatch");
-			});
-
-			Settings.Default.InstalledEnglishPatch = 0;
-			SetPatchToggleSwitches();
-			Settings.Default.Save();
-		}
-
-		private async void LargeFilesToggle_Unchecked(object sender, RoutedEventArgs e)
-		{
-			await Task.Run(() => RestorePatchBackup("LargeFiles"));
-			Settings.Default.InstalledLargeFiles = 0;
-			Settings.Default.Save();
 		}
 
 		private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
@@ -635,24 +475,6 @@ namespace Dogstar
 			EnhancementsTile.IsEnabled = isEnabled;
 			EnhancementsTile.IsEnabled = isEnabled;
 			OtherProxyConfig.IsEnabled = isEnabled;
-		}
-
-		private void SetPatchToggleSwitches()
-		{
-			EnglishPatchToggle.IsChecked = Settings.Default.InstalledEnglishPatch != 0;
-			LargeFilesToggle.IsChecked = Settings.Default.InstalledLargeFiles != 0;
-
-			JpeCodesToggle.IsEnabled = EnglishPatchToggle.IsChecked == true;
-			JpEnemiesToggle.IsEnabled = EnglishPatchToggle.IsChecked == true;
-
-			if (EnglishPatchToggle.IsChecked == false)
-			{
-				Settings.Default.InstalledJPECodes = 0;
-				Settings.Default.InstalledJPEnemies = 0;
-			}
-
-			JpeCodesToggle.IsChecked = JpeCodesToggle.IsEnabled && Settings.Default.InstalledJPECodes != 0;
-			JpEnemiesToggle.IsChecked = JpEnemiesToggle.IsEnabled && Settings.Default.InstalledJPEnemies != 0;
 		}
 
 		private void ResetGeneralDownloadTab()
@@ -818,7 +640,6 @@ namespace Dogstar
 					PatchListEntry[] oldlistdata = ParsePatchList(oldlist).ToArray();
 
 					await RestoreAllPatchBackups();
-					SetPatchToggleSwitches();
 
 					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
 					{
@@ -926,10 +747,10 @@ namespace Dogstar
 								case PatchListSource.None:
 									if (newlistdata.Contains(data) || launcherlistdata.Contains(data))
 									{
-										goto case PatchListSource.Master;
+										goto case PatchListSource.Patch;
 									}
 
-									goto case PatchListSource.Patch;
+									goto case PatchListSource.Master;
 
 								case PatchListSource.Master:
 									uri = masterUrl;
@@ -1146,129 +967,6 @@ namespace Dogstar
 					result = await this.ShowMessageAsync(string.Empty, Text.InvalidPathTryAgain, AffirmNeg, YesNo);
 				}
 			}
-		}
-
-		private async Task<bool> DownloadLanguagePatch(Uri baseUri, string name, int size, string patchname)
-		{
-			var url = new Uri(baseUri, name);
-			var filepath = Path.Combine(Path.GetTempPath(), name);
-			var info = new FileInfo(filepath);
-
-			if (!info.Exists || info.Length != size)
-			{
-				await _generalDownloadManager.DownloadFileTaskAsync(url, filepath);
-			}
-
-			GeneralDownloadIsIndeterminate(true);
-			var succeeded = await Task.Run(() => InstallPatchArchive(filepath, patchname));
-			GeneralDownloadIsIndeterminate(false);
-
-			if (succeeded)
-			{
-				await this.ShowMessageAsync(Text.Complete, string.Format(Text.GenericPatchSuccess, patchname));
-			}
-			else
-			{
-				await this.ShowMessageAsync(Text.Failed, string.Format(Text.GenericPatchFailed, patchname));
-			}
-
-			info.Refresh();
-			if (info.Exists)
-			{
-				File.Delete(filepath);
-			}
-
-			return succeeded;
-		}
-
-		private async Task<long> DownloadJpFile(string dir, string filename, string patchname)
-		{
-			var dataFolder = DataFolder;
-			var backupFolder = Path.Combine(dataFolder, "backup");
-			var dataFilename = Path.Combine(dataFolder, filename);
-			var backupFilename = Path.Combine(backupFolder, patchname, filename);
-			var downloadFilename = Path.Combine(Path.GetTempPath(), filename);
-
-			dynamic jsonData = await GetArghlexJson(dir);
-			dynamic entry = ((JArray)jsonData.files).Select(x => (dynamic)x).FirstOrDefault(x => x.name == filename);
-
-			if (entry == null)
-				return 0;
-
-			var modtime = (long)entry.modtime;
-
-			try
-			{
-				await _generalDownloadManager.DownloadFileTaskAsync(new Uri(new Uri(Arghlex, dir + "/"), filename), downloadFilename);
-			}
-			catch (Exception)
-			{
-				return 0;
-			}
-
-			if (!File.Exists(backupFilename))
-			{
-				await Task.Run(() =>
-				{
-					CreateDirectoryIfNoneExists(Path.Combine(backupFolder, patchname));
-					File.Move(dataFilename, backupFilename);
-					File.Move(downloadFilename, dataFilename);
-				});
-			}
-
-			return modtime;
-		}
-
-		private async Task<bool> CheckEnglishPatchVersion(long modtime)
-		{
-			if (Settings.Default.InstalledEnglishPatch != 0 && Settings.Default.InstalledEnglishPatch < modtime)
-			{
-				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "English Patch"), AffirmNeg, YesNo);
-				return result == MessageDialogResult.Affirmative;
-			}
-
-			return false;
-		}
-
-		private async Task<bool> CheckLargeFilesVersion(long modtime)
-		{
-			if (Settings.Default.InstalledLargeFiles != 0 && Settings.Default.InstalledLargeFiles < modtime)
-			{
-				var result = await this.ShowMessageAsync(Text.NewLangPatch, string.Format(Text.NewGenericPatch, "Large Files"), AffirmNeg, YesNo);
-				return result == MessageDialogResult.Affirmative;
-			}
-
-			return false;
-		}
-
-		private async Task DownloadEnglishPatch(string name, int size, long modtime)
-		{
-			if (await DownloadLanguagePatch(Arghlex, name, size, "EnglishPatch"))
-			{
-				Settings.Default.InstalledEnglishPatch = modtime;
-			}
-			else
-			{
-				EnglishPatchToggle.IsChecked = false;
-				Settings.Default.InstalledEnglishPatch = 0;
-			}
-
-			Settings.Default.Save();
-		}
-
-		private async Task DownloadLargeFiles(string name, int size, long modtime)
-		{
-			if (await DownloadLanguagePatch(Arghlex, name, size, "LargeFiles"))
-			{
-				Settings.Default.InstalledLargeFiles = modtime;
-			}
-			else
-			{
-				LargeFilesToggle.IsChecked = false;
-				Settings.Default.InstalledLargeFiles = 0;
-			}
-
-			Settings.Default.Save();
 		}
 
 		public void Dispose()

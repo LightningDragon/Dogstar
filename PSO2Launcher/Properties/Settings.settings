@@ -26,18 +26,6 @@
     <Setting Name="Theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">BaseDark</Value>
     </Setting>
-    <Setting Name="InstalledEnglishPatch" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="InstalledLargeFiles" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="InstalledJPEnemies" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="InstalledJPECodes" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="PluginSettings" Type="System.String" Scope="User">
       <Value Profile="(Default)">[]</Value>
     </Setting>
