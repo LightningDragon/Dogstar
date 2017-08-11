@@ -472,8 +472,7 @@ namespace Dogstar
 			CheckButton.IsEnabled = isEnabled;
 			LaunchButton.IsEnabled = isEnabled;
 			GameSettingsTile.IsEnabled = isEnabled;
-			EnhancementsTile.IsEnabled = isEnabled;
-			EnhancementsTile.IsEnabled = isEnabled;
+			//EnhancementsTile.IsEnabled = isEnabled;
 			OtherProxyConfig.IsEnabled = isEnabled;
 		}
 
