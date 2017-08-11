@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Windows;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Reflection;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
 using System.Collections.Generic;
-using SharpCompress.Reader;
-using Newtonsoft.Json;
-using Microsoft.Win32;
-using MahApps.Metro.Controls.Dialogs;
-using Dogstar.Resources;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Cache;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Windows;
 using Dogstar.Properties;
+using Dogstar.Resources;
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace Dogstar
 {
@@ -30,16 +30,6 @@ namespace Dogstar
 
 		public static readonly Uri BasePrecede = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
 
-		public static readonly Uri PatchListOldUrl = new Uri("http://download.pso2.jp/patch_prod/patches_old/patchlist.txt");
-
-		public static readonly Uri LauncherListUrl = new Uri("http://download.pso2.jp/patch_prod/patches/launcherlist.txt");
-
-		public static readonly Uri PatchListUrl = new Uri("http://download.pso2.jp/patch_prod/patches/patchlist.txt");
-
-		public static readonly Uri Arghlex = new Uri("http://pitchblack.arghlex.net/pso2/");
-
-		public static readonly Uri VersionUrl = new Uri("http://download.pso2.jp/patch_prod/patches/version.ver");
-
 		public static readonly Uri ManagementUrl = new Uri("http://patch01.pso2gs.net/patch_prod/patches/management_beta.txt");
 
 		public static readonly AssemblyName ApplicationInfo = Application.Current.MainWindow.GetType().Assembly.GetName();
@@ -52,7 +42,7 @@ namespace Dogstar
 
 		public static readonly string PatchListPath = Path.Combine(GameConfigFolder, "_patchlist.txt");
 
-		public static readonly string PatchListOldPath = Path.Combine(GameConfigFolder, "_patchlist_old.txt");
+		public static readonly string PatchListAlwaysPath = Path.Combine(GameConfigFolder, "_patchlist_always.txt");
 
 		public static readonly string VersionPath = Path.Combine(GameConfigFolder, "version.ver");
 
@@ -62,21 +52,27 @@ namespace Dogstar
 
 		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
 
-		public static AquaHttpClient AquaClient => new AquaHttpClient();
-
 		public static Dictionary<string, string> ManagementData { get; private set; }
 
 		public static string MakeLocalToGame(string fileName) => Path.Combine(Settings.Default.GameFolder, fileName);
 
-		public static bool ProxyCheck() => File.ReadLines(HostsPath).Any(x => !x.StartsWith("#") && x.Contains(".pso2gs.net"));
+		public static bool ProxyCheck() => File.ReadLines(HostsPath)
+			.Select(x => x.Trim())
+			.Any(x => !x.StartsWith("#", StringComparison.Ordinal) && x.Contains(".pso2gs.net"));
 
-		public static IEnumerable<string> StripProxyEntries(IEnumerable<string> entries) => entries.Where(x => (x.StartsWith("#") || !x.Contains(".pso2gs.net")) && !x.StartsWith("# Dogstar"));
+		public static IEnumerable<string> StripProxyEntries(IEnumerable<string> entries) => entries
+			.Where(x => (x.StartsWith("#", StringComparison.Ordinal) || !x.Contains(".pso2gs.net")) && !x.StartsWith("# Dogstar", StringComparison.Ordinal));
 
 		public static async Task PullManagementData()
 		{
-			using (var client = AquaClient)
+			using (var client = new AquaHttpClient())
 			{
-				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl)).LineSplit().Where(x => !string.IsNullOrWhiteSpace(x)).ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
+				client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl))
+					.LineSplit()
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
 			}
 		}
 
@@ -163,24 +159,6 @@ namespace Dogstar
 			return from l in list.LineSplit() where !string.IsNullOrWhiteSpace(l) select new PatchListEntry(l);
 		}
 
-		public static async Task<dynamic> GetArghlexJson()
-		{
-			using (var client = AquaClient)
-			{
-				var json = await client.DownloadStringTaskAsync(new Uri(Arghlex, "?sort=modtime&order=desc&json"));
-				return JsonConvert.DeserializeObject(json);
-			}
-		}
-
-		public static async Task<dynamic> GetArghlexJson(string subdir)
-		{
-			using (var client = AquaClient)
-			{
-				var json = await client.DownloadStringTaskAsync(new Uri(new Uri(Arghlex, subdir), "?sort=modtime&order=desc&json"));
-				return JsonConvert.DeserializeObject(json);
-			}
-		}
-
 		public static bool IsFileUpToDate(string file, long size, string hash)
 		{
 			try
@@ -231,61 +209,29 @@ namespace Dogstar
 			});
 		}
 
-		public static bool InstallPatchArchive(string filename, string patchname)
-		{
-			if (!File.Exists(filename))
-			{
-				return false;
-			}
-
-			var installPath = DataFolder;
-			var backupPath = Path.Combine(installPath, "backup", patchname);
-
-			if (!Directory.Exists(backupPath))
-			{
-				Directory.CreateDirectory(backupPath);
-			}
-
-			try
-			{
-				using (Stream stream = File.OpenRead(filename))
-				{
-					using (var reader = ReaderFactory.Open(stream))
-					{
-						while (reader.MoveToNextEntry() && !reader.Entry.IsDirectory)
-						{
-							var file = Path.Combine(installPath, reader.Entry.Key);
-							var backup = Path.Combine(backupPath, reader.Entry.Key);
-
-							if (File.Exists(file) && !File.Exists(backup))
-							{
-								File.Move(file, backup);
-							}
-
-							reader.WriteEntryToDirectory(installPath);
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				RestorePatchBackup(patchname);
-				return false;
-			}
-
-			return true;
-		}
-
 		public static async Task<bool> IsGameUpToDate()
 		{
 			try
 			{
-				var version = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
-				using (var client = AquaClient)
+				if (ManagementData == null)
 				{
-					var otherVersion = await client.DownloadStringTaskAsync(VersionUrl);
-					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), otherVersion));
-					return version == otherVersion;
+					await PullManagementData();
+				}
+
+				if (ManagementData == null)
+				{
+					return true;
+				}
+
+				var versionUrl = new Uri(new Uri(ManagementData["PatchURL"]), "version.ver");
+				string localVersion = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
+
+				using (var client = new AquaHttpClient())
+				{
+					client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+					string remoteVersion = await client.DownloadStringTaskAsync(versionUrl);
+					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), remoteVersion));
+					return localVersion == remoteVersion;
 				}
 			}
 			catch

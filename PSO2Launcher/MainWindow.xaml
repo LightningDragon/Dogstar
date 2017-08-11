@@ -92,7 +92,7 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
-                                <controls:Tile x:Name="EnhancementsTile" Title="Enhancements (English patch, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click">
+                                <controls:Tile x:Name="EnhancementsTile" Title="Plugins" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click" IsEnabled="False">
                                     <Rectangle x:Name="EnhancementIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
@@ -269,8 +269,8 @@
                                         <RowDefinition Height="45"/>
                                         <RowDefinition Height="45"/>
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherInstallGame" Content="Install Game" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherInstallGame_Click"/>
-                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
+                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherInstallGame" Content="Install game" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherInstallGame_Click"/>
+                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Configure proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
                                     <Button Grid.Row="2" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherChangeGameDir" Content="Change game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherChangeGameDir_Click" VerticalAlignment="Top"/>
                                     <Button Grid.Row="3" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherOpenGameDir" Content="Open game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherOpenGameDir_Click"/>
                                 </Grid>

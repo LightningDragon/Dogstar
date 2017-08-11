@@ -158,7 +158,7 @@ namespace Dogstar
 				var plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
 				var pluginInfoPullArray = plugins.Select(x =>
 				{
-					using (var client = AquaClient)
+					using (var client = new AquaHttpClient())
 					{
 						return client.DownloadStringTaskAsync(x.Url);
 					}
@@ -477,22 +477,6 @@ namespace Dogstar
 			OtherProxyConfig.IsEnabled = isEnabled;
 		}
 
-		private void ResetGeneralDownloadTab()
-		{
-			CompletedGeneralDownloadActionLabel.Content = string.Empty;
-			CurrentGeneralDownloadActionLabel.Content = string.Empty;
-			CurrentGeneralDownloadSizeActionLabel.Content = string.Empty;
-			GeneralDownloadProgressbar.Maximum = 100;
-			GeneralDownloadProgressbar.Value = 0;
-			GeneralDownloadIsIndeterminate(false);
-		}
-
-		private void GeneralDownloadIsIndeterminate(bool value)
-		{
-			CurrentGeneralDownloadSizeActionLabel.Visibility = value ? Visibility.Hidden : Visibility.Visible;
-			GeneralDownloadProgressbar.IsIndeterminate = value;
-		}
-
 		private void EnhancementsTabAddSubItem(PluginInfo settings)
 		{
 			EnhancementsItemGrid.RowDefinitions.Add(new RowDefinition());
@@ -631,13 +615,16 @@ namespace Dogstar
 						}
 					}
 
-					string launcherlist = await manager.DownloadStringTaskAsync(LauncherListUrl);
-					string newlist = await manager.DownloadStringTaskAsync(PatchListUrl);
-					string oldlist = await manager.DownloadStringTaskAsync(PatchListOldUrl);
+					var masterUrl = new Uri(ManagementData["MasterURL"]);
+					var patchUrl = new Uri(ManagementData["PatchURL"]);
 
-					PatchListEntry[] launcherlistdata = ParsePatchList(launcherlist).ToArray();
-					PatchListEntry[] newlistdata = ParsePatchList(newlist).ToArray();
-					PatchListEntry[] oldlistdata = ParsePatchList(oldlist).ToArray();
+					string launcherList = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "launcherlist.txt"));
+					string patchList = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "patchlist.txt"));
+					string listAlways = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "patchlist_always.txt"));
+
+					PatchListEntry[] launcherListData = ParsePatchList(launcherList).ToArray();
+					PatchListEntry[] patchListData = ParsePatchList(patchList).ToArray();
+					PatchListEntry[] patchListAlways = ParsePatchList(listAlways).ToArray();
 
 					await RestoreAllPatchBackups();
 
@@ -648,29 +635,26 @@ namespace Dogstar
 						if (File.Exists(LauncherListPath))
 						{
 							IEnumerable<PatchListEntry> storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
-							launcherlistdata = launcherlistdata.Except(storedLauncherlist, entryComparer).ToArray();
+							launcherListData = launcherListData.Except(storedLauncherlist, entryComparer).ToArray();
 						}
 
 						if (File.Exists(PatchListPath))
 						{
 							IEnumerable<PatchListEntry> storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
-							newlistdata = newlistdata.Except(storedNewlist, entryComparer).ToArray();
+							patchListData = patchListData.Except(storedNewlist, entryComparer).ToArray();
 						}
 
-						if (File.Exists(PatchListOldPath))
+						if (File.Exists(PatchListAlwaysPath))
 						{
-							IEnumerable<PatchListEntry> storedOldlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListOldPath)));
-							oldlistdata = oldlistdata.Except(storedOldlist, entryComparer).ToArray();
+							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListAlwaysPath)));
+							patchListAlways = patchListAlways.Except(storedAlwaysList, entryComparer).ToArray();
 						}
 					}
 
-					PatchListEntry[] lists = launcherlistdata.Concat(newlistdata.Concat(oldlistdata)).ToArray();
+					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();
 					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
 
 					CheckProgressbar.Maximum = groups.Length;
-
-					var masterUrl = new Uri(ManagementData["MasterURL"]);
-					var patchUrl = new Uri(ManagementData["PatchURL"]);
 
 					void setTopLabel()
 					{
@@ -745,7 +729,7 @@ namespace Dogstar
 							switch (data.Source)
 							{
 								case PatchListSource.None:
-									if (newlistdata.Contains(data) || launcherlistdata.Contains(data))
+									if (patchListData.Contains(data) || launcherListData.Contains(data))
 									{
 										goto case PatchListSource.Patch;
 									}
@@ -774,7 +758,7 @@ namespace Dogstar
 					}
 
 					numberToDownload++;
-					fileOperations.Add(manager.DownloadFileTaskAsync(VersionUrl, VersionPath));
+					fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchUrl, "version.ver"), VersionPath));
 
 					var downloads = Task.WhenAll(fileOperations);
 
@@ -796,11 +780,14 @@ namespace Dogstar
 
 					await Task.Run(() =>
 					{
-						File.WriteAllText(LauncherListPath, launcherlist);
-						File.WriteAllText(PatchListPath, newlist);
-						File.WriteAllText(PatchListOldPath, oldlist);
+						File.WriteAllText(LauncherListPath, launcherList);
+						File.WriteAllText(PatchListPath, patchList);
+						File.WriteAllText(PatchListAlwaysPath, listAlways);
+
 						if (File.Exists(VersionPath))
+						{
 							SetTweakerRemoteVersion(File.ReadAllText(VersionPath));
+						}
 					});
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
@@ -851,7 +838,7 @@ namespace Dogstar
 
 		public async Task<bool> SetupProxy(string url)
 		{
-			using (var client = AquaClient)
+			using (var client = new AquaHttpClient())
 			{
 				var json = await client.DownloadStringTaskAsync(new Uri(url));
 				dynamic jsonData = JsonConvert.DeserializeObject(json);
