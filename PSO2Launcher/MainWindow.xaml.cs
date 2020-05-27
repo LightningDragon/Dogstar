@@ -63,43 +63,100 @@ namespace Dogstar
 		#region Events
 
 
-		private void Debug_MouseDown(object sender, MouseButtonEventArgs e) => DebugFlyout.IsOpen = !DebugFlyout.IsOpen;
+		private void Debug_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			DebugFlyout.IsOpen = !DebugFlyout.IsOpen;
+		}
 
-		private void Donate_MouseDown(object sender, MouseButtonEventArgs e) => DonationFlyout.IsOpen = !DebugFlyout.IsOpen;
+		private void Donate_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			DonationFlyout.IsOpen = !DebugFlyout.IsOpen;
+		}
 
-		private void Twitter_MouseDown(object sender, MouseButtonEventArgs e) => Process.Start(Properties.Resources.DogstarTwitter);
+		private void Twitter_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Process.Start(Properties.Resources.DogstarTwitter);
+		}
 
-		private void Github_MouseDown(object sender, MouseButtonEventArgs e) => Process.Start(Properties.Resources.DogstarGithub);
+		private void Github_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Process.Start(Properties.Resources.DogstarGithub);
+		}
 
-		private void Information_MouseDown(object sender, MouseButtonEventArgs e) => Process.Start(Properties.Resources.DogstarSupport);
+		private void Information_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Process.Start(Properties.Resources.DogstarSupport);
+		}
 
-		private void CancelCheckButton_Click(object sender, RoutedEventArgs e) => _checkCancelSource.Cancel();
+		private void CancelCheckButton_Click(object sender, RoutedEventArgs e)
+		{
+			_checkCancelSource.Cancel();
+		}
 
-		private void AlwaysOnTop_Changed(object sender, RoutedEventArgs e) => Topmost = Settings.Default.AlwaysOnTop = AlwaysOnTop.IsChecked.GetValueOrDefault();
+		private void AlwaysOnTop_Changed(object sender, RoutedEventArgs e)
+		{
+			Topmost = Settings.Default.AlwaysOnTop = AlwaysOnTop.IsChecked.GetValueOrDefault();
+		}
 
-		private void Launch_Changed(object sender, RoutedEventArgs e) => Settings.Default.CloseOnLaunch = Launch.IsChecked.GetValueOrDefault();
+		private void Launch_Changed(object sender, RoutedEventArgs e)
+		{
+			Settings.Default.CloseOnLaunch = Launch.IsChecked.GetValueOrDefault();
+		}
 
-		private void DonateToDogstar_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.DogstarDonation);
+		private void DonateToDogstar_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start(Properties.Resources.DogstarDonation);
+		}
 
-		private void DonateToPolaris_Click(object sender, RoutedEventArgs e) => Process.Start(Properties.Resources.PolarisDonation);
+		private void DonateToPolaris_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start(Properties.Resources.PolarisDonation);
+		}
 
-		private void EnhancementsTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(EnhancementsTabItem);
+		private void EnhancementsTile_Click(object sender, RoutedEventArgs e)
+		{
+			_gameTabController.ChangeTab(EnhancementsTabItem);
+		}
 
-		private void BackButton_Click(object sender, RoutedEventArgs e) => _gameTabController.PreviousTab();
+		private void BackButton_Click(object sender, RoutedEventArgs e)
+		{
+			_gameTabController.PreviousTab();
+		}
 
-		private void OtherTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(OtherTabItem);
+		private void OtherTile_Click(object sender, RoutedEventArgs e)
+		{
+			_gameTabController.ChangeTab(OtherTabItem);
+		}
 
-		private void GameSettingsTile_Click(object sender, RoutedEventArgs e) => _gameTabController.ChangeTab(GameSettingsTabItem);
+		private void GameSettingsTile_Click(object sender, RoutedEventArgs e)
+		{
+			_gameTabController.ChangeTab(GameSettingsTabItem);
+		}
 
-		private async void CheckButton_Click(object sender, RoutedEventArgs e) => await CheckGameFiles(UpdateMethod.FileCheck);
+		private async void CheckButton_Click(object sender, RoutedEventArgs e)
+		{
+			await CheckGameFiles(UpdateMethod.FileCheck);
+		}
 
-		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e) => await ConfigProxy();
+		private async void OtherProxyConfig_Click(object sender, RoutedEventArgs e)
+		{
+			await ConfigProxy();
+		}
 
-		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e) => await SelectGameFolder();
+		private async void OtherChangeGameDir_Click(object sender, RoutedEventArgs e)
+		{
+			await SelectGameFolder();
+		}
 
-		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e) => Process.Start($"file://{Settings.Default.GameFolder}");
+		private void OtherOpenGameDir_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start($"file://{Settings.Default.GameFolder}");
+		}
 
-		private async void OtherInstallGame_Click(object sender, RoutedEventArgs e) => await SetupGameInfo();
+		private async void OtherInstallGame_Click(object sender, RoutedEventArgs e)
+		{
+			await SetupGameInfo();
+		}
 
 		private async void metroWindow_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -108,7 +165,7 @@ namespace Dogstar
 
 			if (!Settings.Default.IsGameInstalled)
 			{
-				var gamefolder = GetTweakerGameFolder();
+				string gamefolder = GetTweakerGameFolder();
 
 				if (string.IsNullOrWhiteSpace(gamefolder))
 				{
@@ -116,7 +173,7 @@ namespace Dogstar
 				}
 				else
 				{
-					var result = await this.ShowMessageAsync(Text.GameDetected, $"\"{gamefolder}\"", AffirmNeg, YesNo);
+					MessageDialogResult result = await this.ShowMessageAsync(Text.GameDetected, $"\"{gamefolder}\"", AffirmNeg, YesNo);
 
 					if (result == MessageDialogResult.Affirmative)
 					{
@@ -134,7 +191,7 @@ namespace Dogstar
 			{
 				if (!Directory.Exists(Settings.Default.GameFolder))
 				{
-					var result = await this.ShowMessageAsync(Text.MissingFolder, Text.MovedOrDeleted, AffirmNeg, MovedDeleted);
+					MessageDialogResult result = await this.ShowMessageAsync(Text.MissingFolder, Text.MovedOrDeleted, AffirmNeg, MovedDeleted);
 
 					if (result == MessageDialogResult.Affirmative)
 					{
@@ -153,10 +210,10 @@ namespace Dogstar
 			{
 				await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
 
-				var editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
+				string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
 				var plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
-				var pluginInfoPullArray = plugins.Select(x =>
+				Task<string>[] pluginInfoPullArray = plugins.Select(x =>
 				{
 					using (var client = new AquaHttpClient())
 					{
@@ -166,7 +223,7 @@ namespace Dogstar
 
 				if (File.Exists(editionPath))
 				{
-					var edition = await Task.Run(() => File.ReadAllText(editionPath));
+					string edition = await Task.Run(() => File.ReadAllText(editionPath));
 
 					if (edition != "jp")
 					{
@@ -176,7 +233,7 @@ namespace Dogstar
 
 				if (!await IsGameUpToDate())
 				{
-					var result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
+					MessageDialogResult result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
 
 					if (result == MessageDialogResult.Affirmative)
 					{
@@ -184,7 +241,7 @@ namespace Dogstar
 					}
 				}
 
-				var updatedPluginInfos = (await Task.WhenAll(pluginInfoPullArray)).Select(JsonConvert.DeserializeObject<PluginInfo>).ToArray();
+				PluginInfo[] updatedPluginInfos = (await Task.WhenAll(pluginInfoPullArray)).Select(JsonConvert.DeserializeObject<PluginInfo>).ToArray();
 				var pluginsUpdateingTasks = new List<Task>();
 				PluginManager.DownloadManager = _generalDownloadManager;
 
@@ -195,7 +252,7 @@ namespace Dogstar
 						if (await this.ShowMessageAsync(Text.UpdateAvailable, string.Format(Text.DownloadLatest, plugins[index].Name), AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 						{
 							updatedPluginInfos[index].Url = plugins[index].Url;
-							var plugin = plugins[index] = updatedPluginInfos[index];
+							PluginInfo plugin = plugins[index] = updatedPluginInfos[index];
 
 							pluginsUpdateingTasks.Add(plugin.IsEnabled
 								? PluginManager.Install(plugin)
@@ -273,7 +330,7 @@ namespace Dogstar
 			{
 				if (_isPrecedeDownloading && Settings.Default.CloseOnLaunch)
 				{
-					var result = await this.ShowMessageAsync(Text.DownloadInProgress, Text.LaunchDownloadInProgress, AffirmNeg, YesNo);
+					MessageDialogResult result = await this.ShowMessageAsync(Text.DownloadInProgress, Text.LaunchDownloadInProgress, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
 					{
 						return;
@@ -283,7 +340,7 @@ namespace Dogstar
 				await PullManagementData();
 				if (ManagementData.ContainsKey("ManagementData") && ManagementData["IsInMaintenance"] == "1")
 				{
-					var result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
+					MessageDialogResult result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
 					{
 						return;
@@ -326,25 +383,28 @@ namespace Dogstar
 			// TODO: Do this better
 			EnhancementsItemGrid.Children.RemoveRange(10, EnhancementsItemGrid.Children.Count - 10);
 
-			foreach (var plugin in PluginManager.PluginSettings)
+			foreach (PluginInfo plugin in PluginManager.PluginSettings)
 			{
 				EnhancementsTabAddSubItem(plugin);
 			}
 		}
 
-		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => SavePluginSettings();
+		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+		{
+			SavePluginSettings();
+		}
 
 		private async void AddPluginButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				var jsonUrl = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
+				string jsonUrl = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
 				_gameTabController.ChangeTab(GeneralDownloadTab);
 
 				if (jsonUrl != null)
 				{
 					PluginManager.DownloadManager = _generalDownloadManager;
-					var info = await PluginManager.InfoFromUrl(new Uri(jsonUrl));
+					PluginInfo info = await PluginManager.InfoFromUrl(new Uri(jsonUrl));
 					await PluginManager.Install(info);
 					EnhancementsTabAddSubItem(info);
 					PluginManager.PluginSettings.Add(info);
@@ -376,12 +436,15 @@ namespace Dogstar
 			SurroundToggle.IsChecked = PsoSettings.Surround;
 			GlobalFocusToggle.IsChecked = PsoSettings.GlobalFocus;
 
-			var resolution = $"{PsoSettings.WindowWidth}x{PsoSettings.WindowHight}";
+			string resolution = $"{PsoSettings.WindowWidth}x{PsoSettings.WindowHight}";
 			UiResources.GetResolutions().Add(resolution);
 			ResolutionsCombobox.SelectedItem = resolution;
 		}
 
-		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e) => PsoSettings.Save();
+		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.Save();
+		}
 
 		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -432,36 +495,66 @@ namespace Dogstar
 			}
 		}
 
-		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e) => PsoSettings.MoviePlay = true;
+		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.MoviePlay = true;
+		}
 
-		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.MoviePlay = false;
+		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.MoviePlay = false;
+		}
 
 		private void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
-				var resolution = ResolutionsCombobox.SelectedItem.ToString().Split('x');
+				string[] resolution = ResolutionsCombobox.SelectedItem.ToString().Split('x');
 
 				PsoSettings.WindowWidth = ToInt32(resolution[0]);
 				PsoSettings.WindowHight = ToInt32(resolution[1]);
 			}
 		}
 
-		private void MusicSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Music = (int)MusicSlider.Value;
+		private void MusicSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			PsoSettings.Music = (int)MusicSlider.Value;
+		}
 
-		private void SoundSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Sound = (int)SoundSlider.Value;
+		private void SoundSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			PsoSettings.Sound = (int)SoundSlider.Value;
+		}
 
-		private void VoiceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Voice = (int)VoiceSlider.Value;
+		private void VoiceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			PsoSettings.Voice = (int)VoiceSlider.Value;
+		}
 
-		private void VideoSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => PsoSettings.Video = (int)VideoSlider.Value;
+		private void VideoSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			PsoSettings.Video = (int)VideoSlider.Value;
+		}
 
-		private void SurroundToggle_Checked(object sender, RoutedEventArgs e) => PsoSettings.Surround = true;
+		private void SurroundToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.Surround = true;
+		}
 
-		private void SurroundToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.Surround = false;
+		private void SurroundToggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.Surround = false;
+		}
 
-		private void GlobalFocusToggle_Checked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = true;
+		private void GlobalFocusToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.GlobalFocus = true;
+		}
 
-		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e) => PsoSettings.GlobalFocus = false;
+		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			PsoSettings.GlobalFocus = false;
+		}
 
 		#endregion
 
@@ -538,8 +631,15 @@ namespace Dogstar
 				async Task pause()
 				{
 					var taskSource = new TaskCompletionSource<object>();
-					void unpause(object s, RoutedEventArgs e) => taskSource.TrySetResult(null);
-					void cancel(object s, RoutedEventArgs e) => taskSource.TrySetCanceled();
+					void unpause(object s, RoutedEventArgs e)
+					{
+						taskSource.TrySetResult(null);
+					}
+
+					void cancel(object s, RoutedEventArgs e)
+					{
+						taskSource.TrySetCanceled();
+					}
 
 					try
 					{
@@ -722,7 +822,11 @@ namespace Dogstar
 							string patPath = MakeLocalToGame(data.Name);
 							Directory.CreateDirectory(Path.GetDirectoryName(patPath));
 
-							void pat(Task t) => MoveAndOverwriteFile(patPath, filePath);
+							void pat(Task t)
+							{
+								MoveAndOverwriteFile(patPath, filePath);
+							}
+
 							Uri uri;
 
 							switch (data.Source)
@@ -759,7 +863,7 @@ namespace Dogstar
 					numberToDownload++;
 					fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchUrl, "version.ver"), VersionPath));
 
-					var downloads = Task.WhenAll(fileOperations);
+					Task downloads = Task.WhenAll(fileOperations);
 
 					while (!downloads.IsCompleted && !downloads.IsCanceled && !downloads.IsFaulted)
 					{
@@ -820,7 +924,7 @@ namespace Dogstar
 		{
 			try
 			{
-				var url = await this.ShowInputAsync(Text.EnterProxy, string.Empty);
+				string url = await this.ShowInputAsync(Text.EnterProxy, string.Empty);
 
 				if (url != null)
 				{
@@ -839,7 +943,7 @@ namespace Dogstar
 		{
 			using (var client = new AquaHttpClient())
 			{
-				var json = await client.DownloadStringTaskAsync(new Uri(url));
+				string json = await client.DownloadStringTaskAsync(new Uri(url));
 				dynamic jsonData = JsonConvert.DeserializeObject(json);
 
 				if (jsonData.version != 1)
@@ -848,8 +952,8 @@ namespace Dogstar
 					return false;
 				}
 
-				var hostAddress = (await Dns.GetHostAddressesAsync((string)jsonData.host))?.FirstOrDefault()?.ToString();
-				var file = StripProxyEntries(File.ReadAllLines(HostsPath)).ToArray();
+				string hostAddress = (await Dns.GetHostAddressesAsync((string)jsonData.host))?.FirstOrDefault()?.ToString();
+				string[] file = StripProxyEntries(File.ReadAllLines(HostsPath)).ToArray();
 				var lines = file.Concat(new[]
 				{
 					"# Dogstar Proxy Start", $"{hostAddress} gs001.pso2gs.net # {jsonData.name} Ship 01", $"{hostAddress} gs016.pso2gs.net # {jsonData.name} Ship 02", $"{hostAddress} gs031.pso2gs.net # {jsonData.name} Ship 03", $"{hostAddress} gs046.pso2gs.net # {jsonData.name} Ship 04", $"{hostAddress} gs061.pso2gs.net # {jsonData.name} Ship 05", $"{hostAddress} gs076.pso2gs.net # {jsonData.name} Ship 06", $"{hostAddress} gs091.pso2gs.net # {jsonData.name} Ship 07", $"{hostAddress} gs106.pso2gs.net # {jsonData.name} Ship 08", $"{hostAddress} gs121.pso2gs.net # {jsonData.name} Ship 09", $"{hostAddress} gs136.pso2gs.net # {jsonData.name} Ship 10", "# Dogstar Proxy End"
@@ -859,7 +963,7 @@ namespace Dogstar
 
 				client.DownloadFileAsync(new Uri((string)jsonData.publickeyurl), Path.Combine(Settings.Default.GameFolder, "publickey.blob"));
 
-				var gameHost = (await Dns.GetHostAddressesAsync("gs001.pso2gs.net"))?.FirstOrDefault()?.ToString();
+				string gameHost = (await Dns.GetHostAddressesAsync("gs001.pso2gs.net"))?.FirstOrDefault()?.ToString();
 
 				if (gameHost != hostAddress)
 				{
@@ -899,7 +1003,7 @@ namespace Dogstar
 
 		private async Task SetupGameInfo()
 		{
-			var result = await this.ShowMessageAsync(Text.HaveInstalled, string.Empty, AffirmNeg, YesNo);
+			MessageDialogResult result = await this.ShowMessageAsync(Text.HaveInstalled, string.Empty, AffirmNeg, YesNo);
 
 			if (result != MessageDialogResult.Affirmative)
 			{
@@ -907,7 +1011,7 @@ namespace Dogstar
 
 				if (result == MessageDialogResult.Affirmative)
 				{
-					var path = await this.ShowFolderSelectAsync(string.Empty, Text.SelectInstallLocation, Properties.Resources.DefaultInstallDir);
+					string path = await this.ShowFolderSelectAsync(string.Empty, Text.SelectInstallLocation, Properties.Resources.DefaultInstallDir);
 
 					while (!string.IsNullOrWhiteSpace(path) && !await InstallGame(Path.Combine(path, "PHANTASYSTARONLINE2", "pso2_bin")))
 					{
@@ -934,7 +1038,7 @@ namespace Dogstar
 
 			while (result == MessageDialogResult.Affirmative)
 			{
-				var gamePath = await this.ShowFileSelectAsync(string.Empty, Text.SelectExe, Properties.Resources.GameFilter);
+				string gamePath = await this.ShowFileSelectAsync(string.Empty, Text.SelectExe, Properties.Resources.GameFilter);
 
 				if (await Task.Run(() => !string.IsNullOrWhiteSpace(gamePath) && File.Exists(gamePath)))
 				{
