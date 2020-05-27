@@ -35,7 +35,7 @@ namespace Dogstar
 		public Uri LauncherListUrl    { get; private set; }
 		public Uri PatchListUrl       { get; private set; }
 		public Uri PatchListAlwaysUrl { get; private set; }
-		public Uri VersionFileUri     { get; set; }
+		public Uri VersionFileUrl     { get; private set; }
 
 		/// <summary>
 		/// Pull latest management data, including maintenance status, etc.
@@ -58,7 +58,7 @@ namespace Dogstar
 			LauncherListUrl    = new Uri(PatchUrl, "launcherlist.txt");
 			PatchListUrl       = new Uri(PatchUrl, "patchlist.txt");
 			PatchListAlwaysUrl = new Uri(PatchUrl, "patchlist_always.txt");
-			VersionFileUri     = new Uri(PatchUrl, "version.ver");
+			VersionFileUrl     = new Uri(PatchUrl, "version.ver");
 		}
 
 		protected async Task PullManagementDataIfNull()
@@ -93,13 +93,12 @@ namespace Dogstar
 					return true;
 				}
 
-				var    versionUrl   = new Uri(new Uri(ManagementData["PatchURL"]), "version.ver");
 				string localVersion = await Task.Run(() => File.Exists(VersionFilePath) ? File.ReadAllText(VersionFilePath) : string.Empty);
 
 				using (var client = new AquaHttpClient())
 				{
 					client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-					string remoteVersion = await client.DownloadStringTaskAsync(versionUrl);
+					string remoteVersion = await client.DownloadStringTaskAsync(VersionFileUrl);
 					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), remoteVersion));
 					return localVersion == remoteVersion;
 				}

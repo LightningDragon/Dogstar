@@ -50,7 +50,7 @@ namespace Dogstar
 		public MainWindow()
 		{
 			// UNDONE: MAKE REGION SELECTABLE!
-			patchProvider = new JapanPatchProvider();
+			patchProvider = new NorthAmericaPatchProvider();
 
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
@@ -215,9 +215,10 @@ namespace Dogstar
 			{
 				await Task.Run(() => CreateDirectoryIfNoneExists(patchProvider.GameConfigFolder));
 
+				// UNDONE: move to PatchProvider
 				string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
-				var plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
+				PluginInfo[] plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
 				Task<string>[] pluginInfoPullArray = plugins.Select(x =>
 				{
 					using (var client = new AquaHttpClient())
@@ -859,7 +860,7 @@ namespace Dogstar
 					}
 
 					numberToDownload++;
-					fileOperations.Add(manager.DownloadFileTaskAsync(patchProvider.VersionFileUri, patchProvider.VersionFilePath));
+					fileOperations.Add(manager.DownloadFileTaskAsync(patchProvider.VersionFileUrl, patchProvider.VersionFilePath));
 
 					Task downloads = Task.WhenAll(fileOperations);
 
@@ -953,7 +954,7 @@ namespace Dogstar
 
 				string hostAddress = (await Dns.GetHostAddressesAsync((string)jsonData.host))?.FirstOrDefault()?.ToString();
 				string[] file = StripProxyEntries(File.ReadAllLines(HostsPath)).ToArray();
-				var lines = file.Concat(new[]
+				IEnumerable<string> lines = file.Concat(new[]
 				{
 					"# Dogstar Proxy Start", $"{hostAddress} gs001.pso2gs.net # {jsonData.name} Ship 01", $"{hostAddress} gs016.pso2gs.net # {jsonData.name} Ship 02", $"{hostAddress} gs031.pso2gs.net # {jsonData.name} Ship 03", $"{hostAddress} gs046.pso2gs.net # {jsonData.name} Ship 04", $"{hostAddress} gs061.pso2gs.net # {jsonData.name} Ship 05", $"{hostAddress} gs076.pso2gs.net # {jsonData.name} Ship 06", $"{hostAddress} gs091.pso2gs.net # {jsonData.name} Ship 07", $"{hostAddress} gs106.pso2gs.net # {jsonData.name} Ship 08", $"{hostAddress} gs121.pso2gs.net # {jsonData.name} Ship 09", $"{hostAddress} gs136.pso2gs.net # {jsonData.name} Ship 10", "# Dogstar Proxy End"
 				});
