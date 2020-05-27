@@ -8,7 +8,8 @@ using Dogstar.Properties;
 
 namespace Dogstar
 {
-	abstract class PatchProvider
+	// TODO: rename - it does more than provide patch information
+	public abstract class PatchProvider
 	{
 		public Dictionary<string, string> ManagementData { get; private set; }
 

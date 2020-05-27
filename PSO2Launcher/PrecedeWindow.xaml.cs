@@ -26,11 +26,11 @@ namespace Dogstar
 
 		private readonly CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 
-		// UNDONE: ASSIGN PATCH PROVIDER!
-		PatchProvider patchProvider;
+		readonly PatchProvider patchProvider;
 
-		public PrecedeWindow()
+		public PrecedeWindow(PatchProvider patchProvider)
 		{
+			this.patchProvider = patchProvider;
 			InitializeComponent();
 		}
 

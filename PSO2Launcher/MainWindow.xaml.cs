@@ -279,7 +279,13 @@ namespace Dogstar
 				if (await patchProvider.IsNewPrecedeAvailable() &&
 				    await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 				{
-					var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
+					var precedeWindow = new PrecedeWindow(patchProvider)
+					{
+						Owner = this,
+						Top   = Top + Height,
+						Left  = Left
+					};
+
 					_isPrecedeDownloading = true;
 					precedeWindow.Show();
 					precedeWindow.Closed += delegate { _isPrecedeDownloading = false; };
