@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Cache;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -28,31 +27,9 @@ namespace Dogstar
 
 		public static readonly MetroDialogSettings MovedDeleted = new MetroDialogSettings { AffirmativeButtonText = Text.Moved, NegativeButtonText = Text.Deleted };
 
-		public static readonly Uri BasePrecede = new Uri("http://download.pso2.jp/patch_prod/patches_precede/");
-
-		public static readonly Uri ManagementUrl = new Uri("http://patch01.pso2gs.net/patch_prod/patches/management_beta.txt");
-
-		public static readonly AssemblyName ApplicationInfo = Application.Current.MainWindow.GetType().Assembly.GetName();
+		public static readonly AssemblyName ApplicationInfo = Application.Current.MainWindow?.GetType().Assembly.GetName();
 
 		public static readonly string HostsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
-
-		public static readonly string GameConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "PHANTASYSTARONLINE2");
-
-		public static readonly string LauncherListPath = Path.Combine(GameConfigFolder, "launcherlist.txt");
-
-		public static readonly string PatchListPath = Path.Combine(GameConfigFolder, "_patchlist.txt");
-
-		public static readonly string PatchListAlwaysPath = Path.Combine(GameConfigFolder, "_patchlist_always.txt");
-
-		public static readonly string VersionPath = Path.Combine(GameConfigFolder, "version.ver");
-
-		public static readonly string PrecedeTxtPath = Path.Combine(GameConfigFolder, "precede.txt");
-
-		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
-
-		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
-
-		public static Dictionary<string, string> ManagementData { get; private set; }
 
 		public static string MakeLocalToGame(string fileName) => Path.Combine(Settings.Default.GameFolder, fileName);
 
@@ -62,19 +39,6 @@ namespace Dogstar
 
 		public static IEnumerable<string> StripProxyEntries(IEnumerable<string> entries) => entries
 			.Where(x => (x.StartsWith("#", StringComparison.Ordinal) || !x.Contains(".pso2gs.net")) && !x.StartsWith("# Dogstar", StringComparison.Ordinal));
-
-		public static async Task PullManagementData()
-		{
-			using (var client = new AquaHttpClient())
-			{
-				client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
-				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl))
-					.LineSplit()
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
-			}
-		}
 
 		private static string HashFile(string file)
 		{
@@ -87,10 +51,17 @@ namespace Dogstar
 
 		public static string SizeSuffix(long value)
 		{
-			if (value < 0) { return "-" + SizeSuffix(-value); }
-			if (value == 0) { return "0.0 bytes"; }
+			if (value < 0)
+			{
+				return "-" + SizeSuffix(-value);
+			}
 
-			var mag = (int)Math.Log(value, 1024);
+			if (value == 0)
+			{
+				return "0.0 bytes";
+			}
+
+			var mag          = (int)Math.Log(value, 1024);
 			var adjustedSize = (decimal)value / (1L << (mag * 10));
 
 			return $"{adjustedSize:n1} {SizeSuffixes[mag]}";
@@ -118,6 +89,7 @@ namespace Dogstar
 			{
 				File.Delete(destination);
 			}
+
 			File.Move(source, destination);
 		}
 
@@ -154,17 +126,12 @@ namespace Dogstar
 			}
 		}
 
-		public static IEnumerable<PatchListEntry> ParsePatchList(string list)
-		{
-			return from l in list.LineSplit() where !string.IsNullOrWhiteSpace(l) select new PatchListEntry(l);
-		}
-
-		public static bool IsFileUpToDate(string file, long size, string hash)
+		public static bool IsFileUpToDate(string filePath, long targetSize, string targetHash)
 		{
 			try
 			{
-				var info = new FileInfo(file);
-				return info.Exists && info.Length == size && HashFile(file) == hash;
+				var info = new FileInfo(filePath);
+				return info.Exists && info.Length == targetSize && HashFile(filePath) == targetHash;
 			}
 			catch
 			{
@@ -174,8 +141,8 @@ namespace Dogstar
 
 		public static void RestorePatchBackup(string patchname)
 		{
-			var installPath = DataFolder;
-			var path = Path.Combine(installPath, "backup", patchname);
+			var installPath = PatchProvider.DataFolder; // UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS
+			var path        = Path.Combine(installPath, "backup", patchname);
 
 			if (!Directory.Exists(path))
 			{
@@ -194,7 +161,9 @@ namespace Dogstar
 		{
 			await Task.Run(() =>
 			{
-				var path = Path.Combine(DataFolder, "backup");
+				var path = Path.Combine( /* UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS */
+				                        PatchProvider.DataFolder,
+				                        "backup");
 
 				if (Directory.Exists(path))
 				{
@@ -207,52 +176,6 @@ namespace Dogstar
 					}
 				}
 			});
-		}
-
-		public static async Task<bool> IsGameUpToDate()
-		{
-			try
-			{
-				if (ManagementData == null)
-				{
-					await PullManagementData();
-				}
-
-				if (ManagementData == null)
-				{
-					return true;
-				}
-
-				var versionUrl = new Uri(new Uri(ManagementData["PatchURL"]), "version.ver");
-				string localVersion = await Task.Run(() => File.Exists(VersionPath) ? File.ReadAllText(VersionPath) : string.Empty);
-
-				using (var client = new AquaHttpClient())
-				{
-					client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-					string remoteVersion = await client.DownloadStringTaskAsync(versionUrl);
-					await Task.Run(() => File.WriteAllText(Path.Combine(GameConfigFolder, "_version.ver"), remoteVersion));
-					return localVersion == remoteVersion;
-				}
-			}
-			catch
-			{
-				return true;
-			}
-		}
-
-		public static async Task<bool> IsNewPrecedeAvailable()
-		{
-			await PullManagementData();
-
-			if (ManagementData.ContainsKey("PrecedeVersion") && ManagementData.ContainsKey("PrecedeCurrent"))
-			{
-				var version = ManagementData["PrecedeVersion"];
-				var listnum = ManagementData["PrecedeCurrent"];
-				var current = await Task.Run(() => File.Exists(PrecedeTxtPath) ? File.ReadAllText(PrecedeTxtPath) : string.Empty);
-				return string.IsNullOrEmpty(current) || current != $"{version}\t{listnum}";
-			}
-
-			return false;
 		}
 
 		public static void SavePluginSettings()

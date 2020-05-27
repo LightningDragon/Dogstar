@@ -45,8 +45,13 @@ namespace Dogstar
 
 		public string WindowTittle => $"{ApplicationInfo.Name} {ApplicationInfo.Version}";
 
+		PatchProvider patchProvider;
+
 		public MainWindow()
 		{
+			// UNDONE: MAKE REGION SELECTABLE!
+			patchProvider = new JapanPatchProvider();
+
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
 
@@ -208,7 +213,7 @@ namespace Dogstar
 
 			if (Settings.Default.IsGameInstalled)
 			{
-				await Task.Run(() => CreateDirectoryIfNoneExists(GameConfigFolder));
+				await Task.Run(() => CreateDirectoryIfNoneExists(patchProvider.GameConfigFolder));
 
 				string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
@@ -231,7 +236,7 @@ namespace Dogstar
 					}
 				}
 
-				if (!await IsGameUpToDate())
+				if (!await patchProvider.IsGameUpToDate())
 				{
 					MessageDialogResult result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
 
@@ -270,7 +275,8 @@ namespace Dogstar
 
 				PluginManager.PluginSettings.AddRange(plugins);
 
-				if (await IsNewPrecedeAvailable() && await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+				if (await patchProvider.IsNewPrecedeAvailable() &&
+				    await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 				{
 					var precedeWindow = new PrecedeWindow { Owner = this, Top = Top + Height, Left = Left };
 					_isPrecedeDownloading = true;
@@ -337,8 +343,9 @@ namespace Dogstar
 					}
 				}
 
-				await PullManagementData();
-				if (ManagementData.ContainsKey("ManagementData") && ManagementData["IsInMaintenance"] == "1")
+				await patchProvider.PullManagementData();
+
+				if (await patchProvider.IsInMaintenance())
 				{
 					MessageDialogResult result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
@@ -606,7 +613,7 @@ namespace Dogstar
 		{
 			_gameTabController.ChangeTab(FileCheckTabItem);
 
-			await PullManagementData();
+			await patchProvider.PullManagementData();
 
 			_checkCancelSource = new CancellationTokenSource();
 			_isCheckPaused = false;
@@ -659,15 +666,15 @@ namespace Dogstar
 				{
 					await Task.Run(() =>
 					{
-						CreateDirectoryIfNoneExists(GameConfigFolder);
-						CreateDirectoryIfNoneExists(DataFolder);
+						CreateDirectoryIfNoneExists(patchProvider.GameConfigFolder);
+						CreateDirectoryIfNoneExists(PatchProvider.DataFolder);
 					});
 
-					string precedePath = Path.Combine(PrecedeFolder, "data", "win32");
+					string precedePath = Path.Combine(PatchProvider.PrecedeFolder, "data", "win32");
 
-					if (File.Exists(PrecedeTxtPath) && Directory.Exists(precedePath))
+					if (File.Exists(patchProvider.PrecedeTxtPath) && Directory.Exists(precedePath))
 					{
-						if (!ManagementData.ContainsKey("PrecedeVersion") || !ManagementData.ContainsKey("PrecedeCurrent"))
+						if (!patchProvider.ManagementData.ContainsKey("PrecedeVersion") || !patchProvider.ManagementData.ContainsKey("PrecedeCurrent"))
 						{
 							MessageDialogResult result = await this.ShowMessageAsync(Text.ApplyPrecede, Text.ApplyPrecedeNow, AffirmNeg, YesNo);
 
@@ -675,7 +682,7 @@ namespace Dogstar
 							{
 								// TODO: not this
 								CancelCheckButton.IsEnabled = false;
-								PauseCheckButton.IsEnabled = false;
+								PauseCheckButton.IsEnabled  = false;
 
 								string[] files = await Task.Run(() => Directory.GetFiles(precedePath));
 								CheckProgressbar.Maximum = files.Length;
@@ -686,7 +693,7 @@ namespace Dogstar
 
 									try
 									{
-										await Task.Run(() => MoveAndOverwriteFile(file, Path.Combine(DataFolder, Path.GetFileName(file ?? string.Empty))));
+										await Task.Run(() => MoveAndOverwriteFile(file, Path.Combine(PatchProvider.DataFolder, Path.GetFileName(file ?? string.Empty))));
 									}
 									catch (Exception)
 									{
@@ -698,7 +705,7 @@ namespace Dogstar
 
 								try
 								{
-									await Task.Run(() => Directory.Delete(PrecedeFolder, true));
+									await Task.Run(() => Directory.Delete(PatchProvider.PrecedeFolder, true));
 								}
 								catch (Exception)
 								{
@@ -707,45 +714,42 @@ namespace Dogstar
 
 								// TODO: not this
 								CancelCheckButton.IsEnabled = true;
-								PauseCheckButton.IsEnabled = true;
+								PauseCheckButton.IsEnabled  = true;
 
 								method = UpdateMethod.FileCheck;
 							}
 						}
 					}
 
-					var masterUrl = new Uri(ManagementData["MasterURL"]);
-					var patchUrl = new Uri(ManagementData["PatchURL"]);
+					string launcherList = await manager.DownloadStringTaskAsync(patchProvider.LauncherListUrl);
+					string patchList    = await manager.DownloadStringTaskAsync(patchProvider.PatchListUrl);
+					string listAlways   = await manager.DownloadStringTaskAsync(patchProvider.PatchListAlwaysUrl);
 
-					string launcherList = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "launcherlist.txt"));
-					string patchList = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "patchlist.txt"));
-					string listAlways = await manager.DownloadStringTaskAsync(new Uri(patchUrl, "patchlist_always.txt"));
-
-					PatchListEntry[] launcherListData = ParsePatchList(launcherList).ToArray();
-					PatchListEntry[] patchListData = ParsePatchList(patchList).ToArray();
-					PatchListEntry[] patchListAlways = ParsePatchList(listAlways).ToArray();
+					PatchListEntry[] launcherListData = PatchListEntry.Parse(launcherList).ToArray();
+					PatchListEntry[] patchListData    = PatchListEntry.Parse(patchList).ToArray();
+					PatchListEntry[] patchListAlways  = PatchListEntry.Parse(listAlways).ToArray();
 
 					await RestoreAllPatchBackups();
 
-					if (method == UpdateMethod.Update && Directory.Exists(GameConfigFolder))
+					if (method == UpdateMethod.Update && Directory.Exists(patchProvider.GameConfigFolder))
 					{
 						var entryComparer = new PatchListEntryComparer();
 
-						if (File.Exists(LauncherListPath))
+						if (File.Exists(patchProvider.LauncherListPath))
 						{
-							IEnumerable<PatchListEntry> storedLauncherlist = await Task.Run(() => ParsePatchList(File.ReadAllText(LauncherListPath)));
-							launcherListData = launcherListData.Except(storedLauncherlist, entryComparer).ToArray();
+							IEnumerable<PatchListEntry> storedLauncherList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.LauncherListPath)));
+							launcherListData = launcherListData.Except(storedLauncherList, entryComparer).ToArray();
 						}
 
-						if (File.Exists(PatchListPath))
+						if (File.Exists(patchProvider.PatchListPath))
 						{
-							IEnumerable<PatchListEntry> storedNewlist = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListPath)));
-							patchListData = patchListData.Except(storedNewlist, entryComparer).ToArray();
+							IEnumerable<PatchListEntry> storedNewList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.PatchListPath)));
+							patchListData = patchListData.Except(storedNewList, entryComparer).ToArray();
 						}
 
-						if (File.Exists(PatchListAlwaysPath))
+						if (File.Exists(patchProvider.PatchListAlwaysPath))
 						{
-							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => ParsePatchList(File.ReadAllText(PatchListAlwaysPath)));
+							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.PatchListAlwaysPath)));
 							patchListAlways = patchListAlways.Except(storedAlwaysList, entryComparer).ToArray();
 						}
 					}
@@ -827,31 +831,25 @@ namespace Dogstar
 								MoveAndOverwriteFile(patPath, filePath);
 							}
 
-							Uri uri;
+							Uri fileUri;
 
-							switch (data.Source)
+							if (data.Source == PatchListSource.None)
 							{
-								case PatchListSource.None:
-									if (patchListData.Contains(data) || launcherListData.Contains(data))
-									{
-										goto case PatchListSource.Patch;
-									}
+								var fakeSource = PatchListSource.Master;
 
-									goto case PatchListSource.Master;
+								if (patchListData.Contains(data) || launcherListData.Contains(data))
+								{
+									fakeSource = PatchListSource.Patch;
+								}
 
-								case PatchListSource.Master:
-									uri = masterUrl;
-									break;
-
-								case PatchListSource.Patch:
-									uri = patchUrl;
-									break;
-
-								default:
-									throw new ArgumentOutOfRangeException();
+								fileUri = await patchProvider.BuildFileUri(fakeSource, data.Name);
+							}
+							else
+							{
+								fileUri = await patchProvider.BuildFileUri(data);
 							}
 
-							fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(uri, data.Name), patPath).ContinueWith(pat));
+							fileOperations.Add(manager.DownloadFileTaskAsync(fileUri, patPath).ContinueWith(pat));
 
 							numberToDownload++;
 							totalBytesToDownload += data.Size;
@@ -861,7 +859,7 @@ namespace Dogstar
 					}
 
 					numberToDownload++;
-					fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchUrl, "version.ver"), VersionPath));
+					fileOperations.Add(manager.DownloadFileTaskAsync(patchProvider.VersionFileUri, patchProvider.VersionFilePath));
 
 					Task downloads = Task.WhenAll(fileOperations);
 
@@ -875,6 +873,7 @@ namespace Dogstar
 						}
 						else
 						{
+							// TODO: do we really want to do this? why not yield?
 							await Task.Delay(16);
 						}
 					}
@@ -883,13 +882,13 @@ namespace Dogstar
 
 					await Task.Run(() =>
 					{
-						File.WriteAllText(LauncherListPath, launcherList);
-						File.WriteAllText(PatchListPath, patchList);
-						File.WriteAllText(PatchListAlwaysPath, listAlways);
+						File.WriteAllText(patchProvider.LauncherListPath, launcherList);
+						File.WriteAllText(patchProvider.PatchListPath, patchList);
+						File.WriteAllText(patchProvider.PatchListAlwaysPath, listAlways);
 
-						if (File.Exists(VersionPath))
+						if (File.Exists(patchProvider.VersionFilePath))
 						{
-							SetTweakerRemoteVersion(File.ReadAllText(VersionPath));
+							SetTweakerRemoteVersion(File.ReadAllText(patchProvider.VersionFilePath));
 						}
 					});
 				}

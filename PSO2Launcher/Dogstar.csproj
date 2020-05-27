@@ -96,6 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="NorthAmericaPatchProvider.cs" />
     <Compile Include="AquaHttpClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -105,8 +106,10 @@
     <Compile Include="FolderSelectDialog.xaml.cs">
       <DependentUpon>FolderSelectDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JapanPatchProvider.cs" />
     <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="PatchListEntry.cs" />
+    <Compile Include="PatchProvider.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="PluginSetting.cs" />
     <Compile Include="PrecedeWindow.xaml.cs">

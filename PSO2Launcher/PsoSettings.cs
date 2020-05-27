@@ -152,7 +152,7 @@ namespace Dogstar
 
 		public static void Reload()
 		{
-			LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
+			// UNDONE: LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
 			_isLoaded = true;
 		}
 
@@ -168,7 +168,7 @@ namespace Dogstar
 			LuaVm.DoString("WrapsIni = {Ini = Ini}");
 			var result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
 
-			File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), result);
+			// UNDONE: File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), result);
 		}
 
 	}

@@ -1,13 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dogstar
 {
 	public class PatchListEntryComparer : IEqualityComparer<PatchListEntry>
 	{
-		public bool Equals(PatchListEntry x, PatchListEntry y) => x.Name == y.Name && x.Size == y.Size && x.Hash == y.Hash;
+		public bool Equals(PatchListEntry x, PatchListEntry y)
+		{
+			if (x is null && y is null)
+			{
+				return true;
+			}
 
-		public int GetHashCode(PatchListEntry obj) => obj.Name.GetHashCode() ^ obj.Size.GetHashCode() ^ obj.Hash.GetHashCode();
+			if (x is null || y is null)
+			{
+				return false;
+			}
+
+			return x.Name == y.Name && x.Size == y.Size && x.Hash == y.Hash;
+		}
+
+		public int GetHashCode(PatchListEntry obj)
+		{
+			return obj.Name.GetHashCode() ^ obj.Size.GetHashCode() ^ obj.Hash.GetHashCode();
+		}
 	}
 
 	public enum PatchListSource
@@ -67,6 +84,16 @@ namespace Dogstar
 			{
 				throw new NullReferenceException();
 			}
+		}
+
+		public static IEnumerable<PatchListEntry> Parse(string list)
+		{
+			return Parse(list.LineSplit().Where(x => !string.IsNullOrWhiteSpace(x)));
+		}
+
+		public static IEnumerable<PatchListEntry> Parse(IEnumerable<string> lines)
+		{
+			return from l in lines where !string.IsNullOrWhiteSpace(l) select new PatchListEntry(l);
 		}
 	}
 }
