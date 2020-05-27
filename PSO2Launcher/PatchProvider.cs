@@ -50,7 +50,8 @@ namespace Dogstar
 				ManagementData = (await client.DownloadStringTaskAsync(ManagementUrl))
 					.LineSplit()
 					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.ToDictionary(x => x.Split('=')[0], y => y.Split('=')[1]);
+					.Select(x => x.Split('='))
+					.ToDictionary(key => key[0].Trim(), value => value[1].Trim());
 			}
 
 			MasterUrl = new Uri(ManagementData["MasterURL"]);
