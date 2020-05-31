@@ -15,6 +15,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Dogstar.Resources;
 using Dogstar.Properties;
 using MahApps.Metro.Controls;
+using System.Reflection;
 
 using static MahApps.Metro.ThemeManager;
 using static Dogstar.Helper;
@@ -172,6 +173,13 @@ namespace Dogstar
 			{
 				string gamefolder = GetTweakerGameFolder();
 
+                if (string.IsNullOrWhiteSpace(gamefolder))
+                {
+                    string Pso2Path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\pso2.exe";
+                    if (File.Exists(Pso2Path))
+                        gamefolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                }
+
 				if (string.IsNullOrWhiteSpace(gamefolder))
 				{
 					await SetupGameInfo();
@@ -226,16 +234,6 @@ namespace Dogstar
 						return client.DownloadStringTaskAsync(x.Url);
 					}
 				}).ToArray();
-
-				if (File.Exists(editionPath))
-				{
-					string edition = await Task.Run(() => File.ReadAllText(editionPath));
-
-					if (edition != "jp")
-					{
-						await this.ShowMessageAsync(Text.Warning, Text.NonJPPSO2);
-					}
-				}
 
 				if (!await patchProvider.IsGameUpToDate())
 				{
@@ -731,12 +729,14 @@ namespace Dogstar
 					string launcherList = await manager.DownloadStringTaskAsync(patchProvider.LauncherListUrl);
 					string patchList    = await manager.DownloadStringTaskAsync(patchProvider.PatchListUrl);
 					string listAlways   = await manager.DownloadStringTaskAsync(patchProvider.PatchListAlwaysUrl);
+                    
 
 					PatchListEntry[] launcherListData = PatchListEntry.Parse(launcherList).ToArray();
 					PatchListEntry[] patchListData    = PatchListEntry.Parse(patchList).ToArray();
 					PatchListEntry[] patchListAlways  = PatchListEntry.Parse(listAlways).ToArray();
+                    
 
-					await RestoreAllPatchBackups();
+                    await RestoreAllPatchBackups();
 
 					if (method == UpdateMethod.Update && Directory.Exists(patchProvider.GameConfigFolder))
 					{
@@ -759,7 +759,8 @@ namespace Dogstar
 							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.PatchListAlwaysPath)));
 							patchListAlways = patchListAlways.Except(storedAlwaysList, entryComparer).ToArray();
 						}
-					}
+
+                    }
 
 					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();
 					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();

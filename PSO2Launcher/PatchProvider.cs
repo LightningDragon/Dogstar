@@ -20,8 +20,8 @@ namespace Dogstar
 
 		public string LauncherListPath    => Path.Combine(GameConfigFolder, "launcherlist.txt");
 		public string PatchListPath       => Path.Combine(GameConfigFolder, "_patchlist.txt");
-		public string PatchListAlwaysPath => Path.Combine(GameConfigFolder, "_patchlist_always.txt");
-		public string VersionFilePath     => Path.Combine(GameConfigFolder, "version.ver");
+		public string PatchListAlwaysPath => Path.Combine(GameConfigFolder, "_patchlist_always_win10.txt");
+        public string VersionFilePath     => Path.Combine(GameConfigFolder, "version.ver");
 		public string PrecedeTxtPath      => Path.Combine(GameConfigFolder, "precede.txt");
 
 		// UNDONE: make Settings.Default.GameFolder selectable for region
@@ -36,6 +36,8 @@ namespace Dogstar
 		public Uri LauncherListUrl    { get; private set; }
 		public Uri PatchListUrl       { get; private set; }
 		public Uri PatchListAlwaysUrl { get; private set; }
+        // This probably should be some sort of "editions" array
+        public Uri PatchListWin10Url  { get; private set; }
 		public Uri VersionFileUrl     { get; private set; }
 
 		/// <summary>
@@ -59,7 +61,7 @@ namespace Dogstar
 
 			LauncherListUrl    = new Uri(PatchUrl, "launcherlist.txt");
 			PatchListUrl       = new Uri(PatchUrl, "patchlist.txt");
-			PatchListAlwaysUrl = new Uri(PatchUrl, "patchlist_always.txt");
+			PatchListAlwaysUrl = new Uri(PatchUrl, "patchlist_always_win10.txt");
 			VersionFileUrl     = new Uri(PatchUrl, "version.ver");
 		}
 

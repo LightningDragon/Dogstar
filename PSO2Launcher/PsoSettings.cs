@@ -10,6 +10,7 @@ namespace Dogstar
 	{
 		private static readonly Lua LuaVm = new Lua();
 		private static readonly Dictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
+        private static PatchProvider provider = new NorthAmericaPatchProvider();
 
 		private static bool _isLoaded;
 
@@ -152,7 +153,7 @@ namespace Dogstar
 
 		public static void Reload()
 		{
-			// UNDONE: LuaVm.DoFile(Path.Combine(GameConfigFolder, "user.pso2"));
+			LuaVm.DoFile(Path.Combine(provider.GameConfigFolder, "user.pso2"));
 			_isLoaded = true;
 		}
 
@@ -168,7 +169,7 @@ namespace Dogstar
 			LuaVm.DoString("WrapsIni = {Ini = Ini}");
 			var result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
 
-			// UNDONE: File.WriteAllText(Path.Combine(GameConfigFolder, "user.pso2"), result);
+			File.WriteAllText(Path.Combine(provider.GameConfigFolder, "user.pso2"), result);
 		}
 
 	}
