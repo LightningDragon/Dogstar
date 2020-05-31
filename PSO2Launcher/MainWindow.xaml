@@ -319,12 +319,12 @@
             <TabItem Header="About" controls:ControlsHelper.HeaderFontSize="21">
                 <Grid Margin="10">
                     <Label Content="License" VerticalAlignment="Top" FontSize="24"/>
-                    <ScrollViewer VerticalAlignment="Top" Height="137" Margin="0,46,0,0">
-                        <TextBlock Text="{Binding Mode=OneWay}" TextWrapping="Wrap"/>
+                    <ScrollViewer VerticalAlignment="Top" Height="106" Margin="0,46,0,0">
+                        <TextBlock Text="{Binding Mode=OneWay}" TextWrapping="Wrap" Height="106"/>
                     </ScrollViewer>
-                    <Label Content="Software Used by Dogstar" VerticalAlignment="Bottom" Margin="0,0,0,200" FontSize="24"/>
-                    <ScrollViewer VerticalAlignment="Bottom" Height="137" Margin="0,0,0,61">
-                        <Grid>
+                    <Label Content="Software Used by Dogstar" VerticalAlignment="Bottom" Margin="0,0,0,171" FontSize="24"/>
+                    <ScrollViewer VerticalAlignment="Bottom" Height="137" Margin="0,0,0,10">
+                        <Grid Height="137">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="70"/>
                                 <RowDefinition Height="70"/>
@@ -394,12 +394,16 @@
             </TabItem>
             <TabItem Header="Support" controls:ControlsHelper.HeaderFontSize="21">
                 <Grid>
-                    <Rectangle Width="330" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,74,0,174" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="74*"/>
+                        <RowDefinition Height="121*"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle Width="330" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,45,0,145" Grid.RowSpan="2" >
                         <Rectangle.Fill>
                             <ImageBrush ImageSource="Resources/dogstartlogo.png"/>
                         </Rectangle.Fill>
                     </Rectangle>
-                    <controls:ProgressRing Height="330" Width="330" Margin="0,9,0,109">
+                    <controls:ProgressRing Height="410" Width="330" Margin="0,-20,0,0" Grid.RowSpan="2">
                         <controls:ProgressRing.Effect>
                             <DropShadowEffect/>
                         </controls:ProgressRing.Effect>
