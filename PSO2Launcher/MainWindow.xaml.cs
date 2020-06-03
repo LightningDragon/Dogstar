@@ -764,7 +764,7 @@ namespace Dogstar
 
 					}
 
-					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();
+					PatchListEntry[] lists = patchListAlways.ToArray();
 					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
 
 					CheckProgressbar.Maximum = groups.Length;
@@ -846,8 +846,8 @@ namespace Dogstar
 							if (data.Source == PatchListSource.None)
 							{
 								var fakeSource = PatchListSource.Master;
-
-								if (patchListData.Contains(data) || launcherListData.Contains(data))
+                                // HACK: Type check is a sloppy hack for NA -- all patches come from Patch on NA, not master. (As far as we can tell?)
+								if (patchListData.Contains(data) || launcherListData.Contains(data) || patchProvider.GetType() == typeof(NorthAmericaPatchProvider))
 								{
 									fakeSource = PatchListSource.Patch;
 								}
