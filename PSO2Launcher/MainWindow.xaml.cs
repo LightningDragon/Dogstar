@@ -764,8 +764,8 @@ namespace Dogstar
 
 					}
 
-					PatchListEntry[] lists = patchListAlways.ToArray();
-					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
+					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();
+                    PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
 
 					CheckProgressbar.Maximum = groups.Length;
 
