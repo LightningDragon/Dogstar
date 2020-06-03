@@ -279,13 +279,13 @@ namespace Dogstar
 				PluginManager.PluginSettings.AddRange(plugins);
 
 				if (await patchProvider.IsNewPrecedeAvailable() &&
-				    await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
+					await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 				{
 					var precedeWindow = new PrecedeWindow(patchProvider)
 					{
 						Owner = this,
-						Top   = Top + Height,
-						Left  = Left
+						Top = Top + Height,
+						Left = Left
 					};
 
 					_isPrecedeDownloading = true;
@@ -691,7 +691,7 @@ namespace Dogstar
 							{
 								// TODO: not this
 								CancelCheckButton.IsEnabled = false;
-								PauseCheckButton.IsEnabled  = false;
+								PauseCheckButton.IsEnabled = false;
 
 								string[] files = await Task.Run(() => Directory.GetFiles(precedePath));
 								CheckProgressbar.Maximum = files.Length;
@@ -723,7 +723,7 @@ namespace Dogstar
 
 								// TODO: not this
 								CancelCheckButton.IsEnabled = true;
-								PauseCheckButton.IsEnabled  = true;
+								PauseCheckButton.IsEnabled = true;
 
 								method = UpdateMethod.FileCheck;
 							}
@@ -731,12 +731,12 @@ namespace Dogstar
 					}
 
 					string launcherList = await manager.DownloadStringTaskAsync(patchProvider.LauncherListUrl);
-					string patchList    = await manager.DownloadStringTaskAsync(patchProvider.PatchListUrl);
-					string listAlways   = await manager.DownloadStringTaskAsync(patchProvider.PatchListAlwaysUrl);
+					string patchList = await manager.DownloadStringTaskAsync(patchProvider.PatchListUrl);
+					string listAlways = await manager.DownloadStringTaskAsync(patchProvider.PatchListAlwaysUrl);
 
 					PatchListEntry[] launcherListData = PatchListEntry.Parse(launcherList).ToArray();
-					PatchListEntry[] patchListData    = PatchListEntry.Parse(patchList).ToArray();
-					PatchListEntry[] patchListAlways  = PatchListEntry.Parse(listAlways).ToArray();
+					PatchListEntry[] patchListData = PatchListEntry.Parse(patchList).ToArray();
+					PatchListEntry[] patchListAlways = PatchListEntry.Parse(listAlways).ToArray();
 
 					await RestoreAllPatchBackups();
 
@@ -765,7 +765,7 @@ namespace Dogstar
 					}
 
 					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();
-                    PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
+					PatchListEntry[] groups = (from v in lists group v by v.Name into d select d.First()).ToArray();
 
 					CheckProgressbar.Maximum = groups.Length;
 
@@ -846,7 +846,7 @@ namespace Dogstar
 							if (data.Source == PatchListSource.None)
 							{
 								var fakeSource = PatchListSource.Master;
-                                // HACK: Type check is a sloppy hack for NA -- all patches come from Patch on NA, not master. (As far as we can tell?)
+								// HACK: Type check is a sloppy hack for NA -- all patches come from Patch on NA, not master. (As far as we can tell?)
 								if (patchListData.Contains(data) || launcherListData.Contains(data) || patchProvider.GetType() == typeof(NorthAmericaPatchProvider))
 								{
 									fakeSource = PatchListSource.Patch;
