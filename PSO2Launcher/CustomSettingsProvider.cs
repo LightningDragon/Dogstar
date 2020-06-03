@@ -208,9 +208,9 @@ namespace Dogstar
             get
             {
                 // FIXME: Clean this up. I feel bad :(
-                if(File.Exists(Path.Combine(Assembly.GetEntryAssembly().Location, "dogstar.config")))
+                if(File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config")))
                 {
-                    return Path.Combine(Assembly.GetEntryAssembly().Location, "dogstar.config");
+                    return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config");
                 }
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
             }
