@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace Dogstar
 {
@@ -198,16 +199,27 @@ namespace Dogstar
 			import.Save(UserConfigPath);
 		}
 
-		/// <summary>
-		/// The setting key this is returning must set before the settings are used.
-		/// e.g. <c>Properties.Settings.Default.SettingsKey = @"C:\temp\user.config";</c>
-		/// </summary>
-		private string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
+        /// <summary>
+        /// The setting key this is returning must set before the settings are used.
+        /// e.g. <c>Properties.Settings.Default.SettingsKey = @"C:\temp\user.config";</c>
+        /// </summary>
+        private string UserConfigPath
+        {
+            get
+            {
+                // FIXME: Clean this up. I feel bad :(
+                if(File.Exists(Path.Combine(Assembly.GetEntryAssembly().Location, "dogstar.config")))
+                {
+                    return Path.Combine(Assembly.GetEntryAssembly().Location, "dogstar.config");
+                }
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
+            }
+        }
 
-		/// <summary>
-		/// In memory storage of the settings values
-		/// </summary>
-		private Dictionary<string, SettingStruct> SettingsDictionary { get; set; }
+        /// <summary>
+        /// In memory storage of the settings values
+        /// </summary>
+        private Dictionary<string, SettingStruct> SettingsDictionary { get; set; }
 
 		/// <summary>
 		/// Helper struct.
