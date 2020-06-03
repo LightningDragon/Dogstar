@@ -128,8 +128,8 @@ namespace Dogstar
 
 		public static bool IsFileUpToDate(string filePath, long targetSize, string targetHash)
 		{
-            if (filePath.Contains("pso2launcher"))
-                return true;
+			if (filePath.Contains("pso2launcher"))
+				return true;
 			try
 			{
 				var info = new FileInfo(filePath);
