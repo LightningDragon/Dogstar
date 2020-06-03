@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Dogstar"
         xmlns:properties="clr-namespace:Dogstar.Properties"
         mc:Ignorable="d"
-        Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="482" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize" LocationChanged="MetroWindow_LocationChanged">
+        Title="{Binding WindowTittle, ElementName=MetroWindow, Mode=OneWay}" Height="540" Width="360" Loaded="metroWindow_Loaded" Icon="Resources/icon.ico" ResizeMode="CanMinimize" LocationChanged="MetroWindow_LocationChanged">
 
     <controls:MetroWindow.Resources>
         <ObjectDataProvider x:Key="Resolutions" ObjectType="{x:Type local:UiResources}" MethodName="GetResolutions"/>
@@ -70,8 +70,8 @@
             <TabItem x:Name="GameTabItem" Header="Game" controls:ControlsHelper.HeaderFontSize="21" DataContext="{Binding Source={StaticResource Resolutions}}">
                 <TabControl x:Name="GameTabControl">
                     <TabItem x:Name="MainTabItem" IsEnabled="False">
-                        <Grid Margin="0,0,0,74">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="50,0,56,-61" RenderTransformOrigin="0.5,0.5">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="52,0,52,72" RenderTransformOrigin="0.5,0.5">
                                 <StackPanel.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -92,7 +92,7 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
-                                <controls:Tile x:Name="EnhancementsTile" Title="Plugins" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click" IsEnabled="False">
+                                <controls:Tile x:Name="EnhancementsTile" Title="Enhancements (English patch, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click">
                                     <Rectangle x:Name="EnhancementIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
                                             <VisualBrush Stretch="Uniform"
@@ -269,8 +269,8 @@
                                         <RowDefinition Height="45"/>
                                         <RowDefinition Height="45"/>
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherInstallGame" Content="Install game" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherInstallGame_Click"/>
-                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Configure proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
+                                    <Button Grid.Row="0" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherInstallGame" Content="Install Game" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherInstallGame_Click"/>
+                                    <Button Grid.Row="1" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherProxyConfig" Content="Config Proxy" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherProxyConfig_Click" VerticalAlignment="Top"/>
                                     <Button Grid.Row="2" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherChangeGameDir" Content="Change game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" Click="OtherChangeGameDir_Click" VerticalAlignment="Top"/>
                                     <Button Grid.Row="3" Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="OtherOpenGameDir" Content="Open game folder" BorderBrush="{x:Null}" Height="40" controls:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Click="OtherOpenGameDir_Click"/>
                                 </Grid>
@@ -411,8 +411,157 @@
                             <ImageBrush ImageSource="Resources/Icon.ico" Stretch="UniformToFill"/>
                         </controls:ProgressRing.Foreground>
                     </controls:ProgressRing>
+
+                    <Rectangle Margin="150,372,140,66" RenderTransformOrigin="0.024,0.548">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
+                        </Rectangle.OpacityMask>
+                        <Rectangle.Effect>
+                            <DropShadowEffect/>
+                        </Rectangle.Effect>
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="94.465"/>
+                                <TranslateTransform X="18.684" Y="-16.381"/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Style>
+                            <Style TargetType="{x:Type Rectangle}">
+                                <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+
+                    <Rectangle Margin="241,361,43,73" RenderTransformOrigin="0.003,0.535">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
+                        </Rectangle.OpacityMask>
+                        <Rectangle.Effect>
+                            <DropShadowEffect/>
+                        </Rectangle.Effect>
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="101.247"/>
+                                <TranslateTransform X="31.341" Y="-24.479"/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Style>
+                            <Style TargetType="{x:Type Rectangle}">
+                                <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+
+                    <Rectangle Margin="46,360,206,76" RenderTransformOrigin="0.019,0.505">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Visual="{StaticResource appbar_arrow_right}"/>
+                        </Rectangle.OpacityMask>
+                        <Rectangle.Effect>
+                            <DropShadowEffect/>
+                        </Rectangle.Effect>
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="52.881"/>
+                                <TranslateTransform X="16.696" Y="-28.582"/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                        <Rectangle.Style>
+                            <Style TargetType="{x:Type Rectangle}">
+                                <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+
+                    <Label Content="Tweet at @DogstarTeam." VerticalAlignment="Center" Margin="98,337,92,85"/>
+                    <Label Content="Live chat on IRC." VerticalAlignment="Center" Margin="227,319,6,103"/>
+                    <Label Content="Report a bug on Github." VerticalAlignment="Center" Margin="-1,311,193,111"/>
                 </Grid>
             </TabItem>
         </TabControl>
+
+        <Rectangle x:Name="Debug" Height="40" Width="40" Margin="67,451,245,18" MouseDown="Debug_MouseDown" ToolTip="Debug Window">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_bug_remove}"/>
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Github" Height="40" Width="40" Margin="110,449,202,20" MouseDown="Github_MouseDown" ToolTip="Dogstar Source Code">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform" Visual="{StaticResource appbar_social_github_octocat_solid}"/>
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Twitter" Height="40" Width="40" Margin="155,449,157,20" MouseDown="Twitter_MouseDown" ToolTip="TeamDogstar Twitter Account">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_twitter_bird}"/>
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Donate" Height="40" Width="40" Margin="202,447,110,22" MouseDown="Donate_MouseDown" ToolTip="Donate">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_money}"/>
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="Information" Height="40" Width="40" Margin="249,445,63,24" MouseDown="Information_MouseDown" ToolTip="Get Information On IRC">
+            <Rectangle.OpacityMask>
+                <VisualBrush Stretch="Uniform"
+        			Visual="{StaticResource appbar_information_circle}"/>
+            </Rectangle.OpacityMask>
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColorBrush2}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
     </Grid>
 </controls:MetroWindow>

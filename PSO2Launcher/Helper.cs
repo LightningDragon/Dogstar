@@ -95,9 +95,18 @@ namespace Dogstar
 
 		public static bool LaunchGame()
 		{
-			var info = new ProcessStartInfo(Path.Combine(Settings.Default.GameFolder, "pso2.exe"), "+0x33aca2b9") { UseShellExecute = false };
-			info.EnvironmentVariables["-pso2"] = "+0x01e3f1e9";
-			return new Process() { StartInfo = info }.Start();
+			const int magic = 0x32315350; // 'PS12'
+
+			int time = Environment.TickCount & int.MaxValue;
+			int arg = time ^ magic;
+
+			var info = new ProcessStartInfo(Path.Combine(Settings.Default.GameFolder, "pso2.exe"), $"+0x{arg:x8}")
+			{
+				UseShellExecute = false
+			};
+
+			info.EnvironmentVariables["-pso2"] = $"+0x{time:x8}";
+			return new Process { StartInfo = info }.Start();
 		}
 
 		public static string GetTweakerGameFolder()
@@ -128,8 +137,8 @@ namespace Dogstar
 
 		public static bool IsFileUpToDate(string filePath, long targetSize, string targetHash)
 		{
-            if (filePath.Contains("pso2launcher"))
-                return true;
+			if (filePath.Contains("pso2launcher"))
+				return true;
 			try
 			{
 				var info = new FileInfo(filePath);
