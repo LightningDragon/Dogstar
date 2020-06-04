@@ -39,7 +39,7 @@ namespace Dogstar
 			ScanProgress.Dispatcher.InvokeAsync(() =>
 			{
 				DownloadProgress.Value = _doneBytes + e.BytesReceived;
-				DownloadProgressLabel.Content = $"{SizeSuffix(_doneBytes + e.BytesReceived)}/{SizeSuffix(_totalBytes)}";
+				DownloadProgressLabel.Content = $"{SizeSuffix.GetSizeSuffix(_doneBytes + e.BytesReceived)}/{SizeSuffix.GetSizeSuffix(_totalBytes)}";
 			});
 		}
 

@@ -123,6 +123,7 @@
       <DependentUpon>Text.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="SizeSuffix.cs" />
     <Compile Include="TabControler.cs" />
     <Compile Include="UpdateMethod.cs" />
     <Compile Include="FileSelectDialog.xaml.cs">

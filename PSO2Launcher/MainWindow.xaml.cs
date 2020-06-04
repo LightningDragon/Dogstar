@@ -335,7 +335,7 @@ namespace Dogstar
 			CheckDownloadProgressbar.Dispatcher.InvokeAsync(() =>
 			{
 				GeneralDownloadProgressbar.Value = e.ProgressPercentage;
-				CurrentGeneralDownloadSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+				CurrentGeneralDownloadSizeActionLabel.Content = $"{SizeSuffix.GetSizeSuffix(e.BytesReceived)}/{SizeSuffix.GetSizeSuffix(e.TotalBytesToReceive)}";
 			});
 		}
 
@@ -772,7 +772,7 @@ namespace Dogstar
 					void setTopLabel()
 					{
 						CompletedCheckDownloadActionsLabel.Content = Text.DownloadedOf
-							.Format(numberDownloaded, numberToDownload, SizeSuffix(totalBytesDownloaded), SizeSuffix(totalBytesToDownload));
+							.Format(numberDownloaded, numberToDownload, SizeSuffix.GetSizeSuffix(totalBytesDownloaded), SizeSuffix.GetSizeSuffix(totalBytesToDownload));
 					}
 
 					manager.DownloadStarted += (s, e) =>
@@ -795,7 +795,7 @@ namespace Dogstar
 							lastBytesDownloaded = e.BytesReceived;
 							setTopLabel();
 
-							CurrentCheckSizeActionLabel.Content = $"{SizeSuffix(e.BytesReceived)}/{SizeSuffix(e.TotalBytesToReceive)}";
+							CurrentCheckSizeActionLabel.Content = $"{SizeSuffix.GetSizeSuffix(e.BytesReceived)}/{SizeSuffix.GetSizeSuffix(e.TotalBytesToReceive)}";
 						});
 					};
 
