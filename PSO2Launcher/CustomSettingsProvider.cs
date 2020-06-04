@@ -4,16 +4,17 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace Dogstar
 {
 	class CustomSettingsProvider : SettingsProvider
 	{
-		const string NAME          = "name";
-		const string SERIALIZE_AS  = "serializeAs";
-		const string CONFIG        = "configuration";
+		const string NAME = "name";
+		const string SERIALIZE_AS = "serializeAs";
+		const string CONFIG = "configuration";
 		const string USER_SETTINGS = "userSettings";
-		const string SETTING       = "setting";
+		const string SETTING = "setting";
 
 		/// <summary>
 		/// Loads the file into memory.
@@ -72,12 +73,12 @@ namespace Dogstar
 				if (SettingsDictionary.ContainsKey(setting.Name))
 				{
 					value.SerializedValue = SettingsDictionary[setting.Name].value;
-					value.PropertyValue   = Convert.ChangeType(SettingsDictionary[setting.Name].value, t);
+					value.PropertyValue = Convert.ChangeType(SettingsDictionary[setting.Name].value, t);
 				}
 				else //use defaults in the case where there are no settings yet
 				{
 					value.SerializedValue = setting.DefaultValue;
-					value.PropertyValue   = Convert.ChangeType(setting.DefaultValue, t);
+					value.PropertyValue = Convert.ChangeType(setting.DefaultValue, t);
 				}
 
 				values.Add(value);
@@ -98,8 +99,8 @@ namespace Dogstar
 			{
 				var setting = new SettingStruct()
 				{
-					value       = (value.PropertyValue == null ? string.Empty : value.PropertyValue.ToString()),
-					name        = value.Name,
+					value = (value.PropertyValue == null ? string.Empty : value.PropertyValue.ToString()),
+					name = value.Name,
 					serializeAs = value.Property.SerializeAs.ToString()
 				};
 
@@ -140,9 +141,9 @@ namespace Dogstar
 			{
 				var newSetting = new SettingStruct()
 				{
-					name        = element.Attribute(NAME) == null ? string.Empty : element.Attribute(NAME).Value,
+					name = element.Attribute(NAME) == null ? string.Empty : element.Attribute(NAME).Value,
 					serializeAs = element.Attribute(SERIALIZE_AS) == null ? "String" : element.Attribute(SERIALIZE_AS).Value,
-					value       = element.Value ?? string.Empty
+					value = element.Value ?? string.Empty
 				};
 				SettingsDictionary.Add(element.Attribute(NAME).Value, newSetting);
 			}
@@ -154,11 +155,11 @@ namespace Dogstar
 		/// </summary>
 		private void CreateEmptyConfig()
 		{
-			var doc          = new XDocument();
-			var declaration  = new XDeclaration("1.0", "utf-8", "true");
-			var config       = new XElement(CONFIG);
+			var doc = new XDocument();
+			var declaration = new XDeclaration("1.0", "utf-8", "true");
+			var config = new XElement(CONFIG);
 			var userSettings = new XElement(USER_SETTINGS);
-			var group        = new XElement(typeof(Properties.Settings).FullName);
+			var group = new XElement(typeof(Properties.Settings).FullName);
 			userSettings.Add(group);
 			config.Add(userSettings);
 			doc.Add(config);
@@ -202,7 +203,18 @@ namespace Dogstar
 		/// The setting key this is returning must set before the settings are used.
 		/// e.g. <c>Properties.Settings.Default.SettingsKey = @"C:\temp\user.config";</c>
 		/// </summary>
-		private string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
+		private string UserConfigPath
+		{
+			get
+			{
+				// FIXME: Clean this up. I feel bad :(
+				if (File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config")))
+				{
+					return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config");
+				}
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
+			}
+		}
 
 		/// <summary>
 		/// In memory storage of the settings values
