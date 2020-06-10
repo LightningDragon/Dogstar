@@ -199,6 +199,9 @@ namespace Dogstar
 			import.Save(UserConfigPath);
 		}
 
+		const string configurationFileName = "dogstar.config";
+		string globalConfigurationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA");
+
 		/// <summary>
 		/// The setting key this is returning must set before the settings are used.
 		/// e.g. <c>Properties.Settings.Default.SettingsKey = @"C:\temp\user.config";</c>
@@ -207,12 +210,14 @@ namespace Dogstar
 		{
 			get
 			{
-				// FIXME: Clean this up. I feel bad :(
-				if (File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config")))
+				string workingDirectoryConfiguration = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), configurationFileName);
+
+				if (File.Exists(workingDirectoryConfiguration))
 				{
-					return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dogstar.config");
+					return Path.Combine(workingDirectoryConfiguration);
 				}
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SEGA", "dogstar.config");
+
+				return Path.Combine(globalConfigurationDirectory, configurationFileName);
 			}
 		}
 
