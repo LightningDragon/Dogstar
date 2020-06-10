@@ -33,12 +33,10 @@ namespace Dogstar
 		public Uri MasterUrl { get; private set; }
 		public Uri PatchUrl  { get; private set; }
 
-		public Uri LauncherListUrl    { get; private set; }
-		public Uri PatchListUrl       { get; private set; }
-		public Uri PatchListAlwaysUrl { get; private set; }
-		// This probably should be some sort of "editions" array
-		public Uri PatchListWin10Url  { get; private set; }
-		public Uri VersionFileUrl     { get; private set; }
+		public virtual Uri LauncherListUrl    => new Uri(PatchUrl, "launcherlist.txt");
+		public virtual Uri PatchListUrl       => new Uri(PatchUrl, "patchlist.txt");
+		public virtual Uri PatchListAlwaysUrl => new Uri(PatchUrl, "patchlist_always.txt");
+		public virtual Uri VersionFileUrl     => new Uri(PatchUrl, "version.ver");
 
 		/// <summary>
 		/// Pull latest management data, including maintenance status, etc.
@@ -58,11 +56,6 @@ namespace Dogstar
 
 			MasterUrl = new Uri(ManagementData["MasterURL"]);
 			PatchUrl  = new Uri(ManagementData["PatchURL"]);
-
-			LauncherListUrl    = new Uri(PatchUrl, "launcherlist.txt");
-			PatchListUrl       = new Uri(PatchUrl, "patchlist.txt");
-			PatchListAlwaysUrl = new Uri(PatchUrl, "patchlist_always_win10.txt");
-			VersionFileUrl     = new Uri(PatchUrl, "version.ver");
 		}
 
 		protected async Task PullManagementDataIfNull()
