@@ -1,116 +1,117 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Dogstar.GameEditionManagement;
 using NLua;
-using static Dogstar.Helper;
 
 namespace Dogstar
 {
-	public static class PsoSettings
+	public class PsoSettings
 	{
-		private static readonly Lua LuaVm = new Lua();
-		private static readonly Dictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
-        private static PatchProvider provider = new NorthAmericaPatchProvider();
+		readonly Lua LuaVm = new Lua();
+		readonly Dictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
+		GameEditionManager edition;
 
-		private static bool _isLoaded;
+		bool _isLoaded;
 
-		public static int Vsync
+		public int Vsync
 		{
 			get { return Get<int>("Ini.FrameKeep"); }
 			set { Cache["Ini.FrameKeep"] = value; }
 		}
 
-		public static bool FullScreen
+		public bool FullScreen
 		{
 			get { return Get<bool>("Ini.Windows.FullScreen"); }
 			set { Cache["Ini.Windows.FullScreen"] = value; }
 		}
 
-		public static bool VirtualFullScreen
+		public bool VirtualFullScreen
 		{
 			get { return Get<bool>("Ini.Windows.VirtualFullScreen"); }
 			set { Cache["Ini.Windows.VirtualFullScreen"] = value; }
 		}
 
-		public static bool MoviePlay
+		public bool MoviePlay
 		{
 			get { return Get<bool>("Ini.Config.Basic.MoviePlay"); }
 			set { Cache["Ini.Config.Basic.MoviePlay"] = value; }
 		}
 
-		public static int ShaderQuality
+		public int ShaderQuality
 		{
 			get { return Get<int>("Ini.Config.Draw.ShaderLevel"); }
 			set { Cache["Ini.Config.Draw.ShaderLevel"] = value; }
 		}
 
-		public static int TextureResolution
+		public int TextureResolution
 		{
 			get { return Get<int>("Ini.Config.Draw.TextureResolution"); }
 			set { Cache["Ini.Config.Draw.TextureResolution"] = value; }
 		}
 
-		public static int InterfaceSize
+		public int InterfaceSize
 		{
 			get { return Get<int>("Ini.Config.Screen.InterfaceSize"); }
 			set { Cache["Ini.Config.Screen.InterfaceSize"] = value; }
 		}
 
-		public static bool Surround
+		public bool Surround
 		{
 			get { return Get<bool>("Ini.Config.Sound.Play.Surround"); }
 			set { Cache["Ini.Config.Sound.Play.Surround"] = value; }
 		}
 
-		public static bool GlobalFocus
+		public bool GlobalFocus
 		{
 			get { return Get<bool>("Ini.Config.Sound.Play.GlobalFocus"); }
 			set { Cache["Ini.Config.Sound.Play.GlobalFocus"] = value; }
 		}
 
-		public static int Music
+		public int Music
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Bgm"); }
 			set { Cache["Ini.Config.Sound.Volume.Bgm"] = value; }
 		}
 
-		public static int Voice
+		public int Voice
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Voice"); }
 			set { Cache["Ini.Config.Sound.Volume.Voice"] = value; }
 		}
 
-		public static int Video
+		public int Video
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Movie"); }
 			set { Cache["Ini.Config.Sound.Volume.Movie"] = value; }
 		}
 
-		public static int Sound
+		public int Sound
 		{
 			get { return Get<int>("Ini.Config.Sound.Volume.Se"); }
 			set { Cache["Ini.Config.Sound.Volume.Se"] = value; }
 		}
 
-		public static int WindowHight
+		public int WindowHight
 		{
 			get { return Get<int>("Ini.Windows.Height"); }
 			set { Cache["Ini.Windows.Height"] = value; }
 		}
 
-		public static int WindowWidth
+		public int WindowWidth
 		{
 			get { return Get<int>("Ini.Windows.Width"); }
 			set { Cache["Ini.Windows.Width"] = value; }
 		}
 
-		static PsoSettings()
+		public PsoSettings(GameEditionManager edition)
 		{
+			this.edition = edition;
 			LuaVm.DoString(Properties.Resources.Lua_table_print);
 			LuaVm.DoString(Properties.Resources.Lua_to_string);
 		}
 
-		private static T Get<T>(string name)
+		T Get<T>(string name)
 		{
 			try
 			{
@@ -130,7 +131,7 @@ namespace Dogstar
 			}
 		}
 
-		private static void SetValue<T>(string name, T value)
+		void SetValue<T>(string name, T value)
 		{
 			try
 			{
@@ -143,7 +144,7 @@ namespace Dogstar
 			}
 		}
 
-		private static void LoadCheck()
+		void LoadCheck()
 		{
 			if (!_isLoaded)
 			{
@@ -151,13 +152,13 @@ namespace Dogstar
 			}
 		}
 
-		public static void Reload()
+		public void Reload()
 		{
-			LuaVm.DoFile(Path.Combine(provider.GameConfigFolder, "user.pso2"));
+			LuaVm.DoFile(edition.PathProvider.ConfigurationFilePath);
 			_isLoaded = true;
 		}
 
-		public static void Save()
+		public void Save()
 		{
 			Reload();
 
@@ -169,7 +170,7 @@ namespace Dogstar
 			LuaVm.DoString("WrapsIni = {Ini = Ini}");
 			var result = (string)LuaVm.DoString("return to_string(WrapsIni)")[0];
 
-			File.WriteAllText(Path.Combine(provider.GameConfigFolder, "user.pso2"), result);
+			File.WriteAllText(edition.PathProvider.ConfigurationFilePath, result);
 		}
 
 	}

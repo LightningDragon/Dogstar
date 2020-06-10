@@ -97,7 +97,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CustomSettingsProvider.cs" />
-    <Compile Include="NorthAmericaPatchProvider.cs" />
+    <Compile Include="GameEditionManagement\GameEditionManager.cs" />
+    <Compile Include="GameEditionManagement\GameEditions.cs" />
+    <Compile Include="GameEditionManagement\EditionPathProvider.cs" />
+    <Compile Include="GameEditionManagement\JapanEditionManager.cs" />
+    <Compile Include="GameEditionManagement\JapanPathProvider.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaWin10EditionManager.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaWin10PatchListProvider.cs" />
     <Compile Include="AquaHttpClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,10 +113,11 @@
     <Compile Include="FolderSelectDialog.xaml.cs">
       <DependentUpon>FolderSelectDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JapanPatchProvider.cs" />
+    <Compile Include="GameEditionManagement\JapanPatchListProvider.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaWin10PathProvider.cs" />
     <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="PatchListEntry.cs" />
-    <Compile Include="PatchProvider.cs" />
+    <Compile Include="GameEditionManagement\EditionPatchListProvider.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="PluginSetting.cs" />
     <Compile Include="PrecedeWindow.xaml.cs">

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
+using Dogstar.GameEditionManagement;
 using Dogstar.Properties;
 using Dogstar.Resources;
 using MahApps.Metro.Controls.Dialogs;
@@ -132,7 +133,7 @@ namespace Dogstar
 
 		public static void RestorePatchBackup(string patchname)
 		{
-			var installPath = PatchProvider.DataFolder; // UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS
+			var installPath = EditionPatchListProvider.DataFolder; // UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS
 			var path        = Path.Combine(installPath, "backup", patchname);
 
 			if (!Directory.Exists(path))
@@ -153,7 +154,7 @@ namespace Dogstar
 			await Task.Run(() =>
 			{
 				var path = Path.Combine( /* UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS */
-				                        PatchProvider.DataFolder,
+				                        EditionPatchListProvider.DataFolder,
 				                        "backup");
 
 				if (Directory.Exists(path))

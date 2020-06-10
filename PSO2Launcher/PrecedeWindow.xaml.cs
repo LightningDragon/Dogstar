@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Dogstar.GameEditionManagement;
 using Dogstar.Resources;
 using static Dogstar.Helper;
 
@@ -26,11 +27,11 @@ namespace Dogstar
 
 		private readonly CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 
-		readonly PatchProvider patchProvider;
+		readonly EditionPatchListProvider patchListProvider;
 
-		public PrecedeWindow(PatchProvider patchProvider)
+		public PrecedeWindow(EditionPatchListProvider patchListProvider)
 		{
-			this.patchProvider = patchProvider;
+			this.patchListProvider = patchListProvider;
 			InitializeComponent();
 		}
 
@@ -70,26 +71,26 @@ namespace Dogstar
 				{
 					var fileOperations = new List<Task>();
 
-					if (patchProvider.ManagementData.ContainsKey("PrecedeVersion") && patchProvider.ManagementData.ContainsKey("PrecedeCurrent"))
+					if (patchListProvider.ManagementData.ContainsKey("PrecedeVersion") && patchListProvider.ManagementData.ContainsKey("PrecedeCurrent"))
 					{
-						CreateDirectoryIfNoneExists(Path.Combine(PatchProvider.PrecedeFolder, "data", "win32"));
+						CreateDirectoryIfNoneExists(Path.Combine(EditionPatchListProvider.PrecedeFolder, "data", "win32"));
 
-						var listdatas = new PatchListEntry[int.Parse(patchProvider.ManagementData["PrecedeCurrent"]) + 1][];
+						var listdatas = new PatchListEntry[int.Parse(patchListProvider.ManagementData["PrecedeCurrent"]) + 1][];
 
 						for (var index = 0; index < listdatas.Length; index++)
 						{
 
 							var filename = $"patchlist{index}.txt";
-							var data = await manager.DownloadStringTaskAsync(new Uri(patchProvider.BasePrecede, filename));
+							var data = await manager.DownloadStringTaskAsync(new Uri(patchListProvider.BasePrecede, filename));
 							listdatas[index] = PatchListEntry.Parse(data).ToArray();
-							await Task.Run(() => File.WriteAllText(Path.Combine(PatchProvider.PrecedeFolder, filename), data));
+							await Task.Run(() => File.WriteAllText(Path.Combine(EditionPatchListProvider.PrecedeFolder, filename), data));
 						}
 
 						manager.DownloadProgressChanged += DownloadProgressChanged;
 						manager.DownloadCompleted += DownloadCompleted;
 
 						var groups = (from v in listdatas.SelectMany(x => x) group v by v.Name into d select d.First()).ToArray();
-						var precedePath = PatchProvider.PrecedeFolder;
+						var precedePath = EditionPatchListProvider.PrecedeFolder;
 
 						_totalBytes = groups.Select(x => x.Size).Sum();
 						DownloadProgress.Maximum = _totalBytes;
@@ -143,7 +144,7 @@ namespace Dogstar
 									_numberToDownload++;
 
 									var patPath = Path.Combine(precedePath, data.Name);
-									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchProvider.BasePrecede, data.Name), patPath).ContinueWith(x =>
+									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchListProvider.BasePrecede, data.Name), patPath).ContinueWith(x =>
 									{
 										lock (this)
 										{
@@ -177,7 +178,7 @@ namespace Dogstar
 						await downloads;
 					}
 
-					await Task.Run(() => File.WriteAllText(patchProvider.PrecedeTxtPath, $"{patchProvider.ManagementData["PrecedeVersion"]}\t{patchProvider.ManagementData["PrecedeCurrent"]}"));
+					await Task.Run(() => File.WriteAllText(patchListProvider.PrecedeTxtPath, $"{patchListProvider.ManagementData["PrecedeVersion"]}\t{patchListProvider.ManagementData["PrecedeCurrent"]}"));
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
