@@ -6,5 +6,7 @@
 		public override EditionPathProvider PathProvider { get; protected set; } = new NorthAmericaWin10PathProvider();
 		/// <inheritdoc />
 		public override EditionPatchListProvider PatchListProvider { get; protected set; } = new NorthAmericaWin10PatchListProvider();
+
+		// TODO: override LaunchGame to add "-optimize" flag
 	}
 }
