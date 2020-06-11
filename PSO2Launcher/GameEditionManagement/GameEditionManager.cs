@@ -57,7 +57,7 @@ namespace Dogstar.GameEditionManagement
 
 		public async Task<bool> IsInMaintenance()
 		{
-			await PatchListProvider.PullManagementDataIfNull();
+			await PatchListProvider.PullManagementData();
 
 			if (!PatchListProvider.ManagementData.TryGetValue("IsInMaintenance", out string value))
 			{

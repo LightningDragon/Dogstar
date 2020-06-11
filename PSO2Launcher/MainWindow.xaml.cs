@@ -44,11 +44,14 @@ namespace Dogstar
 		public string WindowTittle => $"{ApplicationInfo.Name} {ApplicationInfo.Version}";
 
 		GameEditionManager game;
+		PsoSettings psoSettings;
 
 		public MainWindow()
 		{
 			// UNDONE: MAKE REGION SELECTABLE!
 			game = new NorthAmericaWin10EditionManager();
+			// UNDONE: THIS SHOULD NOT BE HAPPENING HERE!
+			psoSettings = new PsoSettings(game);
 
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
@@ -222,12 +225,13 @@ namespace Dogstar
 
 			if (Settings.Default.IsGameInstalled)
 			{
-				await Task.Run(() => CreateDirectoryIfNoneExists(patchProvider.GameConfigFolder));
+				await Task.Run(() => CreateDirectoryIfNoneExists(game.PathProvider.GameConfigFolder));
 
 				// UNDONE: move to PatchProvider
+				// UNDONE: we're not doing anything with this???
 				string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
-				if (!await patchProvider.IsGameUpToDate())
+				if (!await game.IsGameUpToDate())
 				{
 					MessageDialogResult result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
 
@@ -237,10 +241,10 @@ namespace Dogstar
 					}
 				}
 
-				if (await patchProvider.IsNewPrecedeAvailable() &&
+				if (await game.IsNewPrecedeAvailable() &&
 					await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
 				{
-					var precedeWindow = new PrecedeWindow(patchProvider)
+					var precedeWindow = new PrecedeWindow(game)
 					{
 						Owner = this,
 						Top = Top + Height,
@@ -311,9 +315,7 @@ namespace Dogstar
 					}
 				}
 
-				await patchProvider.PullManagementData();
-
-				if (await patchProvider.IsInMaintenance())
+				if (await game.IsInMaintenance())
 				{
 					MessageDialogResult result = await this.ShowMessageAsync(Text.ServerMaintenance, Text.GameIsDown, AffirmNeg, YesNo);
 					if (result != MessageDialogResult.Affirmative)
@@ -322,7 +324,7 @@ namespace Dogstar
 					}
 				}
 
-				if (await Task.Run((Func<bool>)LaunchGame) && Settings.Default.CloseOnLaunch && !_isPrecedeDownloading)
+				if (await Task.Run(() => game.LaunchGame()) && Settings.Default.CloseOnLaunch && !_isPrecedeDownloading)
 				{
 					Close();
 				}
@@ -368,37 +370,37 @@ namespace Dogstar
 
 		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.Reload();
+			psoSettings.Reload();
 
 			// Math is used to map the Vsync values to indexes to remove the need for a Switch or an Array
-			VsyncComboBox.SelectedIndex = (int)(PsoSettings.Vsync / 140f * 5f);
-			WindowModeComboBox.SelectedIndex = PsoSettings.VirtualFullScreen ? 2 : ToInt32(PsoSettings.FullScreen);
-			MonitorPlaybackCheckBox.IsChecked = PsoSettings.MoviePlay;
-			TextureComboBox.SelectedIndex = PsoSettings.TextureResolution;
-			ShaderQualityCombobox.SelectedIndex = PsoSettings.ShaderQuality;
-			InterfaceSizeComboBox.SelectedIndex = PsoSettings.InterfaceSize;
-			MusicSlider.Value = PsoSettings.Music;
-			SoundSlider.Value = PsoSettings.Sound;
-			VoiceSlider.Value = PsoSettings.Voice;
-			VideoSlider.Value = PsoSettings.Video;
-			SurroundToggle.IsChecked = PsoSettings.Surround;
-			GlobalFocusToggle.IsChecked = PsoSettings.GlobalFocus;
+			VsyncComboBox.SelectedIndex = (int)(psoSettings.Vsync / 140f * 5f);
+			WindowModeComboBox.SelectedIndex = psoSettings.VirtualFullScreen ? 2 : ToInt32(psoSettings.FullScreen);
+			MonitorPlaybackCheckBox.IsChecked = psoSettings.MoviePlay;
+			TextureComboBox.SelectedIndex = psoSettings.TextureResolution;
+			ShaderQualityCombobox.SelectedIndex = psoSettings.ShaderQuality;
+			InterfaceSizeComboBox.SelectedIndex = psoSettings.InterfaceSize;
+			MusicSlider.Value = psoSettings.Music;
+			SoundSlider.Value = psoSettings.Sound;
+			VoiceSlider.Value = psoSettings.Voice;
+			VideoSlider.Value = psoSettings.Video;
+			SurroundToggle.IsChecked = psoSettings.Surround;
+			GlobalFocusToggle.IsChecked = psoSettings.GlobalFocus;
 
-			string resolution = $"{PsoSettings.WindowWidth}x{PsoSettings.WindowHight}";
+			string resolution = $"{psoSettings.WindowWidth}x{psoSettings.WindowHight}";
 			UiResources.GetResolutions().Add(resolution);
 			ResolutionsCombobox.SelectedItem = resolution;
 		}
 
 		private void GameSettingsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.Save();
+			psoSettings.Save();
 		}
 
 		private void TextureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.TextureResolution = TextureComboBox.SelectedIndex;
+				psoSettings.TextureResolution = TextureComboBox.SelectedIndex;
 			}
 		}
 
@@ -406,7 +408,7 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.ShaderQuality = ShaderQualityCombobox.SelectedIndex;
+				psoSettings.ShaderQuality = ShaderQualityCombobox.SelectedIndex;
 			}
 		}
 
@@ -414,7 +416,7 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.Vsync = ToInt32(((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0"));
+				psoSettings.Vsync = ToInt32(((dynamic)VsyncComboBox.SelectedValue).Content.Replace("Off", "0"));
 			}
 		}
 
@@ -424,13 +426,13 @@ namespace Dogstar
 			{
 				if (WindowModeComboBox.SelectedIndex == 2)
 				{
-					PsoSettings.FullScreen = false;
-					PsoSettings.VirtualFullScreen = true;
+					psoSettings.FullScreen = false;
+					psoSettings.VirtualFullScreen = true;
 				}
 				else
 				{
-					PsoSettings.FullScreen = ToBoolean(WindowModeComboBox.SelectedIndex);
-					PsoSettings.VirtualFullScreen = false;
+					psoSettings.FullScreen = ToBoolean(WindowModeComboBox.SelectedIndex);
+					psoSettings.VirtualFullScreen = false;
 				}
 			}
 		}
@@ -439,18 +441,18 @@ namespace Dogstar
 		{
 			if (IsLoaded)
 			{
-				PsoSettings.InterfaceSize = InterfaceSizeComboBox.SelectedIndex;
+				psoSettings.InterfaceSize = InterfaceSizeComboBox.SelectedIndex;
 			}
 		}
 
 		private void MonitorPlaybackCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.MoviePlay = true;
+			psoSettings.MoviePlay = true;
 		}
 
 		private void MonitorPlaybackCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.MoviePlay = false;
+			psoSettings.MoviePlay = false;
 		}
 
 		private void ResolutionsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -459,49 +461,49 @@ namespace Dogstar
 			{
 				string[] resolution = ResolutionsCombobox.SelectedItem.ToString().Split('x');
 
-				PsoSettings.WindowWidth = ToInt32(resolution[0]);
-				PsoSettings.WindowHight = ToInt32(resolution[1]);
+				psoSettings.WindowWidth = ToInt32(resolution[0]);
+				psoSettings.WindowHight = ToInt32(resolution[1]);
 			}
 		}
 
 		private void MusicSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			PsoSettings.Music = (int)MusicSlider.Value;
+			psoSettings.Music = (int)MusicSlider.Value;
 		}
 
 		private void SoundSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			PsoSettings.Sound = (int)SoundSlider.Value;
+			psoSettings.Sound = (int)SoundSlider.Value;
 		}
 
 		private void VoiceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			PsoSettings.Voice = (int)VoiceSlider.Value;
+			psoSettings.Voice = (int)VoiceSlider.Value;
 		}
 
 		private void VideoSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			PsoSettings.Video = (int)VideoSlider.Value;
+			psoSettings.Video = (int)VideoSlider.Value;
 		}
 
 		private void SurroundToggle_Checked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.Surround = true;
+			psoSettings.Surround = true;
 		}
 
 		private void SurroundToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.Surround = false;
+			psoSettings.Surround = false;
 		}
 
 		private void GlobalFocusToggle_Checked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.GlobalFocus = true;
+			psoSettings.GlobalFocus = true;
 		}
 
 		private void GlobalFocusToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
-			PsoSettings.GlobalFocus = false;
+			psoSettings.GlobalFocus = false;
 		}
 
 		#endregion
@@ -521,7 +523,7 @@ namespace Dogstar
 		{
 			_gameTabController.ChangeTab(FileCheckTabItem);
 
-			await patchProvider.PullManagementData();
+			await game.PatchListProvider.PullManagementData();
 
 			_checkCancelSource = new CancellationTokenSource();
 			_isCheckPaused = false;
@@ -574,15 +576,16 @@ namespace Dogstar
 				{
 					await Task.Run(() =>
 					{
-						CreateDirectoryIfNoneExists(patchProvider.GameConfigFolder);
-						CreateDirectoryIfNoneExists(PatchProvider.DataFolder);
+						CreateDirectoryIfNoneExists(game.PathProvider.GameConfigFolder);
+						CreateDirectoryIfNoneExists(game.PathProvider.DataFolder);
 					});
 
-					string precedePath = Path.Combine(PatchProvider.PrecedeFolder, "data", "win32");
+					string precedePath = Path.Combine(game.PathProvider.PrecedeFolder, "data", "win32");
 
-					if (File.Exists(patchProvider.PrecedeTxtPath) && Directory.Exists(precedePath))
+					if (File.Exists(game.PathProvider.PrecedeTxtPath) && Directory.Exists(precedePath))
 					{
-						if (!patchProvider.ManagementData.ContainsKey("PrecedeVersion") || !patchProvider.ManagementData.ContainsKey("PrecedeCurrent"))
+						// TODO: the main window should never be explicitly checking ManagementData for *anything*.
+						if (!game.PatchListProvider.ManagementData.ContainsKey("PrecedeVersion") || !game.PatchListProvider.ManagementData.ContainsKey("PrecedeCurrent"))
 						{
 							MessageDialogResult result = await this.ShowMessageAsync(Text.ApplyPrecede, Text.ApplyPrecedeNow, AffirmNeg, YesNo);
 
@@ -601,7 +604,7 @@ namespace Dogstar
 
 									try
 									{
-										await Task.Run(() => MoveAndOverwriteFile(file, Path.Combine(PatchProvider.DataFolder, Path.GetFileName(file ?? string.Empty))));
+										await Task.Run(() => MoveAndOverwriteFile(file, Path.Combine(game.PathProvider.DataFolder, Path.GetFileName(file ?? string.Empty))));
 									}
 									catch (Exception)
 									{
@@ -613,7 +616,7 @@ namespace Dogstar
 
 								try
 								{
-									await Task.Run(() => Directory.Delete(PatchProvider.PrecedeFolder, true));
+									await Task.Run(() => Directory.Delete(game.PathProvider.PrecedeFolder, true));
 								}
 								catch (Exception)
 								{
@@ -629,33 +632,33 @@ namespace Dogstar
 						}
 					}
 
-					string launcherList = await manager.DownloadStringTaskAsync(patchProvider.LauncherListUrl);
-					string patchList = await manager.DownloadStringTaskAsync(patchProvider.PatchListUrl);
-					string listAlways = await manager.DownloadStringTaskAsync(patchProvider.PatchListAlwaysUrl);
+					string launcherList = await manager.DownloadStringTaskAsync(game.PatchListProvider.LauncherListUrl);
+					string patchList = await manager.DownloadStringTaskAsync(game.PatchListProvider.PatchListUrl);
+					string listAlways = await manager.DownloadStringTaskAsync(game.PatchListProvider.PatchListAlwaysUrl);
 
 					PatchListEntry[] launcherListData = PatchListEntry.Parse(launcherList).ToArray();
 					PatchListEntry[] patchListData = PatchListEntry.Parse(patchList).ToArray();
 					PatchListEntry[] patchListAlways = PatchListEntry.Parse(listAlways).ToArray();
 
-					if (method == UpdateMethod.Update && Directory.Exists(patchProvider.GameConfigFolder))
+					if (method == UpdateMethod.Update && Directory.Exists(game.PathProvider.GameConfigFolder))
 					{
 						var entryComparer = new PatchListEntryComparer();
 
-						if (File.Exists(patchProvider.LauncherListPath))
+						if (File.Exists(game.PathProvider.LauncherListPath))
 						{
-							IEnumerable<PatchListEntry> storedLauncherList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.LauncherListPath)));
+							IEnumerable<PatchListEntry> storedLauncherList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(game.PathProvider.LauncherListPath)));
 							launcherListData = launcherListData.Except(storedLauncherList, entryComparer).ToArray();
 						}
 
-						if (File.Exists(patchProvider.PatchListPath))
+						if (File.Exists(game.PathProvider.PatchListPath))
 						{
-							IEnumerable<PatchListEntry> storedNewList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.PatchListPath)));
+							IEnumerable<PatchListEntry> storedNewList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(game.PathProvider.PatchListPath)));
 							patchListData = patchListData.Except(storedNewList, entryComparer).ToArray();
 						}
 
-						if (File.Exists(patchProvider.PatchListAlwaysPath))
+						if (File.Exists(game.PathProvider.PatchListAlwaysPath))
 						{
-							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(patchProvider.PatchListAlwaysPath)));
+							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(game.PathProvider.PatchListAlwaysPath)));
 							patchListAlways = patchListAlways.Except(storedAlwaysList, entryComparer).ToArray();
 						}
 
@@ -744,16 +747,16 @@ namespace Dogstar
 							{
 								var fakeSource = PatchListSource.Master;
 								// HACK: Type check is a sloppy hack for NA -- all patches come from Patch on NA, not master. (As far as we can tell?)
-								if (patchListData.Contains(data) || launcherListData.Contains(data) || patchProvider.GetType() == typeof(NorthAmericaPatchProvider))
+								if (patchListData.Contains(data) || launcherListData.Contains(data) || game.GetType() == typeof(NorthAmericaWin10EditionManager))
 								{
 									fakeSource = PatchListSource.Patch;
 								}
 
-								fileUri = await patchProvider.BuildFileUri(fakeSource, data.Name);
+								fileUri = await game.PatchListProvider.BuildFileUri(fakeSource, data.Name);
 							}
 							else
 							{
-								fileUri = await patchProvider.BuildFileUri(data);
+								fileUri = await game.PatchListProvider.BuildFileUri(data);
 							}
 
 							fileOperations.Add(manager.DownloadFileTaskAsync(fileUri, patPath).ContinueWith(pat));
@@ -766,7 +769,7 @@ namespace Dogstar
 					}
 
 					numberToDownload++;
-					fileOperations.Add(manager.DownloadFileTaskAsync(patchProvider.VersionFileUrl, patchProvider.VersionFilePath));
+					fileOperations.Add(manager.DownloadFileTaskAsync(game.PatchListProvider.VersionFileUrl, game.PathProvider.VersionFilePath));
 
 					Task downloads = Task.WhenAll(fileOperations);
 
@@ -789,13 +792,13 @@ namespace Dogstar
 
 					await Task.Run(() =>
 					{
-						File.WriteAllText(patchProvider.LauncherListPath, launcherList);
-						File.WriteAllText(patchProvider.PatchListPath, patchList);
-						File.WriteAllText(patchProvider.PatchListAlwaysPath, listAlways);
+						File.WriteAllText(game.PathProvider.LauncherListPath, launcherList);
+						File.WriteAllText(game.PathProvider.PatchListPath, patchList);
+						File.WriteAllText(game.PathProvider.PatchListAlwaysPath, listAlways);
 
-						if (File.Exists(patchProvider.VersionFilePath))
+						if (File.Exists(game.PathProvider.VersionFilePath))
 						{
-							SetTweakerRemoteVersion(File.ReadAllText(patchProvider.VersionFilePath));
+							SetTweakerRemoteVersion(File.ReadAllText(game.PathProvider.VersionFilePath));
 						}
 					});
 				}
@@ -811,8 +814,11 @@ namespace Dogstar
 			if (GameTabItem.IsSelected)
 			{
 				FlashWindow(this, true);
+
+				// HACK: holy magic number bat man
 				if (numberDownloaded > 4)
 				{
+					// HACK: holy magic number bat man
 					await this.ShowMessageAsync(Text.Updated, Text.FilesDownloaded.Format(numberDownloaded - 4));
 				}
 				else

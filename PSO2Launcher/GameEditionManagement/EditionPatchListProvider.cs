@@ -22,6 +22,8 @@ namespace Dogstar.GameEditionManagement
 		public virtual Uri PatchListAlwaysUrl => new Uri(PatchUrl, "patchlist_always.txt");
 		public virtual Uri VersionFileUrl     => new Uri(PatchUrl, "version.ver");
 
+		// TODO: Implement a version of PullManagementData which will update if null or on a fixed interval
+
 		/// <summary>
 		/// Pull latest management data, including maintenance status, etc.
 		/// </summary>

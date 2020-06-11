@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Dogstar.GameEditionManagement;
 using Dogstar.Properties;
 
 namespace Dogstar
@@ -22,9 +23,13 @@ namespace Dogstar
 				switch (arg)
 				{
 					case "-pso2":
-						Helper.LaunchGame();
+					{
+						// UNDONE: MAKE REGION SELECTABLE!
+						var game = new NorthAmericaWin10EditionManager();
+						game.LaunchGame();
 						Shutdown();
 						break;
+					}
 				}
 			}
 		}
@@ -34,11 +39,6 @@ namespace Dogstar
 			if (e.ApplicationExitCode == 0)
 			{
 				Settings.Default.Save();
-
-				if (Settings.Default.IsGameInstalled)
-				{
-					PsoSettings.Save();
-				}
 			}
 		}
 	}

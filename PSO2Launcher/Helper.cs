@@ -71,22 +71,6 @@ namespace Dogstar
 			File.Move(source, destination);
 		}
 
-		public static bool LaunchGame()
-		{
-			const int magic = 0x32315350; // 'PS12'
-
-			int time = Environment.TickCount & int.MaxValue;
-			int arg = time ^ magic;
-
-			var info = new ProcessStartInfo(Path.Combine(Settings.Default.GameFolder, "pso2.exe"), $"+0x{arg:x8}")
-			{
-				UseShellExecute = false
-			};
-
-			info.EnvironmentVariables["-pso2"] = $"+0x{time:x8}";
-			return new Process { StartInfo = info }.Start();
-		}
-
 		public static string GetTweakerGameFolder()
 		{
 			using (var regkey = Registry.CurrentUser.OpenSubKey(@"Software\AIDA"))

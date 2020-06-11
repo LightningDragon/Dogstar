@@ -6,7 +6,7 @@ using NLua;
 
 namespace Dogstar
 {
-	public class PsoSettings
+	public class PsoSettings : IDisposable
 	{
 		readonly Lua LuaVm = new Lua();
 		readonly Dictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
@@ -16,92 +16,92 @@ namespace Dogstar
 
 		public int Vsync
 		{
-			get { return Get<int>("Ini.FrameKeep"); }
-			set { Cache["Ini.FrameKeep"] = value; }
+			get => Get<int>("Ini.FrameKeep");
+			set => Cache["Ini.FrameKeep"] = value;
 		}
 
 		public bool FullScreen
 		{
-			get { return Get<bool>("Ini.Windows.FullScreen"); }
-			set { Cache["Ini.Windows.FullScreen"] = value; }
+			get => Get<bool>("Ini.Windows.FullScreen");
+			set => Cache["Ini.Windows.FullScreen"] = value;
 		}
 
 		public bool VirtualFullScreen
 		{
-			get { return Get<bool>("Ini.Windows.VirtualFullScreen"); }
-			set { Cache["Ini.Windows.VirtualFullScreen"] = value; }
+			get => Get<bool>("Ini.Windows.VirtualFullScreen");
+			set => Cache["Ini.Windows.VirtualFullScreen"] = value;
 		}
 
 		public bool MoviePlay
 		{
-			get { return Get<bool>("Ini.Config.Basic.MoviePlay"); }
-			set { Cache["Ini.Config.Basic.MoviePlay"] = value; }
+			get => Get<bool>("Ini.Config.Basic.MoviePlay");
+			set => Cache["Ini.Config.Basic.MoviePlay"] = value;
 		}
 
 		public int ShaderQuality
 		{
-			get { return Get<int>("Ini.Config.Draw.ShaderLevel"); }
-			set { Cache["Ini.Config.Draw.ShaderLevel"] = value; }
+			get => Get<int>("Ini.Config.Draw.ShaderLevel");
+			set => Cache["Ini.Config.Draw.ShaderLevel"] = value;
 		}
 
 		public int TextureResolution
 		{
-			get { return Get<int>("Ini.Config.Draw.TextureResolution"); }
-			set { Cache["Ini.Config.Draw.TextureResolution"] = value; }
+			get => Get<int>("Ini.Config.Draw.TextureResolution");
+			set => Cache["Ini.Config.Draw.TextureResolution"] = value;
 		}
 
 		public int InterfaceSize
 		{
-			get { return Get<int>("Ini.Config.Screen.InterfaceSize"); }
-			set { Cache["Ini.Config.Screen.InterfaceSize"] = value; }
+			get => Get<int>("Ini.Config.Screen.InterfaceSize");
+			set => Cache["Ini.Config.Screen.InterfaceSize"] = value;
 		}
 
 		public bool Surround
 		{
-			get { return Get<bool>("Ini.Config.Sound.Play.Surround"); }
-			set { Cache["Ini.Config.Sound.Play.Surround"] = value; }
+			get => Get<bool>("Ini.Config.Sound.Play.Surround");
+			set => Cache["Ini.Config.Sound.Play.Surround"] = value;
 		}
 
 		public bool GlobalFocus
 		{
-			get { return Get<bool>("Ini.Config.Sound.Play.GlobalFocus"); }
-			set { Cache["Ini.Config.Sound.Play.GlobalFocus"] = value; }
+			get => Get<bool>("Ini.Config.Sound.Play.GlobalFocus");
+			set => Cache["Ini.Config.Sound.Play.GlobalFocus"] = value;
 		}
 
 		public int Music
 		{
-			get { return Get<int>("Ini.Config.Sound.Volume.Bgm"); }
-			set { Cache["Ini.Config.Sound.Volume.Bgm"] = value; }
+			get => Get<int>("Ini.Config.Sound.Volume.Bgm");
+			set => Cache["Ini.Config.Sound.Volume.Bgm"] = value;
 		}
 
 		public int Voice
 		{
-			get { return Get<int>("Ini.Config.Sound.Volume.Voice"); }
-			set { Cache["Ini.Config.Sound.Volume.Voice"] = value; }
+			get => Get<int>("Ini.Config.Sound.Volume.Voice");
+			set => Cache["Ini.Config.Sound.Volume.Voice"] = value;
 		}
 
 		public int Video
 		{
-			get { return Get<int>("Ini.Config.Sound.Volume.Movie"); }
-			set { Cache["Ini.Config.Sound.Volume.Movie"] = value; }
+			get => Get<int>("Ini.Config.Sound.Volume.Movie");
+			set => Cache["Ini.Config.Sound.Volume.Movie"] = value;
 		}
 
 		public int Sound
 		{
-			get { return Get<int>("Ini.Config.Sound.Volume.Se"); }
-			set { Cache["Ini.Config.Sound.Volume.Se"] = value; }
+			get => Get<int>("Ini.Config.Sound.Volume.Se");
+			set => Cache["Ini.Config.Sound.Volume.Se"] = value;
 		}
 
 		public int WindowHight
 		{
-			get { return Get<int>("Ini.Windows.Height"); }
-			set { Cache["Ini.Windows.Height"] = value; }
+			get => Get<int>("Ini.Windows.Height");
+			set => Cache["Ini.Windows.Height"] = value;
 		}
 
 		public int WindowWidth
 		{
-			get { return Get<int>("Ini.Windows.Width"); }
-			set { Cache["Ini.Windows.Width"] = value; }
+			get => Get<int>("Ini.Windows.Width");
+			set => Cache["Ini.Windows.Width"] = value;
 		}
 
 		public PsoSettings(GameEditionManager edition)
@@ -173,5 +173,10 @@ namespace Dogstar
 			File.WriteAllText(edition.PathProvider.ConfigurationFilePath, result);
 		}
 
+		/// <inheritdoc />
+		public void Dispose()
+		{
+			LuaVm?.Dispose();
+		}
 	}
 }
