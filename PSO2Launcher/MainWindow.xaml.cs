@@ -1,33 +1,30 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
-using Newtonsoft.Json;
-using MahApps.Metro.Controls.Dialogs;
-using Dogstar.Resources;
+using Dogstar.GameEditionManagement;
 using Dogstar.Properties;
-using MahApps.Metro.Controls;
-using System.Reflection;
-
-using static MahApps.Metro.ThemeManager;
-using static Dogstar.Helper;
-using static Dogstar.External;
+using Dogstar.Resources;
+using MahApps.Metro.Controls.Dialogs;
+using Newtonsoft.Json;
 using static System.Convert;
+using static Dogstar.External;
+using static Dogstar.Helper;
+using static MahApps.Metro.ThemeManager;
 
 namespace Dogstar
 {
 	// TODO: Maybe save management_beta.txt to documents\sega\phantasystaronline2 because vanilla launcher does it
 	// TODO: figure out documents\sega\pso2\download patch lists
-	// TODO: Implement the functionality behind the toggles on the enhancements menu
-	// TODO: When configuring PSO2 Proxy and plugin not installed, install plugin on success
 	// TODO: Figure out why vanilla launcher keeps deleting version.ver
 	// TODO: General download tab needs pause/cancel. Oohhhh boy.
 	// TODO: Switch to general download tab when restoring backups.
@@ -46,12 +43,12 @@ namespace Dogstar
 
 		public string WindowTittle => $"{ApplicationInfo.Name} {ApplicationInfo.Version}";
 
-		PatchProvider patchProvider;
+		GameEditionManager game;
 
 		public MainWindow()
 		{
 			// UNDONE: MAKE REGION SELECTABLE!
-			patchProvider = new NorthAmericaPatchProvider();
+			game = new NorthAmericaWin10EditionManager();
 
 			ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 			InitializeComponent();
@@ -230,15 +227,6 @@ namespace Dogstar
 				// UNDONE: move to PatchProvider
 				string editionPath = Path.Combine(Settings.Default.GameFolder, "edition.txt");
 
-				PluginInfo[] plugins = JsonConvert.DeserializeObject<PluginInfo[]>(Settings.Default.PluginSettings);
-				Task<string>[] pluginInfoPullArray = plugins.Select(x =>
-				{
-					using (var client = new AquaHttpClient())
-					{
-						return client.DownloadStringTaskAsync(x.Url);
-					}
-				}).ToArray();
-
 				if (!await patchProvider.IsGameUpToDate())
 				{
 					MessageDialogResult result = await this.ShowMessageAsync(Text.GameUpdate, Text.GameUpdateAvailable, AffirmNeg, YesNo);
@@ -248,35 +236,6 @@ namespace Dogstar
 						await CheckGameFiles(UpdateMethod.Update);
 					}
 				}
-
-				PluginInfo[] updatedPluginInfos = (await Task.WhenAll(pluginInfoPullArray)).Select(JsonConvert.DeserializeObject<PluginInfo>).ToArray();
-				var pluginsUpdateingTasks = new List<Task>();
-				PluginManager.DownloadManager = _generalDownloadManager;
-
-				for (int index = 0; index < updatedPluginInfos.Length; index++)
-				{
-					if (updatedPluginInfos[index].CurrentVersion > plugins[index].CurrentVersion)
-					{
-						if (await this.ShowMessageAsync(Text.UpdateAvailable, string.Format(Text.DownloadLatest, plugins[index].Name), AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
-						{
-							updatedPluginInfos[index].Url = plugins[index].Url;
-							PluginInfo plugin = plugins[index] = updatedPluginInfos[index];
-
-							pluginsUpdateingTasks.Add(plugin.IsEnabled
-								? PluginManager.Install(plugin)
-								: PluginManager.Install(plugin).ContinueWith(x => PluginManager.Disable(plugin)));
-						}
-					}
-				}
-
-				if (pluginsUpdateingTasks.Count > 0)
-				{
-					_gameTabController.ChangeTab(GeneralDownloadTab);
-					await Task.WhenAll(pluginsUpdateingTasks);
-					_gameTabController.PreviousTab();
-				}
-
-				PluginManager.PluginSettings.AddRange(plugins);
 
 				if (await patchProvider.IsNewPrecedeAvailable() &&
 					await this.ShowMessageAsync(Text.PrecedeAvailable, Text.DownloadLatestPreced, AffirmNeg, YesNo) == MessageDialogResult.Affirmative)
@@ -396,41 +355,14 @@ namespace Dogstar
 
 		private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
 		{
-			// TODO: Do this better
-			EnhancementsItemGrid.Children.RemoveRange(10, EnhancementsItemGrid.Children.Count - 10);
-
-			foreach (PluginInfo plugin in PluginManager.PluginSettings)
-			{
-				EnhancementsTabAddSubItem(plugin);
-			}
 		}
 
 		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
 		{
-			SavePluginSettings();
 		}
 
 		private async void AddPluginButton_Click(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				string jsonUrl = await this.ShowInputAsync(Text.AddPlugin, string.Empty);
-				_gameTabController.ChangeTab(GeneralDownloadTab);
-
-				if (jsonUrl != null)
-				{
-					PluginManager.DownloadManager = _generalDownloadManager;
-					PluginInfo info = await PluginManager.InfoFromUrl(new Uri(jsonUrl));
-					await PluginManager.Install(info);
-					EnhancementsTabAddSubItem(info);
-					PluginManager.PluginSettings.Add(info);
-				}
-			}
-			catch (Exception ex)
-			{
-				await this.ShowMessageAsync(Text.Error, ex.Message);
-			}
-
 			_gameTabController.PreviousTab();
 		}
 
@@ -585,39 +517,6 @@ namespace Dogstar
 			OtherProxyConfig.IsEnabled = isEnabled;
 		}
 
-		private void EnhancementsTabAddSubItem(PluginInfo settings)
-		{
-			EnhancementsItemGrid.RowDefinitions.Add(new RowDefinition());
-
-			var lable = new Label
-			{
-				FontSize = 14,
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Center,
-				Margin = new Thickness(0, 0, 5, 0),
-				Content = $"{settings.Name}:",
-				ToolTip = settings.Description
-			};
-
-			lable.SetValue(Grid.ColumnProperty, 0);
-			lable.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
-
-			var toggleSwitch = new ToggleSwitch
-			{
-				Name = settings.Name + "Toggle",
-				VerticalAlignment = VerticalAlignment.Center,
-				IsChecked = settings.IsEnabled,
-			};
-
-			toggleSwitch.Checked += delegate { PluginManager.Enable(settings); settings.IsEnabled = true; };
-			toggleSwitch.Unchecked += delegate { PluginManager.Disable(settings); settings.IsEnabled = false; };
-			toggleSwitch.SetValue(Grid.ColumnProperty, 1);
-			toggleSwitch.SetValue(Grid.RowProperty, EnhancementsItemGrid.RowDefinitions.Count - 1);
-
-			EnhancementsItemGrid.Children.Add(lable);
-			EnhancementsItemGrid.Children.Add(toggleSwitch);
-		}
-
 		private async Task<bool> CheckGameFiles(UpdateMethod method)
 		{
 			_gameTabController.ChangeTab(FileCheckTabItem);
@@ -737,8 +636,6 @@ namespace Dogstar
 					PatchListEntry[] launcherListData = PatchListEntry.Parse(launcherList).ToArray();
 					PatchListEntry[] patchListData = PatchListEntry.Parse(patchList).ToArray();
 					PatchListEntry[] patchListAlways = PatchListEntry.Parse(listAlways).ToArray();
-
-					await RestoreAllPatchBackups();
 
 					if (method == UpdateMethod.Update && Directory.Exists(patchProvider.GameConfigFolder))
 					{

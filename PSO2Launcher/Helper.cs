@@ -5,14 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Windows;
-using Dogstar.GameEditionManagement;
 using Dogstar.Properties;
 using Dogstar.Resources;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 
 namespace Dogstar
 {
@@ -118,8 +115,6 @@ namespace Dogstar
 
 		public static bool IsFileUpToDate(string filePath, long targetSize, string targetHash)
 		{
-			if (filePath.Contains("pso2launcher"))
-				return true;
 			try
 			{
 				var info = new FileInfo(filePath);
@@ -129,51 +124,6 @@ namespace Dogstar
 			{
 				return false;
 			}
-		}
-
-		public static void RestorePatchBackup(string patchname)
-		{
-			var installPath = EditionPatchListProvider.DataFolder; // UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS
-			var path        = Path.Combine(installPath, "backup", patchname);
-
-			if (!Directory.Exists(path))
-			{
-				return;
-			}
-
-			foreach (var file in Directory.EnumerateFiles(path))
-			{
-				MoveAndOverwriteFile(file, Path.Combine(installPath, Path.GetFileName(file ?? string.Empty)));
-			}
-
-			Directory.Delete(path);
-		}
-
-		public static async Task RestoreAllPatchBackups()
-		{
-			await Task.Run(() =>
-			{
-				var path = Path.Combine( /* UNDONE: THIS WILL NOT WORK WITH BOTH VERSIONS */
-				                        EditionPatchListProvider.DataFolder,
-				                        "backup");
-
-				if (Directory.Exists(path))
-				{
-					RestorePatchBackup("JPECodes");
-					RestorePatchBackup("JPEnemies");
-
-					foreach (var entry in Directory.EnumerateDirectories(path))
-					{
-						RestorePatchBackup(entry);
-					}
-				}
-			});
-		}
-
-		public static void SavePluginSettings()
-		{
-			Settings.Default.PluginSettings = JsonConvert.SerializeObject(PluginManager.PluginSettings);
-			Settings.Default.Save();
 		}
 	}
 }

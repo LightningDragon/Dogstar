@@ -26,8 +26,5 @@
     <Setting Name="Theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">BaseDark</Value>
     </Setting>
-    <Setting Name="PluginSettings" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[]</Value>
-    </Setting>
   </Settings>
 </SettingsFile>
