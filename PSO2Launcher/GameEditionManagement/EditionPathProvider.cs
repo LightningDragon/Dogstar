@@ -15,9 +15,9 @@ namespace Dogstar.GameEditionManagement
 		public virtual string ConfigurationFilePath => Path.Combine(GameConfigFolder, "user.pso2");
 
 		// UNDONE: make Settings.Default.GameFolder selectable for region
-		public static string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
+		public virtual string DataFolder => Path.Combine(Settings.Default.GameFolder, "data", "win32");
 
 		// UNDONE: make Settings.Default.GameFolder selectable for region
-		public static string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
+		public virtual string PrecedeFolder => Path.Combine(Settings.Default.GameFolder, "_precede");
 	}
 }

@@ -27,11 +27,11 @@ namespace Dogstar
 
 		private readonly CancellationTokenSource _checkCancelSource = new CancellationTokenSource();
 
-		readonly EditionPatchListProvider patchListProvider;
+		readonly GameEditionManager game;
 
-		public PrecedeWindow(EditionPatchListProvider patchListProvider)
+		public PrecedeWindow(GameEditionManager game)
 		{
-			this.patchListProvider = patchListProvider;
+			this.game = game;
 			InitializeComponent();
 		}
 
@@ -71,26 +71,27 @@ namespace Dogstar
 				{
 					var fileOperations = new List<Task>();
 
-					if (patchListProvider.ManagementData.ContainsKey("PrecedeVersion") && patchListProvider.ManagementData.ContainsKey("PrecedeCurrent"))
+					if (game.PatchListProvider.ManagementData.ContainsKey("PrecedeVersion") &&
+					    game.PatchListProvider.ManagementData.ContainsKey("PrecedeCurrent"))
 					{
-						CreateDirectoryIfNoneExists(Path.Combine(EditionPatchListProvider.PrecedeFolder, "data", "win32"));
+						// HACK: THIS IS DUMB AND BAD. We shouldn't be making the assumption that data/win32 is always the destination folder.
+						CreateDirectoryIfNoneExists(Path.Combine(game.PathProvider.PrecedeFolder, "data", "win32"));
 
-						var listdatas = new PatchListEntry[int.Parse(patchListProvider.ManagementData["PrecedeCurrent"]) + 1][];
+						var listdatas = new PatchListEntry[int.Parse(game.PatchListProvider.ManagementData["PrecedeCurrent"]) + 1][];
 
 						for (var index = 0; index < listdatas.Length; index++)
 						{
-
 							var filename = $"patchlist{index}.txt";
-							var data = await manager.DownloadStringTaskAsync(new Uri(patchListProvider.BasePrecede, filename));
+							var data = await manager.DownloadStringTaskAsync(new Uri(game.PatchListProvider.BasePrecede, filename));
 							listdatas[index] = PatchListEntry.Parse(data).ToArray();
-							await Task.Run(() => File.WriteAllText(Path.Combine(EditionPatchListProvider.PrecedeFolder, filename), data));
+							await Task.Run(() => File.WriteAllText(Path.Combine(game.PathProvider.PrecedeFolder, filename), data));
 						}
 
 						manager.DownloadProgressChanged += DownloadProgressChanged;
 						manager.DownloadCompleted += DownloadCompleted;
 
 						var groups = (from v in listdatas.SelectMany(x => x) group v by v.Name into d select d.First()).ToArray();
-						var precedePath = EditionPatchListProvider.PrecedeFolder;
+						var precedePath = game.PathProvider.PrecedeFolder;
 
 						_totalBytes = groups.Select(x => x.Size).Sum();
 						DownloadProgress.Maximum = _totalBytes;
@@ -144,7 +145,7 @@ namespace Dogstar
 									_numberToDownload++;
 
 									var patPath = Path.Combine(precedePath, data.Name);
-									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(patchListProvider.BasePrecede, data.Name), patPath).ContinueWith(x =>
+									fileOperations.Add(manager.DownloadFileTaskAsync(new Uri(game.PatchListProvider.BasePrecede, data.Name), patPath).ContinueWith(x =>
 									{
 										lock (this)
 										{
@@ -178,7 +179,7 @@ namespace Dogstar
 						await downloads;
 					}
 
-					await Task.Run(() => File.WriteAllText(patchListProvider.PrecedeTxtPath, $"{patchListProvider.ManagementData["PrecedeVersion"]}\t{patchListProvider.ManagementData["PrecedeCurrent"]}"));
+					await Task.Run(() => File.WriteAllText(game.PathProvider.PrecedeTxtPath, $"{game.PatchListProvider.ManagementData["PrecedeVersion"]}\t{game.PatchListProvider.ManagementData["PrecedeCurrent"]}"));
 				}
 				catch when (_checkCancelSource.IsCancellationRequested)
 				{
