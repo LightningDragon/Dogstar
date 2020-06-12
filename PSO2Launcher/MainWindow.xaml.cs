@@ -808,6 +808,8 @@ namespace Dogstar
 						});
 					};
 
+					string dogstarLocation = Assembly.GetExecutingAssembly().Location;
+
 					for (var index = 0; index < groups.Length;)
 					{
 						_checkCancelSource.Token.ThrowIfCancellationRequested();
@@ -824,7 +826,18 @@ namespace Dogstar
 							CurrentCheckActionLabel.Content = Path.GetFileNameWithoutExtension(data.Name);
 							string filePath = MakeLocalToGame(Path.ChangeExtension(data.Name, null));
 
-							bool upToDate = await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
+							filePath = filePath.Replace('/', '\\');
+
+							bool isDogstar = filePath == dogstarLocation;
+
+							if (isDogstar)
+							{
+								System.Diagnostics.Debug.WriteLine($"File \"{filePath}\" from patch list is dogstar - pretending it's not, and saying it's up to date!");
+							}
+
+							bool upToDate = isDogstar ||
+							                await Task.Run(() => IsFileUpToDate(filePath, data.Size, data.Hash));
+
 							CheckProgressbar.Value = ++index;
 							CompletedCheckActionsLabel.Content = Text.CheckedOf.Format(index, groups.Length);
 
