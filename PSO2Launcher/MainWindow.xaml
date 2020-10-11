@@ -92,14 +92,6 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </controls:Tile>
-                                <controls:Tile x:Name="EnhancementsTile" Title="Enhancements (English patch, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Remove Openning Video, Etc." Click="EnhancementsTile_Click">
-                                    <Rectangle x:Name="EnhancementIcon" Width="40" Height="40" Fill="White">
-                                        <Rectangle.OpacityMask>
-                                            <VisualBrush Stretch="Uniform"
-                                     Visual="{StaticResource appbar_potion}"/>
-                                        </Rectangle.OpacityMask>
-                                    </Rectangle>
-                                </controls:Tile>
                                 <controls:Tile x:Name="OtherTile" Title="Other (PSO2Proxy, etc)" Margin="20,4,20,5" Width="Auto" Height="90" ToolTip="Install PSO2, PSO2Proxy, Etc." Click="OtherTile_Click">
                                     <Rectangle x:Name="OtherIcon" Width="40" Height="40" Fill="White">
                                         <Rectangle.OpacityMask>
@@ -241,22 +233,6 @@
                                 </StackPanel>
                             </ScrollViewer>
                             <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="GameSettingsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="0,3,0,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem x:Name="EnhancementsTabItem" IsEnabled="False" Selector.Selected="EnhancementsTabItem_OnSelected" Selector.Unselected="EnhancementsTabItem_OnUnSelected">
-                        <Grid HorizontalAlignment="Center" Margin="0,0,0,50" VerticalAlignment="Top">
-                            <ScrollViewer Margin="0,0,0,50" HorizontalAlignment="Center">
-                                <Grid Name="EnhancementsItemGrid">
-                                    <Grid.RowDefinitions>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="96"/>
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ScrollViewer>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="EnhancementsBackButton" Content="Back" Width="100" BorderBrush="{x:Null}" Margin="7,0,119,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" Click="BackButton_Click" VerticalAlignment="Bottom"/>
-                            <Button Style="{DynamicResource AccentedSquareButtonStyle}" x:Name="AddPluginButton" Content="Add" Width="100" BorderBrush="{x:Null}" Margin="119,0,7,0" controls:ControlsHelper.ContentCharacterCasing="Normal" Height="40" VerticalAlignment="Bottom" Click="AddPluginButton_Click"/>
                         </Grid>
                     </TabItem>
                     <TabItem x:Name="OtherTabItem" IsEnabled="False">

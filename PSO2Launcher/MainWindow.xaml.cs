@@ -119,11 +119,6 @@ namespace Dogstar
 			Process.Start(Properties.Resources.PolarisDonation);
 		}
 
-		private void EnhancementsTile_Click(object sender, RoutedEventArgs e)
-		{
-			_gameTabController.ChangeTab(EnhancementsTabItem);
-		}
-
 		private void BackButton_Click(object sender, RoutedEventArgs e)
 		{
 			_gameTabController.PreviousTab();
@@ -353,19 +348,6 @@ namespace Dogstar
 				ChangeAppStyle(Application.Current, GetAccent(Settings.Default.AccentColor), GetAppTheme(Settings.Default.Theme));
 				Settings.Default.Save();
 			}
-		}
-
-		private void EnhancementsTabItem_OnSelected(object sender, RoutedEventArgs e)
-		{
-		}
-
-		private void EnhancementsTabItem_OnUnSelected(object sender, RoutedEventArgs e)
-		{
-		}
-
-		private async void AddPluginButton_Click(object sender, RoutedEventArgs e)
-		{
-			_gameTabController.PreviousTab();
 		}
 
 		private void GameSettingsTabItem_OnSelected(object sender, RoutedEventArgs e)
