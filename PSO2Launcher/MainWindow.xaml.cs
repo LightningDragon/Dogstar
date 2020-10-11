@@ -74,24 +74,9 @@ namespace Dogstar
 			DebugFlyout.IsOpen = !DebugFlyout.IsOpen;
 		}
 
-		private void Donate_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			DonationFlyout.IsOpen = !DebugFlyout.IsOpen;
-		}
-
-		private void Twitter_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			Process.Start(Properties.Resources.DogstarTwitter);
-		}
-
 		private void Github_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			Process.Start(Properties.Resources.DogstarGithub);
-		}
-
-		private void Information_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			Process.Start(Properties.Resources.DogstarSupport);
 		}
 
 		private void CancelCheckButton_Click(object sender, RoutedEventArgs e)
@@ -107,16 +92,6 @@ namespace Dogstar
 		private void Launch_Changed(object sender, RoutedEventArgs e)
 		{
 			Settings.Default.CloseOnLaunch = Launch.IsChecked.GetValueOrDefault();
-		}
-
-		private void DonateToDogstar_Click(object sender, RoutedEventArgs e)
-		{
-			Process.Start(Properties.Resources.DogstarDonation);
-		}
-
-		private void DonateToPolaris_Click(object sender, RoutedEventArgs e)
-		{
-			Process.Start(Properties.Resources.PolarisDonation);
 		}
 
 		private void BackButton_Click(object sender, RoutedEventArgs e)
