@@ -49,7 +49,7 @@ namespace Dogstar
 		public MainWindow()
 		{
 			// UNDONE: MAKE REGION SELECTABLE!
-			game = new NorthAmericaWin10EditionManager();
+			game = new NorthAmericaSteamEditionManager();
 			// UNDONE: THIS SHOULD NOT BE HAPPENING HERE!
 			psoSettings = new PsoSettings(game);
 
@@ -618,7 +618,6 @@ namespace Dogstar
 							IEnumerable<PatchListEntry> storedAlwaysList = await Task.Run(() => PatchListEntry.Parse(File.ReadAllText(game.PathProvider.PatchListAlwaysPath)));
 							patchListAlways = patchListAlways.Except(storedAlwaysList, entryComparer).ToArray();
 						}
-
 					}
 
 					PatchListEntry[] lists = launcherListData.Concat(patchListData.Concat(patchListAlways)).ToArray();

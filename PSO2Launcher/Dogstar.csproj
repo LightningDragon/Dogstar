@@ -102,6 +102,9 @@
     <Compile Include="GameEditionManagement\EditionPathProvider.cs" />
     <Compile Include="GameEditionManagement\JapanEditionManager.cs" />
     <Compile Include="GameEditionManagement\JapanPathProvider.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaSteamEditionManager.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaSteamPatchListProvider.cs" />
+    <Compile Include="GameEditionManagement\NorthAmericaSteamPathProvider.cs" />
     <Compile Include="GameEditionManagement\NorthAmericaWin10EditionManager.cs" />
     <Compile Include="GameEditionManagement\NorthAmericaWin10PatchListProvider.cs" />
     <Compile Include="AquaHttpClient.cs">
